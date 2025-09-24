@@ -8,6 +8,7 @@ consolestorage/
 .idea/
 idea-module-files/
 *.iml
+rebel.xml
 com.springsource.sts.config.flow.prefs
 org.springframework.ide.eclipse.beans.core.prefs
 org.springframework.ide.eclipse.core.prefs
