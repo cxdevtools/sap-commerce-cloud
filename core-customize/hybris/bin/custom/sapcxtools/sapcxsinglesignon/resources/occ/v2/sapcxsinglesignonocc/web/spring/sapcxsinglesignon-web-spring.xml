@@ -13,19 +13,4 @@
         <property name="beforeBeanNames" value="springSecurityFilterChain"/>
         <property name="add" ref="cxAccessTokenVerificationFilter"/>
     </bean>
-
-    <alias name="jwtAccessTokenVerificationFilter" alias="cxAccessTokenVerificationFilter"/>
-    <bean id="jwtAccessTokenVerificationFilter" class="tools.sapcx.commerce.sso.filter.JwtAccessTokenVerificationFilter">
-        <constructor-arg name="oAuth2RequestFactory" ref="oAuth2RequestFactory"/>
-        <constructor-arg name="clientDetailsService" ref="oauthClientDetails"/>
-        <constructor-arg name="userDetailsService" ref="wsUserDetailsService"/>
-        <constructor-arg name="customerReplicationStrategy" ref="customerReplicationStrategy"/>
-        <constructor-arg name="tokenStore" ref="oauthTokenStore"/>
-        <constructor-arg name="occClientId" value="${sapcxsinglesignon.filter.login.userClientId}"/>
-        <constructor-arg name="enabled" value="${sapcxsinglesignon.filter.enabled}" type="boolean"/>
-        <constructor-arg name="issuer" value="${sapcxsinglesignon.filter.idp.issuer}"/>
-        <constructor-arg name="audience" value="${sapcxsinglesignon.filter.idp.audience}"/>
-        <constructor-arg name="clientId" value="${sapcxsinglesignon.filter.idp.clientId}"/>
-        <constructor-arg name="customerIdField" value="${sapcxsinglesignon.filter.idp.claim.id}"/>
-    </bean>
 </beans>
