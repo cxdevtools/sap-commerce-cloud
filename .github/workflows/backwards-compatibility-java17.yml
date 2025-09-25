@@ -4,6 +4,7 @@ on:
   push:
     branches: [develop]
     paths:
+      - "core-customize/manifest.json"
       - "core-customize/hybris/bin/custom/sapcxtools/**/*.java"
       - "core-customize/hybris/bin/custom/sapcxtools/**/*-beans.xml"
       - "core-customize/hybris/bin/custom/sapcxtools/**/*-items.xml"

@@ -1,4 +1,45 @@
 {
+    "commerceSuiteVersion": "2211.43",
+    "extensionPacks": [],
+    "extensions": [],
+    "properties": [],
+    "storefrontAddons": [],
+    "useCloudExtensionPack": false,
+    "useConfig": {
+        "extensions": {
+            "exclude": [],
+            "location": "hybris/config/localextensions.xml"
+        },
+        "properties": [{
+                "location": "hybris/config/cloud/common.properties"
+            },
+            {
+                "aspect": "api",
+                "location": "hybris/config/cloud/aspect/api.properties"
+            },
+            {
+                "aspect": "backoffice",
+                "location": "hybris/config/cloud/aspect/backoffice.properties"
+            },
+            {
+                "aspect": "backgroundProcessing",
+                "location": "hybris/config/cloud/aspect/backgroundprocessing.properties"
+            },
+            {
+                "aspect": "admin",
+                "location": "hybris/config/cloud/aspect/admin.properties"
+            },
+            {
+                "location": "hybris/config/cloud/persona/development.properties",
+                "persona": "development"
+            }
+        ],
+        "tests": {
+            "extensions": ["sapcommercetoolkit", "sapcxbackoffice", "sapcxreporting", "sapcxsearch", "sapcxsinglesignon"],
+            "annotations": ["UnitTests", "IntegrationTests"],
+            "packages": ["tools.sapcx.commerce.*"]
+        }
+    },
     "aspects": [{
             "name": "backoffice",
             "webapps": [{
@@ -49,46 +90,5 @@
                 }
             ]
         }
-    ],
-    "commerceSuiteVersion": "2211.43",
-    "extensionPacks": [],
-    "extensions": [],
-    "properties": [],
-    "storefrontAddons": [],
-    "useCloudExtensionPack": false,
-    "useConfig": {
-        "extensions": {
-            "exclude": [],
-            "location": "hybris/config/localextensions.xml"
-        },
-        "properties": [{
-                "location": "hybris/config/cloud/common.properties"
-            },
-            {
-                "aspect": "api",
-                "location": "hybris/config/cloud/aspect/api.properties"
-            },
-            {
-                "aspect": "backoffice",
-                "location": "hybris/config/cloud/aspect/backoffice.properties"
-            },
-            {
-                "aspect": "backgroundProcessing",
-                "location": "hybris/config/cloud/aspect/backgroundprocessing.properties"
-            },
-            {
-                "aspect": "admin",
-                "location": "hybris/config/cloud/aspect/admin.properties"
-            },
-            {
-                "location": "hybris/config/cloud/persona/development.properties",
-                "persona": "development"
-            }
-        ],
-        "tests": {
-            "extensions": ["sapcommercetoolkit", "sapcxbackoffice", "sapcxreporting", "sapcxsearch", "sapcxsinglesignon"],
-            "annotations": ["UnitTests", "IntegrationTests"],
-            "packages": ["tools.sapcx.commerce.*"]
-        }
-    }
+    ]
 }
