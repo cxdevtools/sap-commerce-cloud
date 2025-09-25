@@ -25,7 +25,7 @@ if (project.hasProperty("SAPCX_ARTEFACT_BASEURL") && project.hasProperty("SAPCX_
 
     val COMMERCE_VERSION = CCV2.manifest.commerceSuiteVersion
     tasks.register<Download>("downloadPlatform") {
-        src(BASEURL + "/hybris-commerce-suite/${COMMERCE_VERSION}.zip")
+        src(BASEURL + "/commerce/hybris-commerce-suite-${COMMERCE_VERSION}.zip")
         dest(file("${DEPENDENCY_FOLDER}/hybris-commerce-suite-${COMMERCE_VERSION}.zip"))
         header("Authorization", "Basic ${AUTHORIZATION}")
         overwrite(false)
@@ -42,7 +42,7 @@ if (project.hasProperty("SAPCX_ARTEFACT_BASEURL") && project.hasProperty("SAPCX_
     if (CCV2.manifest.extensionPacks.any{"hybris-commerce-integrations".equals(it.name)}) {
         val INTEXTPACK_VERSION = CCV2.manifest.extensionPacks.first{"hybris-commerce-integrations".equals(it.name)}.version        
         tasks.register<Download>("downloadIntExtPack") {
-            src(BASEURL + "/hybris-commerce-integrations/${INTEXTPACK_VERSION}.zip")
+            src(BASEURL + "/integration/hybris-commerce-integrations-${INTEXTPACK_VERSION}.zip")
             dest(file("${DEPENDENCY_FOLDER}/hybris-commerce-integrations-${INTEXTPACK_VERSION}.zip"))
             header("Authorization", "Basic ${AUTHORIZATION}")
             overwrite(false)

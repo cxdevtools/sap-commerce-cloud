@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ["2205.25"]
+        version: ["2211.43"]
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
