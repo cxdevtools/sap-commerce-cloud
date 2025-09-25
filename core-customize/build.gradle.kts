@@ -6,9 +6,9 @@ import java.time.Instant
 import java.util.Base64
 
 plugins {
-    id("sap.commerce.build") version("3.7.1")
-    id("sap.commerce.build.ccv2") version("3.7.1")
-    id("de.undercouch.download") version("4.1.2")
+    id("sap.commerce.build") version("4.0.0")
+    id("sap.commerce.build.ccv2") version("4.0.0")
+    id("de.undercouch.download") version("5.5.0")
 }
 
 val DEPENDENCY_FOLDER = "../dependencies"
@@ -58,8 +58,8 @@ if (project.hasProperty("SAPCX_ARTEFACT_BASEURL") && project.hasProperty("SAPCX_
 }
 
 tasks.register<WriteProperties>("generateLocalProperties") {
-    comment = "FILE WAS GENERATED AT " + Instant.now()
-    outputFile = project.file("hybris/config/local.properties")
+    comment = "GENERATED AT " + Instant.now()
+    destinationFile = project.file("hybris/config/local.properties")
     property("hybris.optional.config.dir", project.file("hybris/config/local-config").absolutePath)
     doLast {
         mkdir(project.file("hybris/config/local-config/"))
@@ -126,7 +126,7 @@ mapOf(
 tasks.register<WriteProperties>("generateLocalDeveloperProperties") {
     dependsOn(symlinkConfigTask)
     comment = "my.properties - add your own local development configuration parameters here"
-    outputFile = project.file("hybris/config/local-config/99-local.properties")
+    destinationFile = project.file("hybris/config/local-config/99-local.properties")
     onlyIf {
         !project.file("hybris/config/local-config/99-local.properties").exists()
     }
