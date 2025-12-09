@@ -22,11 +22,11 @@ jobs:
         extension: ["sapcommercetoolkit", "sapcxbackoffice", "sapcxreporting", "sapcxsearch", "sapcxenvconfig", "sapcxsinglesignon"]
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK 17
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: "adopt"
-          java-version: "17"
+          distribution: "sapmachine"
+          java-version-file: "core-customize/.java-version"
           cache: "gradle"
       - name: Validate Gradle wrapper
         uses: gradle/actions/wrapper-validation@v3

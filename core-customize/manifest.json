@@ -1,5 +1,5 @@
 {
-    "commerceSuiteVersion": "2211.47",
+    "commerceSuiteVersion": "2211-jdk21.4",
     "extensionPacks": [],
     "extensions": [],
     "properties": [],
@@ -50,28 +50,34 @@
     },
     "aspects": [{
             "name": "backoffice",
-            "webapps": [{
+            "webapps": [
+                {
                     "contextPath": "/hac",
                     "name": "hac"
-                },
-                {
-                    "contextPath": "/medias",
-                    "name": "mediaweb"
                 },
                 {
                     "contextPath": "/backoffice",
                     "name": "backoffice"
                 },
                 {
+                    "contextPath": "/medias",
+                    "name": "mediaweb"
+                },
+                {
                     "contextPath": "/authorizationserver",
-                    "name": "oauth2"
+                    "name": "authorizationserver"
+                },
+                {
+                    "contextPath": "/resourceserver",
+                    "name": "resourceserver"
                 }
             ]
         },
         {
             "name": "backgroundProcessing",
             "properties": [],
-            "webapps": [{
+            "webapps": [
+                {
                     "contextPath": "/hac",
                     "name": "hac"
                 },
@@ -84,17 +90,26 @@
         {
             "name": "api",
             "properties": [],
-            "webapps": [{
+            "webapps": [
+                {
+                    "contextPath": "/hac",
+                    "name": "hac"
+                },
+                {
                     "contextPath": "/occ",
                     "name": "commercewebservices"
+                },
+                {
+                    "contextPath": "/medias",
+                    "name": "mediaweb"
                 },
                 {
                     "contextPath": "/authorizationserver",
                     "name": "oauth2"
                 },
                 {
-                    "contextPath": "/medias",
-                    "name": "mediaweb"
+                    "contextPath": "/resourceserver",
+                    "name": "resourceserver"
                 }
             ]
         }
