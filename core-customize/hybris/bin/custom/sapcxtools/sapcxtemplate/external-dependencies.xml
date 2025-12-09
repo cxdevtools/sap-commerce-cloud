@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>tools.sapcx</groupId>
 	<artifactId>sapcxtemplate</artifactId>
-	<version>4.3.0</version>
+	<version>4.4.0</version>
 	<packaging>jar</packaging>
 	<dependencies>
 	</dependencies>

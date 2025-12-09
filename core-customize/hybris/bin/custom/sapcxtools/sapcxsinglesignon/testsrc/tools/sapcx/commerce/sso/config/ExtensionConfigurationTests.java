@@ -14,6 +14,7 @@ public class ExtensionConfigurationTests {
 				.requires("sapcxsinglesignon")
 				.requires("sapcommercetoolkit")
 				.requires("commercewebservices")
+				.requires("samlsinglesignon")
 				.requires("oauth2")
 				.verify();
 	}

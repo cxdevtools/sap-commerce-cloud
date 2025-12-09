@@ -3,8 +3,8 @@ package tools.sapcx.commerce.sso.filter;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Date;
+import java.util.*;
+import java.util.stream.Stream;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,12 +25,7 @@ import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtDecoders;
-import org.springframework.security.oauth2.jwt.JwtException;
-import org.springframework.security.oauth2.jwt.JwtValidators;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -41,7 +37,7 @@ import org.springframework.security.oauth2.provider.authentication.TokenExtracto
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import tools.sapcx.commerce.sso.replication.CustomerReplicationStrategy;
+import tools.sapcx.commerce.sso.user.UpdateUserFromTokenStrategy;
 
 /**
  * This filter performs verification of an external access token.
@@ -58,16 +54,20 @@ import tools.sapcx.commerce.sso.replication.CustomerReplicationStrategy;
 public class JwtAccessTokenVerificationFilter extends OncePerRequestFilter {
 	private static final Logger LOG = LoggerFactory.getLogger(JwtAccessTokenVerificationFilter.class);
 	public static final String AUTHORIZED_PARTY_CLAIM = "azp";
+	public static final String SCOPE_CLAIM = "scope";
 
 	private OAuth2RequestFactory oAuth2RequestFactory;
 	private ClientDetailsService clientDetailsService;
 	private UserDetailsService userDetailsService;
-	private CustomerReplicationStrategy customerReplicationStrategy;
+	private UpdateUserFromTokenStrategy updateUserFromTokenStrategy;
 	private TokenStore tokenStore;
 	private String occClientId;
 	private boolean enabled;
+	private String jwksUrl;
 	private String issuer;
 	private String audience;
+	private String scope;
+	private List<String> requiredClaims;
 	private String clientId;
 	private String customerIdField;
 	private TokenExtractor tokenExtractor;
@@ -77,23 +77,35 @@ public class JwtAccessTokenVerificationFilter extends OncePerRequestFilter {
 			OAuth2RequestFactory oAuth2RequestFactory,
 			ClientDetailsService clientDetailsService,
 			UserDetailsService userDetailsService,
-			CustomerReplicationStrategy customerReplicationStrategy,
+			UpdateUserFromTokenStrategy updateUserFromTokenStrategy,
 			TokenStore tokenStore,
 			String occClientId,
 			boolean enabled,
+			String jwksUrl,
 			String issuer,
 			String audience,
+			String scope,
+			String requiredClaims,
 			String clientId,
 			String customerIdField) {
 		this.oAuth2RequestFactory = oAuth2RequestFactory;
 		this.clientDetailsService = clientDetailsService;
 		this.userDetailsService = userDetailsService;
-		this.customerReplicationStrategy = customerReplicationStrategy;
+		this.updateUserFromTokenStrategy = updateUserFromTokenStrategy;
 		this.tokenStore = tokenStore;
 		this.occClientId = occClientId;
 		this.enabled = enabled;
+		this.jwksUrl = jwksUrl;
 		this.issuer = issuer;
 		this.audience = audience;
+		this.scope = scope;
+		this.requiredClaims = new ArrayList<>();
+		if (isNotBlank(requiredClaims)) {
+			Stream.of(StringUtils.split(requiredClaims, ','))
+					.map(StringUtils::trimToEmpty)
+					.filter(StringUtils::isNotBlank)
+					.forEach(this.requiredClaims::add);
+		}
 		this.clientId = clientId;
 		this.customerIdField = customerIdField;
 	}
@@ -139,10 +151,10 @@ public class JwtAccessTokenVerificationFilter extends OncePerRequestFilter {
 		if (createIfMissing) {
 			try {
 				Jwt decodedToken = decodeAccessToken(accessTokenValue);
-				String authorizedParty = decodedToken.getClaimAsString(AUTHORIZED_PARTY_CLAIM);
 				String userId = decodedToken.getClaimAsString(customerIdField);
-				if (StringUtils.equals(this.clientId, authorizedParty) && userId != null) {
+				if (userId != null) {
 					LOG.debug("Mapped user ID using field '{}': '{}'", customerIdField, userId);
+					updateUserFromTokenStrategy.updateUserFromToken(userId, decodedToken);
 					oAuth2AccessToken = storeAuthenticationForUser(userId, occClientId, decodedToken);
 				} else {
 					LOG.warn("No user ID found in access token for field: '{}' and the configured authorized party. Make sure your IDP configuration is correct!", customerIdField);
@@ -172,6 +184,7 @@ public class JwtAccessTokenVerificationFilter extends OncePerRequestFilter {
 	private OAuth2AccessToken storeAuthenticationForUser(String userId, String oAuth2ClientId, Jwt decodedToken) {
 		assert isNotBlank(oAuth2ClientId);
 		assert isNotBlank(userId);
+		assert Objects.nonNull(decodedToken);
 
 		// OAuth2 Request
 		ClientDetails clientDetails = clientDetailsService.loadClientByClientId(oAuth2ClientId);
@@ -200,7 +213,6 @@ public class JwtAccessTokenVerificationFilter extends OncePerRequestFilter {
 
 			return oAuth2AccessToken;
 		} catch (BadCredentialsException e) {
-			customerReplicationStrategy.remove(userId);
 			throw e;
 		}
 	}
@@ -208,26 +220,53 @@ public class JwtAccessTokenVerificationFilter extends OncePerRequestFilter {
 	private UsernamePasswordAuthenticationToken createUsernamePasswordAuthenticationToken(String userId) {
 		try {
 			UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
-			return new UsernamePasswordAuthenticationToken(userId, null, userDetails.getAuthorities());
+			Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+			return new UsernamePasswordAuthenticationToken(userId, null, authorities);
 		} catch (UsernameNotFoundException e) {
 			LOG.warn("Login attempt for unknown user '{}'!", userId);
 			throw new BadCredentialsException("Invalid credentials!");
 		}
 	}
 
-	protected void configureValidationForJwtDecoder(NimbusJwtDecoder decoder) {
-		OAuth2TokenValidator<Jwt> audienceValidator = new AudienceValidator(audience);
-		OAuth2TokenValidator<Jwt> withIssuer = JwtValidators.createDefaultWithIssuer(issuer);
-		OAuth2TokenValidator<Jwt> withAudience = new DelegatingOAuth2TokenValidator<>(withIssuer, audienceValidator);
-		decoder.setJwtValidator(withAudience);
+	private synchronized void initJwtDecoder() {
+		if (isNotBlank(jwksUrl)) {
+			LOG.info("Initializing JWT decoder with JwkSetUri '{}'", jwksUrl);
+			this.jwtDecoder = NimbusJwtDecoder.withJwkSetUri(jwksUrl).build();
+		} else {
+			LOG.info("Initializing JWT decoder with OIDC issuer location '{}'", issuer);
+			this.jwtDecoder = JwtDecoders.fromOidcIssuerLocation(issuer);
+		}
+
+		if (this.jwtDecoder instanceof NimbusJwtDecoder) {
+			configureValidatorsForJwtDecoder((NimbusJwtDecoder) this.jwtDecoder);
+		}
 	}
 
-	private synchronized void initJwtDecoder() {
-		if (this.jwtDecoder == null) {
-			this.jwtDecoder = JwtDecoders.fromOidcIssuerLocation(issuer);
-			if (this.jwtDecoder instanceof NimbusJwtDecoder) {
-				configureValidationForJwtDecoder((NimbusJwtDecoder) this.jwtDecoder);
-			}
+	private void configureValidatorsForJwtDecoder(NimbusJwtDecoder decoder) {
+		List<OAuth2TokenValidator<Jwt>> validators = new ArrayList<>();
+
+		validators.add(new JwtTimestampValidator());
+
+		if (isNotBlank(this.issuer)) {
+			validators.add(new JwtIssuerValidator(this.issuer));
 		}
+
+		if (isNotBlank(this.audience)) {
+			validators.add(new AudienceValidator(this.audience));
+		}
+
+		if (isNotBlank(this.clientId)) {
+			validators.add(new JwtClaimValidator<>(AUTHORIZED_PARTY_CLAIM, this.clientId::equalsIgnoreCase));
+		}
+
+		if (isNotBlank(this.scope)) {
+			validators.add(new JwtClaimValidator<>(SCOPE_CLAIM, this.scope::equalsIgnoreCase));
+		}
+
+		for (String requiredClaim : this.requiredClaims) {
+			validators.add(new JwtClaimValidator<>(requiredClaim, Objects::nonNull));
+		}
+
+		decoder.setJwtValidator(new DelegatingOAuth2TokenValidator<>(validators));
 	}
 }

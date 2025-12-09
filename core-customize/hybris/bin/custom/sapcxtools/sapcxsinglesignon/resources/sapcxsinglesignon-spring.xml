@@ -6,50 +6,25 @@
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <!-- Auth0 configuration service -->
-    <bean id="cxAuth0SdkConfigurationService" class="tools.sapcx.commerce.sso.auth0.actions.SdkConfigurationService">
-        <constructor-arg name="configurationService" ref="configurationService"/>
-        <constructor-arg name="customerConverter" ref="auth0CustomerConverter"/>
+    <!-- Single SignOn Filter -->
+    <alias name="jwtAccessTokenVerificationFilter" alias="cxAccessTokenVerificationFilter"/>
+    <bean id="jwtAccessTokenVerificationFilter" class="tools.sapcx.commerce.sso.filter.JwtAccessTokenVerificationFilter">
+        <constructor-arg name="oAuth2RequestFactory" ref="oAuth2RequestFactory"/>
+        <constructor-arg name="clientDetailsService" ref="oauthClientDetails"/>
+        <constructor-arg name="userDetailsService" ref="wsUserDetailsService"/>
+        <constructor-arg name="updateUserFromTokenStrategy" ref="cxUpdateUserFromTokenStrategy"/>
+        <constructor-arg name="tokenStore" ref="oauthTokenStore"/>
+        <constructor-arg name="occClientId" value="${sapcxsinglesignon.filter.login.userClientId}"/>
+        <constructor-arg name="enabled" value="${sapcxsinglesignon.filter.enabled}" type="boolean"/>
+        <constructor-arg name="jwksUrl" value="${sapcxsinglesignon.filter.idp.jwksUrl}"/>
+        <constructor-arg name="issuer" value="${sapcxsinglesignon.filter.idp.issuer}"/>
+        <constructor-arg name="audience" value="${sapcxsinglesignon.filter.idp.audience}"/>
+        <constructor-arg name="scope" value="${sapcxsinglesignon.filter.idp.scope}"/>
+        <constructor-arg name="requiredClaims" value="${sapcxsinglesignon.filter.idp.requiredClaims}"/>
+        <constructor-arg name="clientId" value="${sapcxsinglesignon.filter.idp.clientid}"/>
+        <constructor-arg name="customerIdField" value="${sapcxsinglesignon.filter.idp.claim.id}"/>
     </bean>
 
-    <!-- Auth0 Customer Converter -->
-    <alias name="cxAuth0CustomerConverter" alias="auth0CustomerConverter"/>
-    <bean id="cxAuth0CustomerConverter" parent="abstractPopulatingConverter">
-        <property name="targetClass" value="com.auth0.json.mgmt.users.User"/>
-        <property name="populators">
-            <list>
-                <bean class="tools.sapcx.commerce.sso.auth0.replication.Auth0CustomerPopulator">
-                    <constructor-arg name="customerNameStrategy" ref="customerNameStrategy"/>
-                </bean>
-                <bean class="tools.sapcx.commerce.sso.auth0.replication.Auth0CustomerMetadataPopulator">
-                    <constructor-arg name="metadataPrefix" value="${sapcxsinglesignon.auth0.customer.metadata.prefix}"/>
-                </bean>
-            </list>
-        </property>
-    </bean>
-
-    <!-- Customer Save Interceptor -->
-    <alias name="cxCustomerReplicationInterceptor" alias="customerReplicationInterceptor"/>
-    <bean id="cxCustomerReplicationInterceptor" class="tools.sapcx.commerce.sso.replication.CustomerReplicationInterceptor">
-        <constructor-arg name="customerReplicationStrategy" ref="customerReplicationStrategy"/>
-        <constructor-arg name="customerReplicationFilter" ref="customerReplicationFilter"/>
-        <constructor-arg name="enabled" value="${sapcxsinglesignon.replicate.enabled}" type="boolean"/>
-    </bean>
-    <bean id="cxCustomerReplicationInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
-        <property name="interceptor" ref="customerReplicationInterceptor"/>
-        <property name="typeCode" value="Customer"/>
-    </bean>
-    <alias name="cxAllCustomerReplicationFilter" alias="customerReplicationFilter"/>
-    <bean id="cxAllCustomerReplicationFilter" class="tools.sapcx.commerce.sso.replication.AllCustomerReplicationFilter"/>
-
-    <!-- Customer Replication Strategy -->
-    <alias name="cxAuth0CustomerReplicationStrategy" alias="customerReplicationStrategy"/>
-    <bean id="cxAuth0CustomerReplicationStrategy" class="tools.sapcx.commerce.sso.auth0.replication.Auth0CustomerReplicationStrategy">
-        <constructor-arg name="userService" ref="userService"/>
-        <constructor-arg name="customerReplicationHooks" ref="cxCustomerReplicationHooks"/>
-        <constructor-arg name="auth0RoleForCustomers" value="${sapcxsinglesignon.auth0.customer.role}"/>
-        <constructor-arg name="isCreationEnabled" value="${sapcxsinglesignon.replicate.creation.enabled}" type="boolean"/>
-        <constructor-arg name="isRemovalEnabled" value="${sapcxsinglesignon.replicate.removal.enabled}" type="boolean"/>
-    </bean>
-    <util:list id="cxCustomerReplicationHooks"></util:list>
+    <alias name="noUpdateUserFromTokenStrategy" alias="cxUpdateUserFromTokenStrategy"/>
+    <bean id="noUpdateUserFromTokenStrategy" class="tools.sapcx.commerce.sso.user.NoUpdateUserFromTokenStrategy"/>
 </beans>

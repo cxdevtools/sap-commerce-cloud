@@ -15,5 +15,6 @@
     <extension name="sapcxsearch"/>
     <extension name="sapcxenvconfig"/>
     <extension name="sapcxsinglesignon"/>
+    <extension name="sapcxssoauth0"/>
   </extensions>
 </hybrisconfig>

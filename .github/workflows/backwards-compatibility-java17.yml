@@ -4,6 +4,7 @@ on:
   push:
     branches: [develop]
     paths:
+      - "core-customize/manifest.json"
       - "core-customize/hybris/bin/custom/sapcxtools/**/*.java"
       - "core-customize/hybris/bin/custom/sapcxtools/**/*-beans.xml"
       - "core-customize/hybris/bin/custom/sapcxtools/**/*-items.xml"
@@ -21,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ["2205.25"]
+        version: ["2211.43"]
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17

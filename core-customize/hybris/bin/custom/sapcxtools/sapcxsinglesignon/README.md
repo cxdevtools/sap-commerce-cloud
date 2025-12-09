@@ -9,14 +9,10 @@ The functionality covers a filter for the OCC layer, that handles the validation
 The filter will be executed before the actual spring security chain of the OCC extension, creating a
 valid token in the local token storage for the authenticated user.
 
-The extension also ships a customer replication strategy, that can be activated to create users within
-Auth0, whenever a customer object is created or changed within SAP commerce cloud.
-
 ### How to activate and use
 
 To activate the functionality, one needs to set the configuration parameters accordingly for each environment,
-especially the flags `sapcxsinglesignon.filter.enabled`, `sapcxsinglesignon.replicate.creation.enabled`, and
-`sapcxsinglesignon.replicate.removal.enabled` which are set to `false` by default.
+especially the flag `sapcxsinglesignon.filter.enabled`, which is set to `false` by default.
 
 Also, the IDP should be configured to use the SAP Commerce OCC endpoint as audience, and provide the following
 information within the access token, as they are required by the filter:
@@ -142,42 +138,22 @@ export class CustomLogoutGuard extends LogoutGuard {
 }
 ```
 
-For the customer replication, one can add additional populators to the `auth0CustomerConverter` converter bean.
-This can be easily done using the `modifyPopulatorList` bean notation:
-
-```xml
-<bean id="myCustomerPopulator" class="com.acme.cx.MyCustomerPopulator"/>
-<bean parent="modifyPopulatorList">
-    <property name="list" ref="auth0CustomerConverter"/>
-    <property name="add" ref="myCustomerPopulator"/>
-</bean>
-```
-
 ### Configuration parameters
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| sapcxsinglesignon.filter.enabled                    | Boolean | specifies whether the filter is active or not (default: false) |
-| sapcxsinglesignon.filter.login.userClientId         | String  | the SAP Commerce client ID for your single page application (required) |
-| sapcxsinglesignon.filter.idp.issuer                 | String  | the registered issuer, eg. https://dev-1234.eu.auth0.com/ (required) |
-| sapcxsinglesignon.filter.idp.audience               | String  | the registered API, eg. https://localhost:9002/occ/v2/ (required) |
-| sapcxsinglesignon.filter.idp.clientid               | String  | the client ID of the application (required) |
-| sapcxsinglesignon.filter.idp.claim.id               | String  | claim name used for user ID mapping (default: email) |
-| sapcxsinglesignon.replicate.enabled                 | Boolean | specifies whether the replication is active or not (default: false)                       |
-| sapcxsinglesignon.replicate.creation.enabled        | Boolean | specifies whether the user creation is enabled or not (default: false) |
-| sapcxsinglesignon.replicate.removal.enabled         | Boolean | specifies whether the user removal is enabled or not (default: false) |
-| sapcxsinglesignon.auth0.management.api.audience     | String  | the audience for your machine-to-machine application (required) |
-| sapcxsinglesignon.auth0.management.api.clientid     | String  | the auth0 client ID for your machine-to-machine application (required) |
-| sapcxsinglesignon.auth0.management.api.clientsecret | String  | the auth0 client secret for your machine-to-machine application (required) |
-| sapcxsinglesignon.auth0.customer.connection         | String  | the authentication connection for customers (default: "Username-Password-Authentication") |
-| customer.metadata.prefix                            | String  | the prefix for application metadata for customers (required, default: commerce) |
-| sapcxsinglesignon.auth0.customer.role               | String  | the role to assign to newly created customer accounts |
-| sapcxsinglesignon.auth0.customer.requireemailverification | String | specifies if the user needs to verify their email (default: false) |
-| sapcxsinglesignon.auth0.customer.requirepasswordverification | String | specifies if the user needs to verify their password (default: false)             |
-| sapcxsinglesignon.auth0.customer.useblockedstatus   | Boolean | specifies if the user shall be blocked when disabled in SAP Commerce (default: false) |
+| Parameter                                                    | Type | Description                                                                              |
+|--------------------------------------------------------------|------|------------------------------------------------------------------------------------------|
+| sapcxsinglesignon.filter.enabled                             | Boolean | specifies whether the filter is active or not (default: false)                           |
+| sapcxsinglesignon.filter.login.userClientId                  | String  | the SAP Commerce client ID for your single page application (required)                   |
+| sapcxsinglesignon.filter.idp.issuer                          | String  | the registered issuer, eg. https://dev-1234.eu.auth0.com/ (required)                     |
+| sapcxsinglesignon.filter.idp.jwksUrl                         | String  | if issuer is non-OIDC conform, use this URL for JWKS (optional)                          |
+| sapcxsinglesignon.filter.idp.audience                        | String  | the registered API, eg. https://localhost:9002/occ/v2/ (required)                        |
+| sapcxsinglesignon.filter.idp.scope                           | String  | the required scopeof the API, if any, eg. shop (optional)                                |
+| sapcxsinglesignon.filter.idp.requiredClaims                  | String  | comma-separated list of required claims for a valid token (optional)                     |
+| sapcxsinglesignon.filter.idp.clientid                        | String  | the client ID of the application (required)                                              |
+| sapcxsinglesignon.filter.idp.claim.id                        | String  | claim name used for user ID mapping (default: email)                                     |
 
 ## License
 
 _Licensed under the Apache License, Version 2.0, January 2004_
 
-_Copyright 2023, SAP CX Tools_
+_Copyright 2025, SAP CX Tools_

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!-- Auth0 configuration service -->
+    <bean id="cxAuth0SdkConfigurationService" class="tools.sapcx.commerce.sso.auth0.actions.SdkConfigurationService">
+        <constructor-arg name="configurationService" ref="configurationService"/>
+        <constructor-arg name="customerConverter" ref="auth0CustomerConverter"/>
+    </bean>
+
+    <!-- Auth0 Customer Converter -->
+    <alias name="cxAuth0CustomerConverter" alias="auth0CustomerConverter"/>
+    <bean id="cxAuth0CustomerConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="com.auth0.json.mgmt.users.User"/>
+        <property name="populators">
+            <list>
+                <bean class="tools.sapcx.commerce.sso.auth0.replication.Auth0CustomerPopulator">
+                    <constructor-arg name="customerNameStrategy" ref="customerNameStrategy"/>
+                </bean>
+                <bean class="tools.sapcx.commerce.sso.auth0.replication.Auth0CustomerMetadataPopulator">
+                    <constructor-arg name="metadataPrefix" value="${sapcxssoauth0.auth0.customer.metadata.prefix}"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <!-- Customer Save Interceptor -->
+    <alias name="cxCustomerReplicationInterceptor" alias="customerReplicationInterceptor"/>
+    <bean id="cxCustomerReplicationInterceptor" class="tools.sapcx.commerce.sso.replication.CustomerReplicationInterceptor">
+        <constructor-arg name="customerReplicationStrategy" ref="customerReplicationStrategy"/>
+        <constructor-arg name="customerReplicationFilter" ref="customerReplicationFilter"/>
+        <constructor-arg name="enabled" value="${sapcxssoauth0.replicate.enabled}" type="boolean"/>
+    </bean>
+    <bean id="cxCustomerReplicationInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+        <property name="interceptor" ref="customerReplicationInterceptor"/>
+        <property name="typeCode" value="Customer"/>
+    </bean>
+    <alias name="cxAllCustomerReplicationFilter" alias="customerReplicationFilter"/>
+    <bean id="cxAllCustomerReplicationFilter" class="tools.sapcx.commerce.sso.replication.AllCustomerReplicationFilter"/>
+
+    <!-- Customer Replication Strategy -->
+    <alias name="cxAuth0CustomerReplicationStrategy" alias="customerReplicationStrategy"/>
+    <bean id="cxAuth0CustomerReplicationStrategy" class="tools.sapcx.commerce.sso.auth0.replication.Auth0CustomerReplicationStrategy">
+        <constructor-arg name="userService" ref="userService"/>
+        <constructor-arg name="customerReplicationHooks" ref="cxCustomerReplicationHooks"/>
+        <constructor-arg name="auth0RoleForCustomers" value="${sapcxssoauth0.auth0.customer.role}"/>
+        <constructor-arg name="isCreationEnabled" value="${sapcxssoauth0.replicate.creation.enabled}" type="boolean"/>
+        <constructor-arg name="isRemovalEnabled" value="${sapcxssoauth0.replicate.removal.enabled}" type="boolean"/>
+    </bean>
+    <util:list id="cxCustomerReplicationHooks"></util:list>
+</beans>
