@@ -1,5 +1,5 @@
 {
-    "commerceSuiteVersion": "2211.43",
+    "commerceSuiteVersion": "2211.47",
     "extensionPacks": [],
     "extensions": [],
     "properties": [],
@@ -32,6 +32,14 @@
             {
                 "location": "hybris/config/cloud/persona/development.properties",
                 "persona": "development"
+            },
+            {
+                "location": "hybris/config/cloud/persona/staging.properties",
+                "persona": "staging"
+            },
+            {
+                "location": "hybris/config/cloud/persona/production.properties",
+                "persona": "production"
             }
         ],
         "tests": {
