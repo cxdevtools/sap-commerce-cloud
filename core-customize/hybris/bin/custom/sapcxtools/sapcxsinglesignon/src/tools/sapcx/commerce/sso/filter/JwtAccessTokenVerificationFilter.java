@@ -37,7 +37,6 @@ import org.springframework.security.oauth2.provider.authentication.TokenExtracto
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import tools.sapcx.commerce.sso.replication.CustomerReplicationStrategy;
 import tools.sapcx.commerce.sso.user.UpdateUserFromTokenStrategy;
 
 /**
@@ -61,7 +60,6 @@ public class JwtAccessTokenVerificationFilter extends OncePerRequestFilter {
 	private ClientDetailsService clientDetailsService;
 	private UserDetailsService userDetailsService;
 	private UpdateUserFromTokenStrategy updateUserFromTokenStrategy;
-	private CustomerReplicationStrategy customerReplicationStrategy;
 	private TokenStore tokenStore;
 	private String occClientId;
 	private boolean enabled;
@@ -80,7 +78,6 @@ public class JwtAccessTokenVerificationFilter extends OncePerRequestFilter {
 			ClientDetailsService clientDetailsService,
 			UserDetailsService userDetailsService,
 			UpdateUserFromTokenStrategy updateUserFromTokenStrategy,
-			CustomerReplicationStrategy customerReplicationStrategy,
 			TokenStore tokenStore,
 			String occClientId,
 			boolean enabled,
@@ -95,7 +92,6 @@ public class JwtAccessTokenVerificationFilter extends OncePerRequestFilter {
 		this.clientDetailsService = clientDetailsService;
 		this.userDetailsService = userDetailsService;
 		this.updateUserFromTokenStrategy = updateUserFromTokenStrategy;
-		this.customerReplicationStrategy = customerReplicationStrategy;
 		this.tokenStore = tokenStore;
 		this.occClientId = occClientId;
 		this.enabled = enabled;
@@ -217,7 +213,6 @@ public class JwtAccessTokenVerificationFilter extends OncePerRequestFilter {
 
 			return oAuth2AccessToken;
 		} catch (BadCredentialsException e) {
-			customerReplicationStrategy.remove(userId);
 			throw e;
 		}
 	}
