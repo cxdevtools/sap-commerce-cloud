@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>tools.sapcx</groupId>
 	<artifactId>sapcxssoauth0</artifactId>
-	<version>4.4.0</version>
+	<version>5.0.0-snapshot</version>
 	<packaging>jar</packaging>
 	<dependencies>
 		<dependency>
@@ -14,7 +14,7 @@
 		<dependency>
 			<groupId>com.auth0</groupId>
 			<artifactId>java-jwt</artifactId>
-			<version>4.4.0</version>
+			<version>5.0.0-snapshot</version>
 		</dependency>
 		<dependency>
 			<groupId>com.squareup.okhttp3</groupId>

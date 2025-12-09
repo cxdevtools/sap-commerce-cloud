@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <extensioninfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="extensioninfo.xsd">
     <extension abstractclassprefix="Generated" classprefix="Toolkit" jaloLogicFree="true"
-        name="sapcommercetoolkit" version="4.4.0" usemaven="true">
+        name="sapcommercetoolkit" version="5.0.0-snapshot" usemaven="true">
         <requires-extension name="backoffice"/>
         <coremodule generated="true" manager="de.hybris.platform.jalo.extension.GenericManager" packageroot="tools.sapcx.commerce.toolkit"/>
         <meta key="backoffice-module" value="true"/>

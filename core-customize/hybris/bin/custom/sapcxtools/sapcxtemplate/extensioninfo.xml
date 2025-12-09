@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <extensioninfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="extensioninfo.xsd">
-    <extension abstractclassprefix="Generated" classprefix="CxTemplate" jaloLogicFree="true" name="sapcxtemplate" version="4.4.0" usemaven="true">
+    <extension abstractclassprefix="Generated" classprefix="CxTemplate" jaloLogicFree="true" name="sapcxtemplate" version="5.0.0-snapshot" usemaven="true">
         <requires-extension name="sapcommercetoolkit"/>
         <coremodule generated="true" manager="de.hybris.platform.jalo.extension.GenericManager" packageroot="tools.sapcx.commerce.template"/>
     </extension>
