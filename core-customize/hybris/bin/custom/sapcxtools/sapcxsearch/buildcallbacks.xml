@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project name="sapcxsearch_buildcallbacks">
+	<macrodef name="sapcxsearch_before_build">
+		<sequential>
+			<register_sass_extension extensionname="sapcxsearch" />
+			<register_sass_extension extensionname="sapcxsearch" resources="resources" destination="" />
+		</sequential>
+	</macrodef>
+</project>

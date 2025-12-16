@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<action-definition id="tools.sapcx.commerce.search.backoffice.action.solrindexerconfigurableoperations"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/action-definition.xsd">
+    <name>Configurable Index</name>
+    <description>Configurable Index</description>
+    <author>Phil</author>
+    <version>1.0</version>
+    <actionClassName>tools.sapcx.commerce.search.backoffice.action.SolrIndexerConfigurableOperationsAction</actionClassName>
+    <inputType>de.hybris.platform.solrfacetsearch.model.config.SolrFacetSearchConfigModel</inputType>
+    <outputType>java.lang.Object</outputType>
+
+    <sockets>
+        <output id="operationWizard" type="java.util.Map"/>
+    </sockets>
+
+    <iconUri>icons/indexer_conf_operations_wizard_default.png</iconUri>
+    <iconHoverUri>icons/indexer_conf_operations_wizard_hover.png</iconHoverUri>
+    <iconDisabledUri>icons/indexer_conf_operations_wizard_disabled.png</iconDisabledUri>
+
+    <settings>
+        <setting key="viewMode" default-value="iconAndText"/>
+    </settings>
+
+</action-definition>

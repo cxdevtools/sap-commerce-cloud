@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<items xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="items.xsd">
+    <collectiontypes>
+        <collectiontype code="SolrIndexedTypesCollection" elementtype="SolrIndexedType" autocreate="true" generate="false" type="list"/>
+    </collectiontypes>
+
+    <relations>
+        <relation code="SolrIndexerConfigurableCronJob2IndexedTypes" localized="false">
+            <deployment table="cxsiccj2sit" typecode="31155"/>
+            <sourceElement type="SolrIndexerConfigurableCronJob" qualifier="solrIndexerConfigurableCronJobs" cardinality="many">
+                <modifiers read="true" write="true" />
+            </sourceElement>
+            <targetElement type="SolrIndexedType" qualifier="indexedTypes" cardinality="many">
+                <modifiers read="true" write="true" search="true" />
+            </targetElement>
+        </relation>
+    </relations>
+
+    <itemtypes>
+        <itemtype code="SolrIndexerConfigurableCronJob" autocreate="true" generate="true" extends="SolrIndexerCronJob">
+            <attributes>
+            </attributes>
+        </itemtype>
+    </itemtypes>
+</items>

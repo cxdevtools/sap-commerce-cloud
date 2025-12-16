@@ -1,0 +1,28 @@
+@import "cockpitng-globals.scss";
+
+.ya-tools_sapcx_commerce_search_backoffice_action_solrindexerconfigurableoperations {
+    &:hover {
+        background: $white none repeat scroll 0 0;
+        color: $blue__default;
+        transition: background-color 0.3s ease 0s;
+        box-shadow: inset 0 0 0 $editor-defaults__action-button--border-width $editor-defaults__action-button-hover--border-color;
+        .cng-action-icon {
+            box-shadow: none !important;
+
+            &, &:hover, &:focus {
+                background: transparent;
+            }
+        }
+    }
+
+    .z-hbox-separator {
+        display: none;
+    }
+
+    .cng-action-text {
+        padding-right: 5px;
+        padding-top: 3px;
+        padding-bottom: 0;
+        line-height: 24px;
+    }
+}

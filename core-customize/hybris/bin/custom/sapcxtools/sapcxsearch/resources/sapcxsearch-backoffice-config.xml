@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<config xmlns="http://www.hybris.com/cockpit/config"
+        xmlns:y="http://www.hybris.com/cockpit/config/hybris"
+        xmlns:common="http://www.hybris.com/cockpitng/config/common"
+        xmlns:dashboard="http://www.hybris.com/cockpitng/config/dashboard"
+        xmlns:notifications="http://www.hybris.com/cockpitng/config/notifications"
+        xmlns:explorer-tree="http://www.hybris.com/cockpitng/config/explorertree"
+        xmlns:compare-view="http://www.hybris.com/cockpitng/component/compareview"
+        xmlns:list-view="http://www.hybris.com/cockpitng/component/listView"
+        xmlns:grid-view="http://www.hybris.com/cockpitng/component/gridView"
+        xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch"
+        xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch"
+        xmlns:wizard="http://www.hybris.com/cockpitng/config/wizard-config"
+        xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea"
+        xmlns:collection-browser="http://www.hybris.com/cockpitng/config/collectionbrowser">
+
+    <context merge-by="type" parent="SolrIndexerCronJob" type="SolrIndexerConfigurableCronJob" component="editor-area">
+        <editorArea:editorArea xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea">
+            <editorArea:tab name="hmc.tab.cronjob.common">
+                <editorArea:section name="hmc.section.cronjob.indexer" merge-mode="merge">
+                    <editorArea:attribute qualifier="indexedTypes" />
+                </editorArea:section>
+            </editorArea:tab>
+        </editorArea:editorArea>
+    </context>
+
+    <context type="SolrFacetSearchConfig" component="editorareaactions" merge-by="type" parent="GenericItem">
+        <y:actions >
+            <y:group qualifier="common" show-group-header="false">
+                <y:action action-id="tools.sapcx.commerce.search.backoffice.action.solrindexerconfigurableoperations" property="currentObject" position="3"/>
+            </y:group>
+        </y:actions>
+    </context>
+
+    <context type="SolrIndexerConfigurableOperationWizard" component="create-wizard">
+        <wz:flow xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config" id="solrIndexerConfigurableOperationWizard" title="create.title(ctx.TYPE_CODE)">
+            <wz:prepare id="prepare">
+                <wz:initialize property="newItem" type="SolrIndexerConfigurableCronJob" />
+                <wz:assign property="newItem.facetSearchConfig" value="currentContext.facetSearchConfig" />
+            </wz:prepare>
+            <wz:step id="step1" label="create.indexeroperation.indexer.label" sublabel="create.indexeroperation.indexer.sublabel">
+                <wz:content>
+                    <wz:custom-view id="step1.content.customView" lang="zul">
+                        <wz:renderer spring-bean="solrIndexerConfigurableOperationStep" />
+                    </wz:custom-view>
+                </wz:content>
+                <wz:navigation id="step1.navigation">
+                    <wz:cancel />
+                    <wz:done visible="finished EQ true" />
+                </wz:navigation>
+            </wz:step>
+        </wz:flow>
+    </context>
+
+
+
+</config>
