@@ -12,9 +12,6 @@
     <extension name="sapcommercetoolkit"/>
     <extension name="sapcxbackoffice"/>
     <extension name="sapcxreporting"/>
-    <extension name="sapcxsearch"/>
     <extension name="sapcxenvconfig"/>
-    <extension name="sapcxsinglesignon"/>
-    <extension name="sapcxssoauth0"/>
   </extensions>
 </hybrisconfig>
