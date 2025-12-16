@@ -2,12 +2,12 @@ package tools.sapcx.commerce.toolkit.email;
 
 import java.io.UnsupportedEncodingException;
 
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.mail2.core.EmailException;
+import org.apache.commons.mail2.jakarta.HtmlEmail;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.HtmlEmail;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 
 /**
  * The {@link HtmlEmailService} interface introduces a simplified way of sending HTML emails from processes and

@@ -12,7 +12,6 @@ import de.hybris.platform.servicelayer.type.TypeService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.VisibleForTesting;
-import org.springframework.beans.factory.annotation.Required;
 
 /**
  * Generic implementation of {@link ItemVisitor}. This class shall avoid that new {@link ItemVisitor} classes need to
@@ -70,17 +69,14 @@ public class GenericItemSyncRelatedItemsVisitor implements ItemVisitor<ItemModel
 		return Collections.emptyList();
 	}
 
-	@Required
 	public void setModelService(ModelService modelService) {
 		this.modelService = modelService;
 	}
 
-	@Required
 	public void setTypeService(TypeService typeService) {
 		this.typeService = typeService;
 	}
 
-	@Required
 	public void setHybrisProperties(Properties hybrisProperties) {
 		this.hybrisProperties = hybrisProperties;
 	}

@@ -18,9 +18,6 @@ import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import javax.activation.DataSource;
-import javax.mail.util.ByteArrayDataSource;
-
 import de.hybris.platform.cronjob.enums.CronJobResult;
 import de.hybris.platform.cronjob.enums.CronJobStatus;
 import de.hybris.platform.media.services.MimeService;
@@ -33,12 +30,11 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.HtmlEmail;
+import org.apache.commons.mail2.core.EmailException;
+import org.apache.commons.mail2.jakarta.HtmlEmail;
 import org.assertj.core.util.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Required;
 
 import tools.sapcx.commerce.reporting.model.QueryReportConfigurationModel;
 import tools.sapcx.commerce.reporting.model.ReportGenerationScheduleModel;
@@ -48,6 +44,9 @@ import tools.sapcx.commerce.reporting.search.GenericSearchResult;
 import tools.sapcx.commerce.reporting.search.GenericSearchService;
 import tools.sapcx.commerce.toolkit.email.HtmlEmailGenerator;
 import tools.sapcx.commerce.toolkit.email.HtmlEmailService;
+
+import jakarta.activation.DataSource;
+import jakarta.mail.util.ByteArrayDataSource;
 
 public class ReportGeneratorJobPerformable extends AbstractJobPerformable<ReportGenerationScheduleModel> {
 	private static final Logger LOG = LoggerFactory.getLogger(ReportGeneratorJobPerformable.class);
@@ -221,32 +220,26 @@ public class ReportGeneratorJobPerformable extends AbstractJobPerformable<Report
 		return "application/octet-stream";
 	}
 
-	@Required
 	public void setGenericSearchService(GenericSearchService genericSearchService) {
 		this.genericSearchService = genericSearchService;
 	}
 
-	@Required
 	public void setReportService(ReportService reportService) {
 		this.reportService = reportService;
 	}
 
-	@Required
 	public void setHtmlEmailGenerator(HtmlEmailGenerator htmlEmailGenerator) {
 		this.htmlEmailGenerator = htmlEmailGenerator;
 	}
 
-	@Required
 	public void setMimeService(MimeService mimeService) {
 		this.mimeService = mimeService;
 	}
 
-	@Required
 	public void setHtmlEmailService(HtmlEmailService htmlEmailService) {
 		this.htmlEmailService = htmlEmailService;
 	}
 
-	@Required
 	public void setQueryConfigurationConverter(Converter<QueryReportConfigurationModel, QueryFileConfigurationData> queryConfigurationConverter) {
 		this.queryConfigurationConverter = queryConfigurationConverter;
 	}

@@ -309,12 +309,6 @@ public class FailureLoggingModelService extends DefaultModelService {
 	}
 
 	@Override
-	@Deprecated(since = "6.1.0", forRemoval = true)
-	public <T> T getByExample(T t) {
-		return wrapWithLoggingCapabilities(() -> super.getByExample(t));
-	}
-
-	@Override
 	public void lock(PK pk) {
 		wrapWithLoggingCapabilities(() -> super.lock(pk));
 	}

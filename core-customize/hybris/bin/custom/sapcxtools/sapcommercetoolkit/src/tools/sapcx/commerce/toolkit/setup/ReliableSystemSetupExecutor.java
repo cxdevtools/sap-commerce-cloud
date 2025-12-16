@@ -15,7 +15,6 @@ import org.assertj.core.util.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -94,7 +93,6 @@ public final class ReliableSystemSetupExecutor implements ApplicationContextAwar
 		return context.getProcess().isInit() && !context.getProcess().isAll();
 	}
 
-	@Required
 	public void setValidationService(ValidationService validationService) {
 		this.validationService = validationService;
 	}

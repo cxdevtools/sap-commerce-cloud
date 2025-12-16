@@ -10,17 +10,17 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import javax.mail.internet.InternetAddress;
-
 import de.hybris.platform.core.model.media.MediaModel;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.HtmlEmail;
+import org.apache.commons.mail2.core.EmailException;
+import org.apache.commons.mail2.jakarta.HtmlEmail;
 
 import tools.sapcx.commerce.toolkit.email.attachments.EmailAfterBuildHook;
 import tools.sapcx.commerce.toolkit.email.attachments.HtmlEmailAttachmentBuilder;
 import tools.sapcx.commerce.toolkit.email.attachments.HtmlEmailAttachmentBuilders;
+
+import jakarta.mail.internet.InternetAddress;
 
 public class HtmlEmailBuilder {
 	static HtmlEmailBuilder withHtmlEmailGenerator(HtmlEmailGenerator generator) {

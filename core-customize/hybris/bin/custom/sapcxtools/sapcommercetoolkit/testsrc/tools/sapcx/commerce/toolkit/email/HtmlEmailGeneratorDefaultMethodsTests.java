@@ -8,16 +8,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMultipart;
-
-import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.HtmlEmail;
+import org.apache.commons.mail2.core.EmailException;
+import org.apache.commons.mail2.jakarta.HtmlEmail;
 import org.junit.Before;
 import org.junit.Test;
 
 import tools.sapcx.commerce.toolkit.testing.testdoubles.email.HtmlEmailGeneratorFake;
+
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMultipart;
 
 public class HtmlEmailGeneratorDefaultMethodsTests {
 	private HtmlEmailGenerator htmlEmailGenerator;

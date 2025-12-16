@@ -9,21 +9,20 @@ import java.util.Locale;
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.impex.ImportConfig;
 
-import org.apache.commons.configuration.BaseConfiguration;
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
-import org.apache.log4j.Logger;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.assertj.core.util.VisibleForTesting;
-import org.springframework.beans.factory.annotation.Required;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This facade handles the access to important properties for the system setup process. It also keeps track of imported
  * files and verifies the release numbers of the files accordingly.
  */
 public final class SystemSetupEnvironment {
-	static final Logger LOG = Logger.getLogger(SystemSetupEnvironment.class);
+	static final Logger LOG = LoggerFactory.getLogger(SystemSetupEnvironment.class);
 	@VisibleForTesting
 	static final String LEGACYMODEKEY = "sapcommercetoolkit.impeximport.configuration.legacymode";
 	@VisibleForTesting
@@ -43,7 +42,8 @@ public final class SystemSetupEnvironment {
 	@VisibleForTesting
 	static final String FILE_HEADER = "This file is generated automatically by the sapcommercetoolkit extension. Do not change the file manually!";
 
-	private Configuration persistentConfiguration = new BaseConfiguration();
+	private String fileName;
+	private FileBasedConfigurationBuilder<PropertiesConfiguration> persistentConfiguration;
 	private ConfigurationService configurationService;
 
 	public boolean useLegacyModeForImpEx() {
@@ -77,24 +77,38 @@ public final class SystemSetupEnvironment {
 
 	public void addProcessedItem(String version, String key) {
 		setLastProcessedReleaseVersion(version);
-		persistentConfiguration.addProperty(LASTPROCESSEDRELEASEITEMSKEY, key);
+		getPersistentConfiguration().addProperty(LASTPROCESSEDRELEASEITEMSKEY, key);
+	}
+
+	private PropertiesConfiguration getPersistentConfiguration() {
+		try {
+			if (persistentConfiguration == null) {
+				throw new ConfigurationException("No persistent configuration found!");
+			}
+			return persistentConfiguration.getConfiguration();
+		} catch (ConfigurationException e) {
+			LOG.error(
+					"Persistent configuration could not be loaded, any modification will be lost! Please make sure you have configured the file path correctly. Current value is '{}'",
+					fileName, e);
+			return new PropertiesConfiguration();
+		}
 	}
 
 	public void setLastProcessedReleaseVersion(String version) {
 		String lastVersion = getLastProcessedReleaseVersion();
 		if (version.compareToIgnoreCase(lastVersion) > 0) {
-			persistentConfiguration.clearProperty(LASTPROCESSEDRELEASEITEMSKEY);
-			persistentConfiguration.setProperty(LASTPROCESSEDRELEASEVERSIONKEY, version);
+			getPersistentConfiguration().clearProperty(LASTPROCESSEDRELEASEITEMSKEY);
+			getPersistentConfiguration().setProperty(LASTPROCESSEDRELEASEVERSIONKEY, version);
 		}
 	}
 
 	public String getLastProcessedReleaseVersion() {
-		return persistentConfiguration.getString(LASTPROCESSEDRELEASEVERSIONKEY, "");
+		return getPersistentConfiguration().getString(LASTPROCESSEDRELEASEVERSIONKEY, "");
 	}
 
 	public List<String> getLastProcessedItems() {
 		ArrayList<String> keys = new ArrayList<>();
-		persistentConfiguration.getList(LASTPROCESSEDRELEASEITEMSKEY).stream()
+		getPersistentConfiguration().getList(LASTPROCESSEDRELEASEITEMSKEY).stream()
 				.map(String.class::cast)
 				.forEach(keys::add);
 		return keys;
@@ -135,33 +149,33 @@ public final class SystemSetupEnvironment {
 		return new Locale(locale);
 	}
 
-	@Required
 	public void setConfigurationService(ConfigurationService configurationService) {
 		this.configurationService = configurationService;
 	}
 
 	public void setConfigurationFile(String fileName) {
-		try {
-			PropertiesConfiguration configuration = new PropertiesConfiguration();
-			configuration.setFileName(fileName);
+		this.fileName = fileName;
 
-			File file = configuration.getFile();
+		try {
+			File file = new File(fileName);
 			if (!file.exists()) {
 				file.getParentFile().mkdirs();
 				if (!file.createNewFile()) {
 					throw new IOException("Cannot create file at: " + fileName);
 				}
-				configuration.setHeader(FILE_HEADER);
-				configuration.save();
-			} else {
-				configuration.load();
 			}
 
-			configuration.setAutoSave(true);
-			configuration.setReloadingStrategy(new FileChangedReloadingStrategy());
-			this.persistentConfiguration = configuration;
+			persistentConfiguration = new FileBasedConfigurationBuilder<>(PropertiesConfiguration.class);
+			persistentConfiguration.setParameters(new Parameters()
+					.fileBased()
+					.setEncoding("UTF-8")
+					.setFile(file)
+					.getParameters());
+			persistentConfiguration.setAutoSave(true);
+			persistentConfiguration.getConfiguration().setHeader(FILE_HEADER);
 		} catch (IOException | ConfigurationException e) {
 			LOG.error("Cannot read or create persistent configuration file at: " + fileName + ". Please create the file manually and restart the server.", e);
+			persistentConfiguration = null;
 		}
 	}
 }

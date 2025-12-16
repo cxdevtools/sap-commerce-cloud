@@ -8,7 +8,7 @@ import java.util.function.Predicate;
 import de.hybris.platform.core.initialization.SystemSetupContext;
 import de.hybris.platform.core.initialization.SystemSetupParameter;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * In addition to the {@link PrefixBasedDataImporter}, this class adds a {@link SystemSetupParameter} for every key.

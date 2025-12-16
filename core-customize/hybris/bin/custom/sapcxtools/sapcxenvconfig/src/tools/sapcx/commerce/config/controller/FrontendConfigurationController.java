@@ -1,7 +1,5 @@
 package tools.sapcx.commerce.config.controller;
 
-import javax.annotation.Resource;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import tools.sapcx.commerce.config.FrontendConfigurationWsDto;
 import tools.sapcx.commerce.config.frontend.FrontendConfigurationService;
+
+import jakarta.annotation.Resource;
 
 @RestController
 @RequestMapping(value = "/{baseSiteId}/configuration")

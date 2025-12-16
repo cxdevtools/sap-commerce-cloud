@@ -3,8 +3,6 @@ package tools.sapcx.commerce.reporting.backoffice.action;
 import java.text.MessageFormat;
 import java.util.Map;
 
-import javax.annotation.Resource;
-
 import com.hybris.cockpitng.actions.ActionContext;
 import com.hybris.cockpitng.actions.ActionResult;
 import com.hybris.cockpitng.actions.CockpitAction;
@@ -17,6 +15,8 @@ import tools.sapcx.commerce.reporting.model.QueryReportConfigurationModel;
 import tools.sapcx.commerce.reporting.report.ReportService;
 import tools.sapcx.commerce.reporting.search.FlexibleSearchGenericSearchService;
 import tools.sapcx.commerce.reporting.search.GenericSearchResult;
+
+import jakarta.annotation.Resource;
 
 public class ValidateReportAction implements CockpitAction<QueryReportConfigurationModel, Object> {
 	private static final Logger LOG = LoggerFactory.getLogger(ValidateReportAction.class);

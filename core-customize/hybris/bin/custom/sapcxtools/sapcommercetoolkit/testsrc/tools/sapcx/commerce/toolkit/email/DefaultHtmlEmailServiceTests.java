@@ -4,14 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Random;
 
-import javax.mail.internet.InternetAddress;
-
 import de.hybris.bootstrap.annotations.UnitTest;
 
-import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.HtmlEmail;
+import org.apache.commons.mail2.core.EmailException;
+import org.apache.commons.mail2.jakarta.HtmlEmail;
 import org.junit.Before;
 import org.junit.Test;
+
+import jakarta.mail.internet.InternetAddress;
 
 @UnitTest
 public class DefaultHtmlEmailServiceTests {

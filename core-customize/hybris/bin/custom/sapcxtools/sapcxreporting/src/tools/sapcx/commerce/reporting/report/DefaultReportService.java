@@ -13,7 +13,6 @@ import org.apache.commons.io.FileUtils;
 import org.assertj.core.util.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Required;
 
 import tools.sapcx.commerce.reporting.enums.ReportExportFormat;
 import tools.sapcx.commerce.reporting.generator.ReportGenerator;
@@ -106,7 +105,6 @@ public class DefaultReportService implements ReportService {
 		return generators.keySet().stream().collect(Collectors.toList());
 	}
 
-	@Required
 	public void setGenerators(Map<ReportExportFormat, ReportGenerator> generators) {
 		this.generators = generators;
 	}

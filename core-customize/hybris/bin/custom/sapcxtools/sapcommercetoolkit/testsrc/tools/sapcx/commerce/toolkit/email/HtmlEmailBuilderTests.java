@@ -9,21 +9,21 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMultipart;
-
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.core.model.media.MediaModel;
 
-import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.HtmlEmail;
+import org.apache.commons.mail2.core.EmailException;
+import org.apache.commons.mail2.jakarta.HtmlEmail;
 import org.junit.Before;
 import org.junit.Test;
 
 import tools.sapcx.commerce.toolkit.email.attachments.HtmlEmailAttachmentBuilders;
 import tools.sapcx.commerce.toolkit.testing.itemmodel.InMemoryModelFactory;
 import tools.sapcx.commerce.toolkit.testing.testdoubles.email.HtmlEmailGeneratorFake;
+
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMultipart;
 
 @UnitTest
 public class HtmlEmailBuilderTests {
@@ -168,28 +168,31 @@ public class HtmlEmailBuilderTests {
 				.build();
 
 		htmlEmail.buildMimeMessage();
-
 		assertThat(htmlEmail)
 				.extracting("container")
-				.flatExtracting("parts")
+				.extracting("parts")
+				.asList()
 				.extractingResultOf("getDisposition")
 				.containsExactly(null, "attachment", "attachment");
 
 		assertThat(htmlEmail)
 				.extracting("container")
-				.flatExtracting("parts")
+				.extracting("parts")
+				.asList()
 				.extractingResultOf("getContentType")
 				.containsExactly("text/plain", "text/plain", "text/plain");
 
 		assertThat(htmlEmail)
 				.extracting("container")
-				.flatExtracting("parts")
+				.extracting("parts")
+				.asList()
 				.extractingResultOf("getFileName")
 				.containsExactly(null, tempFile.getFileName().toString(), "url-attachment.txt");
 
 		assertThat(htmlEmail)
 				.extracting("container")
-				.flatExtracting("parts")
+				.extracting("parts")
+				.asList()
 				.extractingResultOf("getDescription")
 				.containsExactly(null, null, "url attachment description");
 	}

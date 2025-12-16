@@ -6,10 +6,10 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.mail.internet.InternetAddress;
+import org.apache.commons.mail2.core.EmailException;
+import org.apache.commons.mail2.jakarta.HtmlEmail;
 
-import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.HtmlEmail;
+import jakarta.mail.internet.InternetAddress;
 
 /**
  * The {@link HtmlEmailGenerator} interface introduces a simplified way of generating HTML emails from processes and

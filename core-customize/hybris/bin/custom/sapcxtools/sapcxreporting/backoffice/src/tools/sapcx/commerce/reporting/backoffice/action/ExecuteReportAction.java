@@ -10,8 +10,6 @@ import java.text.MessageFormat;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.annotation.Resource;
-
 import com.hybris.cockpitng.actions.ActionContext;
 import com.hybris.cockpitng.actions.ActionResult;
 import com.hybris.cockpitng.actions.CockpitAction;
@@ -29,6 +27,8 @@ import tools.sapcx.commerce.reporting.report.ReportService;
 import tools.sapcx.commerce.reporting.report.data.QueryFileConfigurationData;
 import tools.sapcx.commerce.reporting.search.FlexibleSearchGenericSearchService;
 import tools.sapcx.commerce.reporting.search.GenericSearchResult;
+
+import jakarta.annotation.Resource;
 
 public class ExecuteReportAction implements CockpitAction<QueryReportConfigurationModel, Object> {
 	private static final Logger LOG = LoggerFactory.getLogger(ExecuteReportAction.class);

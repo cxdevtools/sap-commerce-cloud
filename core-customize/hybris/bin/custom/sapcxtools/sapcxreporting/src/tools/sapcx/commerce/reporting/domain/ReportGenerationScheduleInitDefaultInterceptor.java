@@ -9,7 +9,6 @@ import de.hybris.platform.servicelayer.search.FlexibleSearchService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Required;
 
 import tools.sapcx.commerce.reporting.model.ReportGenerationScheduleModel;
 
@@ -39,12 +38,10 @@ public class ReportGenerationScheduleInitDefaultInterceptor implements InitDefau
 		}
 	}
 
-	@Required
 	public void setFlexibleSearchService(FlexibleSearchService flexibleSearchService) {
 		this.flexibleSearchService = flexibleSearchService;
 	}
 
-	@Required
 	public void setJobCode(String jobCode) {
 		this.jobCode = jobCode;
 	}

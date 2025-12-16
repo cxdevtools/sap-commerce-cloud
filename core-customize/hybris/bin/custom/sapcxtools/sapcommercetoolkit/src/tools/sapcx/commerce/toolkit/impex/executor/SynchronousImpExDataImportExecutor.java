@@ -13,8 +13,7 @@ import de.hybris.platform.servicelayer.impex.ImportService;
 import de.hybris.platform.servicelayer.impex.impl.StreamBasedImpExResource;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Required;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.ResourceLoader;
 
@@ -106,17 +105,14 @@ public class SynchronousImpExDataImportExecutor implements ImpExDataImportExecut
 		this.resourceLoader = resourceLoader;
 	}
 
-	@Required
 	public void setEnvironment(SystemSetupEnvironment environment) {
 		this.environment = environment;
 	}
 
-	@Required
 	public void setCommonI18NService(CommonI18NService commonI18NService) {
 		this.commonI18NService = commonI18NService;
 	}
 
-	@Required
 	public void setImportService(ImportService importService) {
 		this.importService = importService;
 	}

@@ -7,7 +7,7 @@ import de.hybris.platform.servicelayer.model.AbstractItemModel;
 import de.hybris.platform.servicelayer.model.attribute.DynamicAttributeHandler;
 import de.hybris.platform.servicelayer.model.attribute.DynamicLocalizedAttributeHandler;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class InMemoryDynamicItemModelAttribute<T extends AbstractItemModel, VALUE> implements ItemModelAttribute, InMemoryItemAwareAttribute<T> {
 	/**

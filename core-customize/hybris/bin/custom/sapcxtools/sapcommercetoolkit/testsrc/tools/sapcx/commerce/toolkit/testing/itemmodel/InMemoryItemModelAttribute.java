@@ -3,7 +3,7 @@ package tools.sapcx.commerce.toolkit.testing.itemmodel;
 import java.util.*;
 import java.util.function.Function;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 class InMemoryItemModelAttribute implements ItemModelAttribute {
 	/**

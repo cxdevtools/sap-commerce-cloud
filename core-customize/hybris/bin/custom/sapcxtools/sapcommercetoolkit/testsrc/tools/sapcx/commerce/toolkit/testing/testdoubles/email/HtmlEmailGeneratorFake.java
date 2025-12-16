@@ -4,12 +4,12 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.mail.internet.InternetAddress;
-
-import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.HtmlEmail;
+import org.apache.commons.mail2.core.EmailException;
+import org.apache.commons.mail2.jakarta.HtmlEmail;
 
 import tools.sapcx.commerce.toolkit.email.HtmlEmailGenerator;
+
+import jakarta.mail.internet.InternetAddress;
 
 public class HtmlEmailGeneratorFake implements HtmlEmailGenerator {
 	@Override

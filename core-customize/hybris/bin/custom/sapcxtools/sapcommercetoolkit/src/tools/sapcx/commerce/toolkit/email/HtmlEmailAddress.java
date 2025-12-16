@@ -1,10 +1,10 @@
 package tools.sapcx.commerce.toolkit.email;
 
-import javax.mail.internet.InternetAddress;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import jakarta.mail.internet.InternetAddress;
 
 public class HtmlEmailAddress {
 	private String name;

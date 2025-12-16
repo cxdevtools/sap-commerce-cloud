@@ -1,7 +1,7 @@
 package tools.sapcx.commerce.toolkit.email;
 
-import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.HtmlEmail;
+import org.apache.commons.mail2.core.EmailException;
+import org.apache.commons.mail2.jakarta.HtmlEmail;
 
 public class DefaultHtmlEmailService implements HtmlEmailService {
 	/**

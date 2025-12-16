@@ -32,7 +32,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.assertj.core.util.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Required;
 
 /**
  * Implements the {@link GenericSearchService} interface performing searches based on the {@link DefaultFlexibleSearchService}. It supports
@@ -193,22 +192,18 @@ public class FlexibleSearchGenericSearchService implements GenericSearchService 
 		return null;
 	}
 
-	@Required
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
 
-	@Required
 	public void setSessionService(SessionService sessionService) {
 		this.sessionService = sessionService;
 	}
 
-	@Required
 	public void setCatalogVersionService(CatalogVersionService catalogVersionService) {
 		this.catalogVersionService = catalogVersionService;
 	}
 
-	@Required
 	public void setFlexibleSearchService(DefaultFlexibleSearchService flexibleSearchService) {
 		this.flexibleSearchService = flexibleSearchService;
 	}

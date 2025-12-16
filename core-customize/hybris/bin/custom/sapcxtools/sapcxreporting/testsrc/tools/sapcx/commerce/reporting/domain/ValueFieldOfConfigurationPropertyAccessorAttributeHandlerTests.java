@@ -5,7 +5,7 @@ import static tools.sapcx.commerce.toolkit.testing.itemmodel.InMemoryModelFactor
 
 import de.hybris.bootstrap.annotations.UnitTest;
 
-import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration2.Configuration;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -66,7 +66,7 @@ public class ValueFieldOfConfigurationPropertyAccessorAttributeHandlerTests {
 		handler.set(configurationItem, "override");
 
 		Configuration configuration = configurationService.getConfiguration();
-		assertThat(configuration.getKeys()).hasSize(2);
+		assertThat(configuration.getKeys()).toIterable().hasSize(2);
 	}
 
 	@Test

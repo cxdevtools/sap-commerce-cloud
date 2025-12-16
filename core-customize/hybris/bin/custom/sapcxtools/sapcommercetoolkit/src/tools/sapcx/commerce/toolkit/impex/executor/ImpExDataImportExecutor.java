@@ -2,7 +2,7 @@ package tools.sapcx.commerce.toolkit.impex.executor;
 
 import de.hybris.platform.core.initialization.SystemSetupContext;
 
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @FunctionalInterface
 public interface ImpExDataImportExecutor {
@@ -13,6 +13,6 @@ public interface ImpExDataImportExecutor {
 	}
 
 	default ImpExDataImporterLogger getLogger() {
-		return new ImpExDataImporterLogger(Logger.getLogger(getClass()));
+		return new ImpExDataImporterLogger(LoggerFactory.getLogger(getClass()));
 	}
 }

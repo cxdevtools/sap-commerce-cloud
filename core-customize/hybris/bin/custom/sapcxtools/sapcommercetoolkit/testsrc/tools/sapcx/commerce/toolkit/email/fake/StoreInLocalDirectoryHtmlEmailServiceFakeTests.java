@@ -9,18 +9,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.internet.MimeMessage;
-
 import de.hybris.bootstrap.annotations.UnitTest;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.HtmlEmail;
+import org.apache.commons.mail2.core.EmailException;
+import org.apache.commons.mail2.jakarta.HtmlEmail;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.internet.MimeMessage;
 
 @UnitTest
 public class StoreInLocalDirectoryHtmlEmailServiceFakeTests {

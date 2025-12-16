@@ -2,8 +2,8 @@ package tools.sapcx.commerce.reporting.search;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -40,7 +40,7 @@ import de.hybris.platform.servicelayer.user.UserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import tools.sapcx.commerce.toolkit.testing.itemmodel.InMemoryModelFactory;
 import tools.sapcx.commerce.toolkit.testing.testdoubles.catalog.CatalogVersionServiceFake;

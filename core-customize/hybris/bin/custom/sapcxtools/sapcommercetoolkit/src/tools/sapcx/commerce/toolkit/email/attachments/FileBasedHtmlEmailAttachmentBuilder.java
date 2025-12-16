@@ -3,10 +3,10 @@ package tools.sapcx.commerce.toolkit.email.attachments;
 import java.io.File;
 import java.io.IOException;
 
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
+import org.apache.commons.mail2.core.EmailException;
 
-import org.apache.commons.mail.EmailException;
+import jakarta.activation.DataSource;
+import jakarta.activation.FileDataSource;
 
 public class FileBasedHtmlEmailAttachmentBuilder extends AbstractHtmlEmailAttachmentBuilder {
 	private File file;

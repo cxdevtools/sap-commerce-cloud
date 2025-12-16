@@ -9,22 +9,22 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.internet.MimeMessage;
-
 import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.servicelayer.media.MediaService;
 import de.hybris.platform.servicelayer.model.ModelService;
 
-import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.HtmlEmail;
+import org.apache.commons.mail2.core.EmailException;
+import org.apache.commons.mail2.jakarta.HtmlEmail;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import tools.sapcx.commerce.toolkit.model.LocallyStoredEmailModel;
 import tools.sapcx.commerce.toolkit.testing.itemmodel.InMemoryModelFactory;
+
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.internet.MimeMessage;
 
 @UnitTest
 public class StoreInDatabaseHtmlEmailServiceFakeTests {

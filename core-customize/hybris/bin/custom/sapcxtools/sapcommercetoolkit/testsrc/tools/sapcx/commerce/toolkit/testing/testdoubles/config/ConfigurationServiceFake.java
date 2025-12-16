@@ -2,8 +2,8 @@ package tools.sapcx.commerce.toolkit.testing.testdoubles.config;
 
 import de.hybris.platform.servicelayer.config.ConfigurationService;
 
-import org.apache.commons.configuration.BaseConfiguration;
-import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration2.BaseConfiguration;
+import org.apache.commons.configuration2.Configuration;
 
 public class ConfigurationServiceFake implements ConfigurationService {
 	private BaseConfiguration configuration = new BaseConfiguration();

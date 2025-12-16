@@ -2,14 +2,15 @@ package tools.sapcx.commerce.toolkit.impex.executor;
 
 import de.hybris.platform.core.initialization.SystemSetupContext;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This logger facade provides simplified access to the logging stack and guarantees that log messages are shown both
  * in the log files of the system as well as in the JSP context of the triggered system setup process.
  */
 public final class ImpExDataImporterLogger {
-	static final Logger LOG = Logger.getLogger(ImpExDataImporterLogger.class);
+	static final Logger LOG = LoggerFactory.getLogger(ImpExDataImporterLogger.class);
 
 	private final Logger logger;
 

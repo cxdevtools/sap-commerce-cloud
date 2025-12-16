@@ -4,7 +4,6 @@ import de.hybris.platform.servicelayer.config.ConfigurationService;
 import de.hybris.platform.servicelayer.model.attribute.AbstractDynamicAttributeHandler;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Required;
 
 import tools.sapcx.commerce.reporting.model.ConfigurationPropertyAccessorModel;
 
@@ -25,7 +24,6 @@ public class ValueFieldOfConfigurationPropertyAccessorAttributeHandler extends A
 		}
 	}
 
-	@Required
 	public void setConfigurationService(ConfigurationService configurationService) {
 		this.configurationService = configurationService;
 	}

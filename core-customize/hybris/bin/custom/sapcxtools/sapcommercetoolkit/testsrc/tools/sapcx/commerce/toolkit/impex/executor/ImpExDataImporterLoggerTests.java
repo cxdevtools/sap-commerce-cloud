@@ -11,8 +11,6 @@ import de.hybris.platform.core.initialization.SystemSetupContext;
 import de.hybris.platform.util.JspContext;
 
 import org.apache.commons.io.output.StringBuilderWriter;
-import org.apache.log4j.Level;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockJspWriter;
@@ -21,7 +19,6 @@ import org.springframework.mock.web.MockJspWriter;
 public class ImpExDataImporterLoggerTests {
 	private SystemSetupContext context;
 	private Writer jspOutWriter = new StringBuilderWriter();
-	private Level previousLevel;
 
 	private ImpExDataImporterLogger logger;
 
@@ -33,12 +30,6 @@ public class ImpExDataImporterLoggerTests {
 		context.setJspContext(new JspContext(new MockJspWriter(jspOutWriter), null, null));
 
 		logger = new ImpExDataImporterLogger();
-		previousLevel = ImpExDataImporterLogger.LOG.getLevel();
-	}
-
-	@After
-	public void tearDown() throws Exception {
-		ImpExDataImporterLogger.LOG.setLevel(previousLevel);
 	}
 
 	@Test
@@ -61,16 +52,12 @@ public class ImpExDataImporterLoggerTests {
 
 	@Test
 	public void verifyDebugLogsToJspContextIfDebugIsEnabled() {
-		ImpExDataImporterLogger.LOG.setLevel(Level.DEBUG);
-
 		logger.debug(context, "debug text");
 		assertThat(jspOutWriter.toString()).isEqualTo(coloredTextWithNewline("debug text", "cyan"));
 	}
 
 	@Test
 	public void verifyDebugWithExceptionLogsToJspContextIfDebugIsEnabled() {
-		ImpExDataImporterLogger.LOG.setLevel(Level.DEBUG);
-
 		logger.debug(context, "debug text");
 		assertThat(jspOutWriter.toString()).isEqualTo(coloredTextWithNewline("debug text", "cyan"));
 	}

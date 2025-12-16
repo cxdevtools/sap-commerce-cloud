@@ -5,8 +5,8 @@ import java.util.Map;
 
 import de.hybris.platform.util.mail.MailUtils;
 
-import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.HtmlEmail;
+import org.apache.commons.mail2.core.EmailException;
+import org.apache.commons.mail2.jakarta.HtmlEmail;
 import org.assertj.core.util.VisibleForTesting;
 import org.thymeleaf.ITemplateEngine;
 import org.thymeleaf.context.Context;

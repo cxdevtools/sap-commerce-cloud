@@ -4,8 +4,7 @@ import java.util.function.Predicate;
 
 import de.hybris.platform.core.initialization.SystemSetupContext;
 
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Required;
+import org.apache.commons.lang3.StringUtils;
 
 import tools.sapcx.commerce.toolkit.impex.executor.ImpExDataImportExecutor;
 import tools.sapcx.commerce.toolkit.setup.ImpExDataImporter;
@@ -53,7 +52,6 @@ public class PrefixBasedDataImporter implements ImpExDataImporter {
 		return StringUtils::isNotBlank;
 	}
 
-	@Required
 	public void setEnvironment(SystemSetupEnvironment environment) {
 		this.environment = environment;
 	}
@@ -62,7 +60,6 @@ public class PrefixBasedDataImporter implements ImpExDataImporter {
 		return environment;
 	}
 
-	@Required
 	public void setImpExDataImportExecutor(ImpExDataImportExecutor impExDataImportExecutor) {
 		this.impExDataImportExecutor = impExDataImportExecutor;
 	}
@@ -71,7 +68,6 @@ public class PrefixBasedDataImporter implements ImpExDataImporter {
 		return impExDataImportExecutor;
 	}
 
-	@Required
 	public void setTitle(String title) {
 		this.title = title;
 	}
@@ -80,7 +76,6 @@ public class PrefixBasedDataImporter implements ImpExDataImporter {
 		return title;
 	}
 
-	@Required
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
 	}

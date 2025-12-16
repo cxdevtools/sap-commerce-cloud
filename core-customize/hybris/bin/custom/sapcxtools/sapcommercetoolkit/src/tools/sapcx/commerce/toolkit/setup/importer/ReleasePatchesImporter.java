@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 import de.hybris.platform.core.initialization.SystemSetupContext;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import tools.sapcx.commerce.toolkit.setup.SystemSetupEnvironment;
 

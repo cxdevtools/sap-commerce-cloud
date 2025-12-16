@@ -15,28 +15,29 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.mail.Address;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-
 import de.hybris.platform.core.model.media.MediaFolderModel;
 import de.hybris.platform.servicelayer.exceptions.UnknownIdentifierException;
 import de.hybris.platform.servicelayer.media.MediaService;
 import de.hybris.platform.servicelayer.model.ModelService;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.HtmlEmail;
-import org.apache.log4j.Logger;
+import org.apache.commons.mail2.core.EmailException;
+import org.apache.commons.mail2.jakarta.HtmlEmail;
 import org.assertj.core.util.VisibleForTesting;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import tools.sapcx.commerce.toolkit.email.HtmlEmailService;
 import tools.sapcx.commerce.toolkit.model.LocallyStoredEmailModel;
 
+import jakarta.mail.Address;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+
 public class StoreLocallyHtmlEmailServiceFake implements HtmlEmailService {
-	private static final Logger LOG = Logger.getLogger(StoreLocallyHtmlEmailServiceFake.class);
+	private static final Logger LOG = LoggerFactory.getLogger(StoreLocallyHtmlEmailServiceFake.class);
 	private static final String TIMESTAMP_FORMAT = "yyyyMMdd-HHmmssS";
 	private static final String MEDIACODE_FORMAT = "fake-email_%s";
 	private static final String DEFAULT_FILENAME_PATTERN = "{timestamp}_{subject}.{extension}";

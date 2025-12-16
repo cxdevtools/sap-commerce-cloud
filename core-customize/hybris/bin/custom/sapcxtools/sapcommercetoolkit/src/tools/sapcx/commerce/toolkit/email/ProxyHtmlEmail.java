@@ -7,21 +7,22 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.activation.DataSource;
-import javax.mail.Authenticator;
-import javax.mail.BodyPart;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 import javax.naming.NamingException;
 
-import org.apache.commons.mail.Email;
-import org.apache.commons.mail.EmailAttachment;
-import org.apache.commons.mail.EmailException;
-import org.apache.commons.mail.HtmlEmail;
-import org.apache.commons.mail.MultiPartEmail;
+import org.apache.commons.mail2.core.EmailException;
+import org.apache.commons.mail2.jakarta.Email;
+import org.apache.commons.mail2.jakarta.EmailAttachment;
+import org.apache.commons.mail2.jakarta.HtmlEmail;
+import org.apache.commons.mail2.jakarta.MultiPartEmail;
+
+import jakarta.activation.DataSource;
+import jakarta.mail.Authenticator;
+import jakarta.mail.BodyPart;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 
 class ProxyHtmlEmail extends HtmlEmail {
 	private static final String UNSUPPORTED_OPERATION_MESSAGE = "This method must not be called on the proxy object!";
@@ -221,12 +222,6 @@ class ProxyHtmlEmail extends HtmlEmail {
 	@Override
 	public void setHostName(String aHostName) {
 		proxiedHtmlEmail.setHostName(aHostName);
-	}
-
-	@Override
-	@Deprecated
-	public void setTLS(boolean withTLS) {
-		proxiedHtmlEmail.setTLS(withTLS);
 	}
 
 	@Override
@@ -475,31 +470,13 @@ class ProxyHtmlEmail extends HtmlEmail {
 	}
 
 	@Override
-	@Deprecated
-	public boolean isTLS() {
-		return proxiedHtmlEmail.isTLS();
-	}
-
-	@Override
 	public void setPopBeforeSmtp(boolean newPopBeforeSmtp, String newPopHost, String newPopUsername, String newPopPassword) {
 		proxiedHtmlEmail.setPopBeforeSmtp(newPopBeforeSmtp, newPopHost, newPopUsername, newPopPassword);
 	}
 
 	@Override
-	@Deprecated
-	public boolean isSSL() {
-		return proxiedHtmlEmail.isSSL();
-	}
-
-	@Override
 	public boolean isSSLOnConnect() {
 		return proxiedHtmlEmail.isSSLOnConnect();
-	}
-
-	@Override
-	@Deprecated
-	public void setSSL(boolean ssl) {
-		proxiedHtmlEmail.setSSL(ssl);
 	}
 
 	@Override
@@ -563,17 +540,7 @@ class ProxyHtmlEmail extends HtmlEmail {
 	}
 
 	@Override
-	public void setSocketConnectionTimeout(int socketConnectionTimeout) {
-		proxiedHtmlEmail.setSocketConnectionTimeout(socketConnectionTimeout);
-	}
-
-	@Override
 	public int getSocketTimeout() {
 		return proxiedHtmlEmail.getSocketTimeout();
-	}
-
-	@Override
-	public void setSocketTimeout(int socketTimeout) {
-		proxiedHtmlEmail.setSocketTimeout(socketTimeout);
 	}
 }

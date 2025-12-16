@@ -15,8 +15,6 @@ import com.hybris.backoffice.i18n.BackofficeLocaleService;
 import de.hybris.platform.servicelayer.i18n.I18NService;
 import de.hybris.platform.servicelayer.user.UserService;
 
-import org.springframework.beans.factory.annotation.Required;
-
 /**
  * Enhancement of the {@link BackofficeLocaleService} to enhance configuration possibilities!
  * <p>
@@ -73,24 +71,20 @@ public class ConfigurableBackofficeLocaleService extends BackofficeLocaleService
 		}
 	}
 
-	@Required
 	public void setUserService(UserService userService) {
 		this.userService = userService;
 	}
 
-	@Required
 	@Override
 	public void setI18nService(I18NService i18nService) {
 		super.setI18nService(i18nService);
 		this.i18nService = i18nService;
 	}
 
-	@Required
 	public void setSortDataLocalesByIsoCode(boolean sortDataLocalesByIsoCode) {
 		this.sortDataLocalesByIsoCode = sortDataLocalesByIsoCode;
 	}
 
-	@Required
 	public void setLocalesForBackofficeUi(String localesForBackofficeUi) {
 		this.localesForBackofficeUi.clear();
 

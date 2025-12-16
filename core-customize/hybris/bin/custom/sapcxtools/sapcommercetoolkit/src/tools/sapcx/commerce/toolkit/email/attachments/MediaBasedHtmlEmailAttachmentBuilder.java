@@ -1,14 +1,14 @@
 package tools.sapcx.commerce.toolkit.email.attachments;
 
-import javax.activation.DataSource;
-import javax.mail.util.ByteArrayDataSource;
-
 import de.hybris.platform.core.Registry;
 import de.hybris.platform.core.model.media.MediaModel;
 import de.hybris.platform.servicelayer.media.MediaService;
 import de.hybris.platform.servicelayer.media.NoDataAvailableException;
 
-import org.apache.commons.mail.EmailException;
+import org.apache.commons.mail2.core.EmailException;
+
+import jakarta.activation.DataSource;
+import jakarta.mail.util.ByteArrayDataSource;
 
 public class MediaBasedHtmlEmailAttachmentBuilder extends AbstractHtmlEmailAttachmentBuilder {
 	private MediaModel media;
