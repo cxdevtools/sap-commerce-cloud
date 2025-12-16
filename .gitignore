@@ -29,7 +29,7 @@ core-customize/hybris/roles/
 core-customize/hybris/log/
 core-customize/hybris/temp/
 core-customize/hybris/data/
-core-customize/hybris/config/local-config/9[0-9]-local.properties
+core-customize/hybris/config/local-config/
 
 # only allow sapcxtools extension
 core-customize/hybris/bin/modules/

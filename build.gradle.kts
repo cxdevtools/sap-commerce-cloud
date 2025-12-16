@@ -1,5 +1,5 @@
 plugins {
-    id("com.diffplug.spotless") version("6.25.0")
+    id("com.diffplug.spotless") version("8.1.0")
 }
 
 repositories {
@@ -26,6 +26,6 @@ spotless {
     //        "js-storefront/*/src/**/*.ts",
     //        "js-storefront/*/src/**/*.html"
     //    )
-    //    prettier("2.5.1").configFile(frontendFormatterConfigFile)
+    //    prettier("3.5.3").configFile(frontendFormatterConfigFile)
     //}
 }

@@ -1,6 +1,10 @@
 {
-    "commerceSuiteVersion": "2211-jdk21.4",
+    "commerceSuiteVersion": "2211-jdk21.5",
     "extensionPacks": [],
+    "solr": {
+        "location": "solr",
+        "solrVersion": "9.8"
+    },
     "extensions": [],
     "properties": [],
     "storefrontAddons": [],

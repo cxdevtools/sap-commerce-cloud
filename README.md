@@ -3,10 +3,7 @@
 [![Build & Test](https://github.com/sapcxtools/workspace/actions/workflows/buildandtest.yml/badge.svg)](https://github.com/sapcxtools/workspace/actions/workflows/buildandtest.yml) 
 [![Code Analysis](https://github.com/sapcxtools/workspace/actions/workflows/code-analysis.yml/badge.svg)](https://github.com/sapcxtools/workspace/actions/workflows/code-analysis.yml) 
 [![Code Coverage](https://codecov.io/gh/sapcxtools/workspace/branch/main/graph/badge.svg?token=F1BIK8R7NZ)](https://codecov.io/gh/sapcxtools/workspace)
-
 [![Dependency Check](https://github.com/sapcxtools/workspace/actions/workflows/dependency-check.yml/badge.svg)](https://github.com/sapcxtools/workspace/actions/workflows/dependency-check.yml) 
-[![Backwards Compatibility](https://github.com/sapcxtools/workspace/actions/workflows/backwards-compatibility-java17.yml/badge.svg)](https://github.com/sapcxtools/workspace/actions/workflows/backwards-compatibility-java17.yml) 
-[![Backwards Compatibility](https://github.com/sapcxtools/workspace/actions/workflows/backwards-compatibility-java11.yml/badge.svg)](https://github.com/sapcxtools/workspace/actions/workflows/backwards-compatibility-java11.yml) 
 
 All extensions available in this repository are built with high test coverage and do not influence the behavior of
 your project without changes to your configuration. This is guaranteed and intended by design, because the extensions

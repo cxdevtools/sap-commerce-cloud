@@ -1,20 +1,64 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 
 import de.undercouch.gradle.tasks.download.Download
+import de.undercouch.gradle.tasks.download.VerifyAction
 
 import java.time.Instant
 import java.util.Base64
 
 plugins {
-    id("sap.commerce.build") version("4.0.0")
-    id("sap.commerce.build.ccv2") version("4.0.0")
-    id("de.undercouch.download") version("5.5.0")
+    id("sap.commerce.build") version("5.0.2")
+    id("sap.commerce.build.ccv2") version("5.0.2")
+    id("de.undercouch.download") version("5.6.0")
+    `maven-publish`
 }
 
-val DEPENDENCY_FOLDER = "../dependencies"
+val dependencyDir = "../dependencies"
+val workingDir = project.projectDir
+val binDir = "${workingDir}/hybris/bin"
+
 repositories {
-    flatDir { dirs(DEPENDENCY_FOLDER) }
+    flatDir { dirs(dependencyDir) }
     mavenCentral()
+}
+
+hybris {
+    // what files should be deleted when cleaning up the platform?
+    // (cloudhofolders will be downloaded by custom configuration)
+    cleanGlob.set("glob:**hybris/bin/{modules**,platform**,cloudhotfolders**}")
+
+    // what should be unpacked from the platform zip files?
+    bootstrapInclude.set(
+        listOf(
+            "hybris/**", //
+            "azurecloudhotfolder/**", //
+            "cloudcommons/**", //
+            "cloudhotfolder/**" //
+        )
+    )
+
+    // what should excluded when unpacking?
+    // the default value is a npm package folder that includes UTF-8 filenames, which lead to problems on linux
+    bootstrapExclude.set(
+        listOf(
+            "hybris/bin/ext-content/npmancillary/resources/npm/node_modules/http-server/node_modules/ecstatic/test/**"
+        )
+    )
+
+    // Control the sparse platform bootstrap.
+    // When enabled, the commerce extensions are extracted from the distribution zip on a as-needed basis.
+    // Only extensions that are actually used in the project (either directly listed in the localextensions.xml or
+    // required by other extensions) are extracted.
+    // The platform itself is always extracted.
+    // When this mode is enabled, the bootstrapInclude configuration property is ignored.
+    sparseBootstrap {
+        enabled = true
+        alwaysIncluded = listOf<String>()
+    }
+}
+
+tasks.ybuild {
+    group = "build"
 }
 
 if (project.hasProperty("SAPCX_ARTEFACT_BASEURL") && project.hasProperty("SAPCX_ARTEFACT_USER") && project.hasProperty("SAPCX_ARTEFACT_PASSWORD")) {
@@ -23,10 +67,10 @@ if (project.hasProperty("SAPCX_ARTEFACT_BASEURL") && project.hasProperty("SAPCX_
     val PASSWORD = project.property("SAPCX_ARTEFACT_PASSWORD") as String
     val AUTHORIZATION = Base64.getEncoder().encodeToString((USER + ":" + PASSWORD).toByteArray())
 
-    val COMMERCE_VERSION = CCV2.manifest.commerceSuiteVersion
+    val COMMERCE_VERSION = CCV2.manifest.effectiveVersion
     tasks.register<Download>("downloadPlatform") {
         src(BASEURL + "/commerce/hybris-commerce-suite-${COMMERCE_VERSION}.zip")
-        dest(file("${DEPENDENCY_FOLDER}/hybris-commerce-suite-${COMMERCE_VERSION}.zip"))
+        dest(file("${dependencyDir}/hybris-commerce-suite-${COMMERCE_VERSION}.zip"))
         header("Authorization", "Basic ${AUTHORIZATION}")
         overwrite(false)
         tempAndMove(true)
@@ -43,7 +87,7 @@ if (project.hasProperty("SAPCX_ARTEFACT_BASEURL") && project.hasProperty("SAPCX_
         val INTEXTPACK_VERSION = CCV2.manifest.extensionPacks.first{"hybris-commerce-integrations".equals(it.name)}.version        
         tasks.register<Download>("downloadIntExtPack") {
             src(BASEURL + "/integration/hybris-commerce-integrations-${INTEXTPACK_VERSION}.zip")
-            dest(file("${DEPENDENCY_FOLDER}/hybris-commerce-integrations-${INTEXTPACK_VERSION}.zip"))
+            dest(file("${dependencyDir}/hybris-commerce-integrations-${INTEXTPACK_VERSION}.zip"))
             header("Authorization", "Basic ${AUTHORIZATION}")
             overwrite(false)
             tempAndMove(true)
@@ -66,60 +110,26 @@ tasks.register<WriteProperties>("generateLocalProperties") {
     }
 }
 
-val symlinkConfigTask = tasks.register("symlinkConfig")
-val hybrisConfig = file("hybris/config")
+val symlinkConfigTask: TaskProvider<Task> = tasks.register("symlinkConfig")
 val localConfig = file("hybris/config/local-config")
-val homeDirectory = file(project.gradle.gradleUserHomeDir.parent)
 mapOf(
-    "10-local.properties" to "cloud/common.properties",
-    "20-local.properties" to "cloud/persona/development.properties",
-    "50-local.properties" to "cloud/local-dev.properties",
-    "90-local.properties" to "local/90-local.properties",
-    "91-local.properties" to "local/91-local.properties",
-    "92-local.properties" to "local/92-local.properties",
-    "93-local.properties" to "local/93-local.properties",
-    "94-local.properties" to "local/94-local.properties",
-    "95-local.properties" to "local/95-local.properties",
-    "96-local.properties" to "local/96-local.properties",
-    "97-local.properties" to "local/97-local.properties",
-    "98-local.properties" to "local/98-local.properties"
+    "10-local.properties" to file("hybris/config/cloud/common.properties"),
+    "20-local.properties" to file("hybris/config/cloud/persona/development.properties")
 ).forEach{
-    val link = it.key
-    var path = file(hybrisConfig.absolutePath + "/" + it.value)
-    if (!path.exists()) {
-        path = file(homeDirectory.absolutePath + "/.sap-commerce/local-config/" + it.key)
+    val symlinkTask = tasks.register<Exec>("symlink${it.key}") {
+        val path = it.value.relativeTo(localConfig)
+        if (Os.isFamily(Os.FAMILY_UNIX)) {
+            commandLine("sh", "-c", "ln -sfn $path ${it.key}")
+        } else {
+            // https://blogs.windows.com/windowsdeveloper/2016/12/02/symlinks-windows-10/
+            val windowsPath = path.toString().replace("[/]".toRegex(), "\\")
+            commandLine("cmd", "/c", """mklink "${it.key}" "$windowsPath" """)
+        }
+        workingDir(localConfig)
+        dependsOn("generateLocalProperties")
     }
-    
-    if (path.exists()) {
-        val symlinkTask = tasks.register<Exec>("symlink-${link}") {
-            val relPath = path.relativeTo(localConfig)
-            if (Os.isFamily(Os.FAMILY_UNIX)) {
-                commandLine("sh", "-c", "ln -sfn ${relPath} ${link}")
-            } else {
-                // https://blogs.windows.com/windowsdeveloper/2016/12/02/symlinks-windows-10/
-                val windowsPath = relPath.toString().replace("[/]".toRegex(), "\\")
-                commandLine("cmd", "/c", """mklink "${link}" "${windowsPath}" """)
-            }
-            workingDir(localConfig)
-            dependsOn("generateLocalProperties")
-        }
-        symlinkConfigTask.configure {
-            dependsOn(symlinkTask)
-        }
-    } else {
-        // Unlink if no longer existing
-        val unlinkTask = tasks.register<Exec>("unlink-${link}") {
-            if (Os.isFamily(Os.FAMILY_UNIX)) {
-                commandLine("sh", "-c", "rm -f ${link}")
-            } else {
-                commandLine("cmd", "/c", "del /q ${link}")
-            }
-            workingDir(localConfig)
-            dependsOn("generateLocalProperties")
-        }
-        symlinkConfigTask.configure {
-            dependsOn(unlinkTask)
-        }
+    symlinkConfigTask.configure {
+        dependsOn(symlinkTask)
     }
 }
 
@@ -132,6 +142,13 @@ tasks.register<WriteProperties>("generateLocalDeveloperProperties") {
     }
 }
 
+// https://help.sap.com/viewer/b2f400d4c0414461a4bb7e115dccd779/LATEST/en-US/784f9480cf064d3b81af9cad5739fecc.html
+tasks.register<Copy>("enableModeltMock") {
+    from("hybris/bin/custom/extras/modelt/extensioninfo.disabled")
+    into("hybris/bin/custom/extras/modelt/")
+    rename { "extensioninfo.xml" }
+}
+
 tasks.named("installManifestAddons") {
     mustRunAfter("generateLocalProperties")
 }
@@ -139,5 +156,10 @@ tasks.named("installManifestAddons") {
 tasks.register("setupLocalDevelopment") {
     group = "SAP Commerce"
     description = "Setup local development"
-    dependsOn("bootstrapPlatform", "generateLocalDeveloperProperties", "installManifestAddons")
+    dependsOn(
+        "bootstrapPlatform",
+        "generateLocalDeveloperProperties",
+        "installManifestAddons",
+        "enableModeltMock"
+    )
 }
