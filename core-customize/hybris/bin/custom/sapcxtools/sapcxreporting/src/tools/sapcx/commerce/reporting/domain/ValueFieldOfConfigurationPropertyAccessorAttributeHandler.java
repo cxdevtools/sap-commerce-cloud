@@ -8,7 +8,11 @@ import org.apache.commons.lang3.StringUtils;
 import tools.sapcx.commerce.reporting.model.ConfigurationPropertyAccessorModel;
 
 public class ValueFieldOfConfigurationPropertyAccessorAttributeHandler extends AbstractDynamicAttributeHandler<String, ConfigurationPropertyAccessorModel> {
-	private ConfigurationService configurationService;
+	private final ConfigurationService configurationService;
+
+	public ValueFieldOfConfigurationPropertyAccessorAttributeHandler(ConfigurationService configurationService) {
+		this.configurationService = configurationService;
+	}
 
 	@Override
 	public String get(ConfigurationPropertyAccessorModel model) {
@@ -22,9 +26,5 @@ public class ValueFieldOfConfigurationPropertyAccessorAttributeHandler extends A
 		if (StringUtils.isNotBlank(key)) {
 			configurationService.getConfiguration().setProperty(key, value);
 		}
-	}
-
-	public void setConfigurationService(ConfigurationService configurationService) {
-		this.configurationService = configurationService;
 	}
 }

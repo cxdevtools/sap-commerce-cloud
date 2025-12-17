@@ -68,22 +68,7 @@ public class DefaultGenericFlexibleSearchTests {
 	private GenericSearchResultHeader header2;
 	private ResultSetMock resultSetFake;
 
-	private FlexibleSearchGenericSearchService genericFlexibleSearch = new FlexibleSearchGenericSearchService() {
-		@Override
-		protected boolean isHanaUsed() {
-			return false;
-		}
-
-		@Override
-		protected void fillStatement(PreparedStatement statement, List<Object> values) throws IllegalArgumentException, SQLException {
-			return;
-		}
-
-		@Override
-		HybrisDataSource getDatasource() {
-			return tenant.getDataSource();
-		}
-	};
+	private FlexibleSearchGenericSearchService genericFlexibleSearch;
 
 	@Before
 	public void setup() throws SQLException {
@@ -101,10 +86,22 @@ public class DefaultGenericFlexibleSearchTests {
 		((CatalogVersionServiceFake) catalogVersionService)
 				.setReadableCatalogVersions(Collections.singletonList(InMemoryModelFactory.createTestableItemModel(CatalogVersionModel.class)));
 
-		genericFlexibleSearch.setUserService(userService);
-		genericFlexibleSearch.setSessionService(sessionService);
-		genericFlexibleSearch.setCatalogVersionService(catalogVersionService);
-		genericFlexibleSearch.setFlexibleSearchService(flexibleSearchService);
+		genericFlexibleSearch = new FlexibleSearchGenericSearchService(userService, sessionService, catalogVersionService, flexibleSearchService) {
+			@Override
+			protected boolean isHanaUsed() {
+				return false;
+			}
+
+			@Override
+			protected void fillStatement(PreparedStatement statement, List<Object> values) throws IllegalArgumentException, SQLException {
+				return;
+			}
+
+			@Override
+			HybrisDataSource getDatasource() {
+				return tenant.getDataSource();
+			}
+		};
 
 		header1 = new GenericSearchResultHeader(1, "col1", "Column 1");
 		header2 = new GenericSearchResultHeader(2, "col2", "Column 2");

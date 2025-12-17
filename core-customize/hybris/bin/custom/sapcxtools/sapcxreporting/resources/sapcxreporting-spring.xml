@@ -8,17 +8,17 @@
 
     <!-- Report -->
     <bean id="reportGeneratorJobPerformable" parent="abstractJobPerformable" class="tools.sapcx.commerce.reporting.generator.ReportGeneratorJobPerformable">
-        <property name="genericSearchService" ref="cxGenericSearchService" />
-        <property name="reportService" ref="reportService" />
-        <property name="htmlEmailGenerator" ref="htmlEmailGenerator" />
-        <property name="htmlEmailService" ref="htmlEmailService" />
-        <property name="mimeService" ref="mimeService" />
-        <property name="queryConfigurationConverter" ref="queryConfigurationConverter"/>
+        <constructor-arg name="genericSearchService" ref="cxGenericSearchService" />
+        <constructor-arg name="reportService" ref="reportService" />
+        <constructor-arg name="htmlEmailGenerator" ref="htmlEmailGenerator" />
+        <constructor-arg name="htmlEmailService" ref="htmlEmailService" />
+        <constructor-arg name="mimeService" ref="mimeService" />
+        <constructor-arg name="queryConfigurationConverter" ref="queryConfigurationConverter"/>
     </bean>
 
     <alias alias="reportService" name="cxReportService" />
     <bean id="cxReportService" class="tools.sapcx.commerce.reporting.report.DefaultReportService">
-        <property name="generators" ref="reportGeneratorMap" />
+        <constructor-arg name="generators" ref="reportGeneratorMap" />
     </bean>
 
     <alias alias="reportGeneratorMap" name="defaultReportGeneratorMap" />
@@ -38,10 +38,10 @@
     <!-- Search -->
     <alias alias="cxGenericSearchService" name="cxFlexibleSearchGenericSearchService" />
     <bean id="cxFlexibleSearchGenericSearchService" class="tools.sapcx.commerce.reporting.search.FlexibleSearchGenericSearchService">
-        <property name="userService" ref="userService" />
-        <property name="sessionService" ref="sessionService" />
-        <property name="catalogVersionService" ref="catalogVersionService" />
-        <property name="flexibleSearchService" ref="flexibleSearchService" />
+        <constructor-arg name="userService" ref="userService" />
+        <constructor-arg name="sessionService" ref="sessionService" />
+        <constructor-arg name="catalogVersionService" ref="catalogVersionService" />
+        <constructor-arg name="flexibleSearchService" ref="flexibleSearchService" />
     </bean>
 
     <!-- Report Download Facade -->
@@ -58,12 +58,12 @@
 
     <!-- Domain -->
     <bean id="valueFieldOfConfigurationPropertyAccessorAttributeHandler" class="tools.sapcx.commerce.reporting.domain.ValueFieldOfConfigurationPropertyAccessorAttributeHandler">
-        <property name="configurationService" ref="configurationService"/>
+        <constructor-arg name="configurationService" ref="configurationService"/>
     </bean>
 
     <bean id="reportGenerationScheduleInitDefaultInterceptor" class="tools.sapcx.commerce.reporting.domain.ReportGenerationScheduleInitDefaultInterceptor">
-        <property name="flexibleSearchService" ref="flexibleSearchService" />
-        <property name="jobCode" value="${sapcxreporting.report.job.code}" />
+        <constructor-arg name="flexibleSearchService" ref="flexibleSearchService" />
+        <constructor-arg name="jobCode" value="${sapcxreporting.report.job.code}" />
     </bean>
     <bean id="reportGenerationScheduleInitDefaultInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
         <property name="interceptor" ref="reportGenerationScheduleInitDefaultInterceptor"/>

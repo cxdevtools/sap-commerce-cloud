@@ -12,8 +12,8 @@ import tools.sapcx.commerce.reporting.search.AbstractGenericSearchFacade;
 import tools.sapcx.commerce.reporting.search.GenericSearchResult;
 
 public class SolrReportDownloadFacade implements ReportDownloadFacade {
-	private ReportService reportService;
-	private Map<String, AbstractGenericSearchFacade<?>> reportSearchFacades;
+	private final ReportService reportService;
+	private final Map<String, AbstractGenericSearchFacade<?>> reportSearchFacades;
 
 	public SolrReportDownloadFacade(ReportService reportService, Map<String, AbstractGenericSearchFacade<?>> reportSearchFacades) {
 		this.reportService = reportService;

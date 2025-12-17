@@ -7,7 +7,7 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 
-public class SelfDeletingFileInputStream extends FileInputStream {
+class SelfDeletingFileInputStream extends FileInputStream {
 	private final File file;
 
 	public SelfDeletingFileInputStream(File file) throws FileNotFoundException {

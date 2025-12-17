@@ -15,8 +15,13 @@ import tools.sapcx.commerce.reporting.model.ReportGenerationScheduleModel;
 public class ReportGenerationScheduleInitDefaultInterceptor implements InitDefaultsInterceptor<ReportGenerationScheduleModel> {
 	private static final Logger LOG = LoggerFactory.getLogger(ReportGenerationScheduleInitDefaultInterceptor.class);
 
-	private FlexibleSearchService flexibleSearchService;
-	private String jobCode;
+	private final FlexibleSearchService flexibleSearchService;
+	private final String jobCode;
+
+	public ReportGenerationScheduleInitDefaultInterceptor(FlexibleSearchService flexibleSearchService, String jobCode) {
+		this.flexibleSearchService = flexibleSearchService;
+		this.jobCode = jobCode;
+	}
 
 	@Override
 	public void onInitDefaults(ReportGenerationScheduleModel cronJob, InterceptorContext interceptorContext) {
@@ -36,13 +41,5 @@ public class ReportGenerationScheduleInitDefaultInterceptor implements InitDefau
 					"of the job performable was set before running the system update.", e);
 			return null;
 		}
-	}
-
-	public void setFlexibleSearchService(FlexibleSearchService flexibleSearchService) {
-		this.flexibleSearchService = flexibleSearchService;
-	}
-
-	public void setJobCode(String jobCode) {
-		this.jobCode = jobCode;
 	}
 }

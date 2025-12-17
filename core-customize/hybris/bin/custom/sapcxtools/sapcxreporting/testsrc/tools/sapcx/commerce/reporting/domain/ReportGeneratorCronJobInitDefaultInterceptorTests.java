@@ -23,16 +23,13 @@ public class ReportGeneratorCronJobInitDefaultInterceptorTests {
 	@Before
 	public void setUp() throws Exception {
 		interceptorContext = InterceptorContextStub.interceptorContext().stub();
-
-		interceptor = new ReportGenerationScheduleInitDefaultInterceptor();
-		interceptor.setJobCode("jobCode");
 	}
 
 	@Test
 	public void ifJobIsNotFound_cronJobWillRemainWithoutAJob() throws InterceptorException {
 		ReportGenerationScheduleModel cronJob = InMemoryModelFactory.createTestableItemModel(ReportGenerationScheduleModel.class);
 
-		interceptor.setFlexibleSearchService(new FlexibleSearchServiceStub());
+		interceptor = new ReportGenerationScheduleInitDefaultInterceptor(new FlexibleSearchServiceStub(), "jobCode");
 		interceptor.onInitDefaults(cronJob, interceptorContext);
 
 		assertThat(cronJob.getJob()).isNull();
@@ -44,7 +41,7 @@ public class ReportGeneratorCronJobInitDefaultInterceptorTests {
 		ServicelayerJobModel job = InMemoryModelFactory.createTestableItemModel(ServicelayerJobModel.class);
 		job.setCode("jobCode");
 
-		interceptor.setFlexibleSearchService(new FlexibleSearchServiceStub(job));
+		interceptor = new ReportGenerationScheduleInitDefaultInterceptor(new FlexibleSearchServiceStub(job), "jobCode");
 		interceptor.onInitDefaults(cronJob, interceptorContext);
 
 		assertThat(cronJob.getJob()).isEqualTo(job);

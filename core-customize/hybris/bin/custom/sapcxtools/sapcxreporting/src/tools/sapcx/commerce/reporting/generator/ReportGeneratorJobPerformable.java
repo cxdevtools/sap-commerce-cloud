@@ -52,13 +52,27 @@ public class ReportGeneratorJobPerformable extends AbstractJobPerformable<Report
 	private static final Logger LOG = LoggerFactory.getLogger(ReportGeneratorJobPerformable.class);
 	private static final int BYTES_TO_READ = 20;
 
-	private GenericSearchService genericSearchService;
-	private ReportService reportService;
-	private HtmlEmailGenerator htmlEmailGenerator;
-	private HtmlEmailService htmlEmailService;
-	private MimeService mimeService;
+	private final GenericSearchService genericSearchService;
+	private final ReportService reportService;
+	private final HtmlEmailGenerator htmlEmailGenerator;
+	private final HtmlEmailService htmlEmailService;
+	private final MimeService mimeService;
+	private final Converter<QueryReportConfigurationModel, QueryFileConfigurationData> queryConfigurationConverter;
 
-	private Converter<QueryReportConfigurationModel, QueryFileConfigurationData> queryConfigurationConverter;
+	public ReportGeneratorJobPerformable(
+			GenericSearchService genericSearchService,
+			ReportService reportService,
+			HtmlEmailGenerator htmlEmailGenerator,
+			HtmlEmailService htmlEmailService,
+			MimeService mimeService,
+			Converter<QueryReportConfigurationModel, QueryFileConfigurationData> queryConfigurationConverter) {
+		this.genericSearchService = genericSearchService;
+		this.reportService = reportService;
+		this.htmlEmailGenerator = htmlEmailGenerator;
+		this.htmlEmailService = htmlEmailService;
+		this.mimeService = mimeService;
+		this.queryConfigurationConverter = queryConfigurationConverter;
+	}
 
 	@Override
 	public PerformResult perform(ReportGenerationScheduleModel schedule) {
@@ -218,29 +232,5 @@ public class ReportGeneratorJobPerformable extends AbstractJobPerformable<Report
 			LOG.warn(String.format("Mime type detection failed, reason: Cannot read file %s", file.getAbsolutePath()), e);
 		}
 		return "application/octet-stream";
-	}
-
-	public void setGenericSearchService(GenericSearchService genericSearchService) {
-		this.genericSearchService = genericSearchService;
-	}
-
-	public void setReportService(ReportService reportService) {
-		this.reportService = reportService;
-	}
-
-	public void setHtmlEmailGenerator(HtmlEmailGenerator htmlEmailGenerator) {
-		this.htmlEmailGenerator = htmlEmailGenerator;
-	}
-
-	public void setMimeService(MimeService mimeService) {
-		this.mimeService = mimeService;
-	}
-
-	public void setHtmlEmailService(HtmlEmailService htmlEmailService) {
-		this.htmlEmailService = htmlEmailService;
-	}
-
-	public void setQueryConfigurationConverter(Converter<QueryReportConfigurationModel, QueryFileConfigurationData> queryConfigurationConverter) {
-		this.queryConfigurationConverter = queryConfigurationConverter;
 	}
 }

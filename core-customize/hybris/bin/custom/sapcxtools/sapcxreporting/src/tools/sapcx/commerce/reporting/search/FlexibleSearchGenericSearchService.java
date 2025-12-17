@@ -42,10 +42,18 @@ public class FlexibleSearchGenericSearchService implements GenericSearchService 
 	private static final Logger LOG = LoggerFactory.getLogger(FlexibleSearchGenericSearchService.class);
 	private static final String LOG_MSG_TRANSLATION_INPUT = "FlexibleSearchQuery object for translation: [query: %s], [query parameters: %s], [user - %s], [count - -1], [locale - %s], [ctgVer - %s]";
 
-	private UserService userService;
-	private SessionService sessionService;
-	private CatalogVersionService catalogVersionService;
-	private DefaultFlexibleSearchService flexibleSearchService;
+	private final UserService userService;
+	private final SessionService sessionService;
+	private final CatalogVersionService catalogVersionService;
+	private final DefaultFlexibleSearchService flexibleSearchService;
+
+	public FlexibleSearchGenericSearchService(UserService userService, SessionService sessionService, CatalogVersionService catalogVersionService,
+			DefaultFlexibleSearchService flexibleSearchService) {
+		this.userService = userService;
+		this.sessionService = sessionService;
+		this.catalogVersionService = catalogVersionService;
+		this.flexibleSearchService = flexibleSearchService;
+	}
 
 	@Override
 	public GenericSearchResult search(String query, Map<String, Object> parameters) {
@@ -190,22 +198,6 @@ public class FlexibleSearchGenericSearchService implements GenericSearchService 
 		}
 
 		return null;
-	}
-
-	public void setUserService(UserService userService) {
-		this.userService = userService;
-	}
-
-	public void setSessionService(SessionService sessionService) {
-		this.sessionService = sessionService;
-	}
-
-	public void setCatalogVersionService(CatalogVersionService catalogVersionService) {
-		this.catalogVersionService = catalogVersionService;
-	}
-
-	public void setFlexibleSearchService(DefaultFlexibleSearchService flexibleSearchService) {
-		this.flexibleSearchService = flexibleSearchService;
 	}
 
 	private class Execution extends SessionExecutionBody {

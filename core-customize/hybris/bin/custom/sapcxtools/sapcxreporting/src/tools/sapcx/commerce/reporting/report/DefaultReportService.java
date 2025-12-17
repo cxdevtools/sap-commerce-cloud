@@ -24,7 +24,11 @@ import tools.sapcx.commerce.reporting.search.GenericSearchResult;
 public class DefaultReportService implements ReportService {
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultReportService.class);
 
-	private Map<ReportExportFormat, ReportGenerator> generators;
+	private final Map<ReportExportFormat, ReportGenerator> generators;
+
+	public DefaultReportService(Map<ReportExportFormat, ReportGenerator> generators) {
+		this.generators = generators;
+	}
 
 	@Override
 	public Optional<File> getReportFile(QueryFileConfigurationData report, GenericSearchResult result) {
@@ -103,9 +107,5 @@ public class DefaultReportService implements ReportService {
 	@Override
 	public List<ReportExportFormat> getConfiguredReportFormats() {
 		return generators.keySet().stream().collect(Collectors.toList());
-	}
-
-	public void setGenerators(Map<ReportExportFormat, ReportGenerator> generators) {
-		this.generators = generators;
 	}
 }
