@@ -9,6 +9,7 @@ import de.hybris.bootstrap.annotations.UnitTest;
 import de.hybris.platform.servicelayer.impex.ImportConfig;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,13 +19,18 @@ import tools.sapcx.commerce.toolkit.testing.testdoubles.config.ConfigurationServ
 public class SystemSetupEnvironmentTests {
 	private ConfigurationServiceFake configurationServiceFake;
 	private SystemSetupEnvironment environment;
+	private File tempFile;
 
 	@Before
-	public void setUp() {
+	public void setUp() throws Exception {
 		configurationServiceFake = new ConfigurationServiceFake();
+		tempFile = File.createTempFile("configuration", ".properties");
+		environment = new SystemSetupEnvironment(tempFile.getAbsolutePath(), configurationServiceFake);
+	}
 
-		environment = new SystemSetupEnvironment();
-		environment.setConfigurationService(configurationServiceFake);
+	@After
+	public void removeTempFile() throws Exception {
+		tempFile.delete();
 	}
 
 	@Test
@@ -111,33 +117,18 @@ public class SystemSetupEnvironmentTests {
 
 	@Test
 	public void verifyPersistentConfigurationFileIsCreatedIfAbsent() throws Exception {
-		File tempFile = null;
-		try {
-			tempFile = File.createTempFile("configuration", ".properties");
-			tempFile.delete();
+		tempFile.delete();
+		environment = new SystemSetupEnvironment(tempFile.getAbsolutePath(), configurationServiceFake);
 
-			environment.setConfigurationFile(tempFile.getAbsolutePath());
-
-			assertThat(tempFile).exists().canRead().canWrite();
-			assertThat(tempFile).hasContent("# " + environment.FILE_HEADER + "\n\n");
-		} finally {
-			tempFile.delete();
-		}
+		assertThat(tempFile).exists().canRead().canWrite();
+		assertThat(tempFile).hasContent("# " + environment.FILE_HEADER + "\n\n");
 	}
 
 	@Test
 	public void verifyPersistentConfigurationFileIsReadIfAvailable() throws Exception {
-		File tempFile = null;
-		try {
-			tempFile = File.createTempFile("configuration", ".properties");
-			FileUtils.writeStringToFile(tempFile, "# " + SystemSetupEnvironment.FILE_HEADER + "\n\n");
-			FileUtils.writeStringToFile(tempFile, SystemSetupEnvironment.LASTPROCESSEDRELEASEVERSIONKEY + " = release1x0x0\n");
+		FileUtils.writeStringToFile(tempFile, "# " + SystemSetupEnvironment.FILE_HEADER + "\n\n");
+		FileUtils.writeStringToFile(tempFile, SystemSetupEnvironment.LASTPROCESSEDRELEASEVERSIONKEY + " = release1x0x0\n");
 
-			environment.setConfigurationFile(tempFile.getAbsolutePath());
-
-			assertThat(environment.getLastProcessedReleaseVersion()).isEqualTo("release1x0x0");
-		} finally {
-			tempFile.delete();
-		}
+		assertThat(environment.getLastProcessedReleaseVersion()).isEqualTo("release1x0x0");
 	}
 }

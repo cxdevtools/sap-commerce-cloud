@@ -26,13 +26,19 @@ import tools.sapcx.commerce.toolkit.setup.SystemSetupEnvironment;
  * @see SystemSetupEnvironment
  */
 public class SynchronousImpExDataImportExecutor implements ImpExDataImportExecutor, ResourceLoaderAware {
-	private ImpExDataImporterLogger logger = new ImpExDataImporterLogger();
+	private final ImpExDataImporterLogger logger = new ImpExDataImporterLogger();
+	private final SystemSetupEnvironment environment;
+	private final CommonI18NService commonI18NService;
+	private final ImportService importService;
 	private ResourceLoader resourceLoader;
-	private SystemSetupEnvironment environment;
-	private CommonI18NService commonI18NService;
-	private ImportService importService;
 
-	@Override
+    public SynchronousImpExDataImportExecutor(SystemSetupEnvironment environment, CommonI18NService commonI18NService, ImportService importService) {
+        this.environment = environment;
+        this.commonI18NService = commonI18NService;
+        this.importService = importService;
+    }
+
+    @Override
 	public void importImpexFile(SystemSetupContext context, final String file, final String fileEncoding) {
 		this.importImpexFile(context, file, fileEncoding, true);
 	}
@@ -103,17 +109,5 @@ public class SynchronousImpExDataImportExecutor implements ImpExDataImportExecut
 	@Override
 	public void setResourceLoader(ResourceLoader resourceLoader) {
 		this.resourceLoader = resourceLoader;
-	}
-
-	public void setEnvironment(SystemSetupEnvironment environment) {
-		this.environment = environment;
-	}
-
-	public void setCommonI18NService(CommonI18NService commonI18NService) {
-		this.commonI18NService = commonI18NService;
-	}
-
-	public void setImportService(ImportService importService) {
-		this.importService = importService;
 	}
 }

@@ -38,13 +38,26 @@ public final class ReliableSystemSetupExecutor implements ApplicationContextAwar
 	static final String COCKPIT_CONFIGURATION_SERVICE = "cockpitConfigurationService";
 
 	private ApplicationContext applicationContext;
-	private ValidationService validationService;
-	private ImpExDataImporter elementaryDataImporter;
-	private ImpExDataImporter releasePatchesImporter;
-	private ImpExDataImporter essentialDataImporter;
-	private List<ImpExDataImporter> projectDataImporters = new ArrayList<>();
+	private final ValidationService validationService;
+	private final ImpExDataImporter elementaryDataImporter;
+	private final ImpExDataImporter releasePatchesImporter;
+	private final ImpExDataImporter essentialDataImporter;
+	private final List<ImpExDataImporter> projectDataImporters;
 
-	public void reliableSetupPhases(final SystemSetupContext context) {
+    public ReliableSystemSetupExecutor(
+            ValidationService validationService,
+            ImpExDataImporter elementaryDataImporter,
+            ImpExDataImporter releasePatchesImporter,
+            ImpExDataImporter essentialDataImporter,
+			List<ImpExDataImporter> projectDataImporters) {
+        this.validationService = validationService;
+        this.elementaryDataImporter = elementaryDataImporter;
+        this.releasePatchesImporter = releasePatchesImporter;
+        this.essentialDataImporter = essentialDataImporter;
+        this.projectDataImporters = projectDataImporters;
+    }
+
+    public void reliableSetupPhases(final SystemSetupContext context) {
 		Consumer<ImpExDataImporter> importData = importer -> importer.importData(context);
 
 		if (context.getType().isEssential()) {
@@ -91,27 +104,6 @@ public final class ReliableSystemSetupExecutor implements ApplicationContextAwar
 
 	private boolean isSystemInitialization(SystemSetupContext context) {
 		return context.getProcess().isInit() && !context.getProcess().isAll();
-	}
-
-	public void setValidationService(ValidationService validationService) {
-		this.validationService = validationService;
-	}
-
-	public void setElementaryDataImporter(ImpExDataImporter elementaryDataImporter) {
-		this.elementaryDataImporter = elementaryDataImporter;
-	}
-
-	public void setReleasePatchesImporter(ImpExDataImporter releasePatchesImporter) {
-		this.releasePatchesImporter = releasePatchesImporter;
-	}
-
-	public void setEssentialDataImporter(ImpExDataImporter essentialDataImporter) {
-		this.essentialDataImporter = essentialDataImporter;
-	}
-
-	public void setProjectDataImporters(List<ImpExDataImporter> projectDataImporters) {
-		this.projectDataImporters.clear();
-		this.projectDataImporters.addAll(projectDataImporters);
 	}
 
 	@Override

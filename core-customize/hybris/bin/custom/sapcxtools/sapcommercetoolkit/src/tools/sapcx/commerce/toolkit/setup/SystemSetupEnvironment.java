@@ -42,11 +42,17 @@ public final class SystemSetupEnvironment {
 	@VisibleForTesting
 	static final String FILE_HEADER = "This file is generated automatically by the sapcommercetoolkit extension. Do not change the file manually!";
 
-	private String fileName;
+	private final String fileName;
+	private final ConfigurationService configurationService;
 	private FileBasedConfigurationBuilder<PropertiesConfiguration> persistentConfiguration;
-	private ConfigurationService configurationService;
 
-	public boolean useLegacyModeForImpEx() {
+    public SystemSetupEnvironment(String fileName, ConfigurationService configurationService) {
+		this.fileName = fileName;
+        this.configurationService = configurationService;
+		this.updatePersistentConfigurationBuilder();
+    }
+
+    public boolean useLegacyModeForImpEx() {
 		return configurationService.getConfiguration().getBoolean(LEGACYMODEKEY, false);
 	}
 
@@ -149,13 +155,7 @@ public final class SystemSetupEnvironment {
 		return new Locale(locale);
 	}
 
-	public void setConfigurationService(ConfigurationService configurationService) {
-		this.configurationService = configurationService;
-	}
-
-	public void setConfigurationFile(String fileName) {
-		this.fileName = fileName;
-
+	private void updatePersistentConfigurationBuilder() {
 		try {
 			File file = new File(fileName);
 			if (!file.exists()) {

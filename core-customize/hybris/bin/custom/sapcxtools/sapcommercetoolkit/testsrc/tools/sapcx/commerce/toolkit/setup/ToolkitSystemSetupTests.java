@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,6 +17,7 @@ import de.hybris.platform.core.initialization.SystemSetup;
 import de.hybris.platform.core.initialization.SystemSetupContext;
 import de.hybris.platform.core.initialization.SystemSetupParameter;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -46,29 +48,35 @@ public class ToolkitSystemSetupTests {
 	private ProjectDataImporter releasePatchReRunImporter;
 
 	private ToolkitSystemSetup systemSetup;
+	private File tempFile;
 
 	@Before
 	public void setUp() throws Exception {
+		tempFile = File.createTempFile("configuration", ".properties");
+
 		applicationContext = mock(ApplicationContext.class);
 		when(applicationContext.getBean(ReliableSystemSetupExecutor.COCKPIT_CONFIGURATION_SERVICE)).thenThrow(new NoSuchBeanDefinitionException("Bean not found!"));
 
 		validationService = new ValidationServiceSpy();
-		environment = new SystemSetupEnvironment();
-		configurationServiceFake = new ConfigurationServiceFake();
-		environment.setConfigurationService(configurationServiceFake);
+		environment = new SystemSetupEnvironment("", configurationServiceFake);
 
 		setupImpexDataImporterForTesting(environment);
 		addEnvironmentConfiguration(false, false, false);
 
-		ReliableSystemSetupExecutor executor = new ReliableSystemSetupExecutor();
+		ReliableSystemSetupExecutor executor = new ReliableSystemSetupExecutor(
+				validationService,
+				elementaryDataImporter,
+				essentialDataImporter,
+				releasePatchesImporter,
+				Arrays.asList(sampleDataImporter, testDataImporter, releasePatchReRunImporter));
 		executor.setApplicationContext(applicationContext);
-		executor.setValidationService(validationService);
-		executor.setElementaryDataImporter(elementaryDataImporter);
-		executor.setEssentialDataImporter(essentialDataImporter);
-		executor.setReleasePatchesImporter(releasePatchesImporter);
-		executor.setProjectDataImporters(Arrays.asList(sampleDataImporter, testDataImporter, releasePatchReRunImporter));
 
 		systemSetup = new ToolkitSystemSetup(executor, true);
+	}
+
+	@After
+	public void removeTempFile() throws Exception {
+		tempFile.delete();
 	}
 
 	@Test

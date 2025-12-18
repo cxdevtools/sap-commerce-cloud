@@ -10,11 +10,11 @@
 		<constructor-arg name="performSystemSetup" value="${sapcommercetoolkit.impeximport.environment.legacysystemsetup:true}"/>
 	</bean>
 	<bean id="sapcommercetoolkitSystemSetupExecutor" class="tools.sapcx.commerce.toolkit.setup.ReliableSystemSetupExecutor">
-		<property name="validationService" ref="validationService"/>
-		<property name="elementaryDataImporter" ref="elementaryDataImporter"/>
-		<property name="releasePatchesImporter" ref="releasePatchImporter"/>
-		<property name="essentialDataImporter" ref="essentialDataImporter"/>
-		<property name="projectDataImporters" ref="sapcommercetoolkitProjectDataImporters"/>
+		<constructor-arg name="validationService" ref="validationService"/>
+		<constructor-arg name="elementaryDataImporter" ref="elementaryDataImporter"/>
+		<constructor-arg name="releasePatchesImporter" ref="releasePatchImporter"/>
+		<constructor-arg name="essentialDataImporter" ref="essentialDataImporter"/>
+		<constructor-arg name="projectDataImporters" ref="sapcommercetoolkitProjectDataImporters"/>
 	</bean>
 	<util:list id="sapcommercetoolkitProjectDataImporters" value-type="tools.sapcx.commerce.toolkit.setup.ImpExDataImporter">
 		<ref bean="platformOverlayImporter"/>
@@ -76,12 +76,12 @@
 	</bean>
 
 	<bean id="toolkitSystemSetupEnvironment" class="tools.sapcx.commerce.toolkit.setup.SystemSetupEnvironment">
-		<property name="configurationService" ref="configurationService"/>
-		<property name="configurationFile" value="${sapcommercetoolkit.impeximport.environment.configurationfile}"/>
+		<constructor-arg name="configurationService" ref="configurationService"/>
+		<constructor-arg name="fileName" value="${sapcommercetoolkit.impeximport.environment.configurationfile}"/>
 	</bean>
 	<bean id="toolkitImpExDataImportExecutor" class="tools.sapcx.commerce.toolkit.impex.executor.SynchronousImpExDataImportExecutor">
-		<property name="environment" ref="toolkitSystemSetupEnvironment"/>
-		<property name="commonI18NService" ref="commonI18NService"/>
-		<property name="importService" ref="importService"/>
+		<constructor-arg name="environment" ref="toolkitSystemSetupEnvironment"/>
+		<constructor-arg name="commonI18NService" ref="commonI18NService"/>
+		<constructor-arg name="importService" ref="importService"/>
 	</bean>
 </beans>
