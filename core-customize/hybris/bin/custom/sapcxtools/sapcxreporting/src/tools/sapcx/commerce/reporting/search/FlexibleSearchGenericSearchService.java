@@ -56,7 +56,7 @@ public class FlexibleSearchGenericSearchService implements GenericSearchService 
 	}
 
 	@Override
-	public GenericSearchResult search(String query, Map<String, Object> parameters) {
+	public GenericSearchResult search(String query, Map<String, Object> parameters, Map<String, Object> configuration) {
 		if (StringUtils.isBlank(query)) {
 			return error("Query statements must not be blank!");
 		}

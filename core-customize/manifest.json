@@ -3,7 +3,7 @@
     "extensionPacks": [],
     "solr": {
         "location": "solr",
-        "solrVersion": "9.8"
+        "solrVersion": "9.10"
     },
     "extensions": [],
     "properties": [],

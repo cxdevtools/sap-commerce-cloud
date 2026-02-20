@@ -26,7 +26,7 @@ public abstract class AbstractGenericSearchFacade<T> implements GenericSearchSer
 	}
 
 	@Override
-	public GenericSearchResult search(String query, Map<String, Object> parameters) {
+	public GenericSearchResult search(String query, Map<String, Object> parameters, Map<String, Object> configuration) {
 		int currentPage = 0;
 		PageableData pageableData = new PageableData();
 		pageableData.setCurrentPage(currentPage);

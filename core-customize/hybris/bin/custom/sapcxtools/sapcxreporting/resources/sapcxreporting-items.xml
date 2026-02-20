@@ -11,6 +11,10 @@
             <value code="CSV" />
             <value code="EXCEL" />
         </enumtype>
+        <enumtype code="SearchQueryType" dynamic="true">
+            <value code="FlexibleSearch" />
+            <value code="ImpExExport" />
+        </enumtype>
     </enumtypes>
 
     <relations>
@@ -62,13 +66,26 @@
                         </columntype>
                     </persistence>
                 </attribute>
+                <attribute qualifier="searchQueryType" type="SearchQueryType">
+                    <persistence type="property"/>
+                    <defaultvalue>tools.sapcx.commerce.reporting.enums.SearchQueryType.FLEXIBLESEARCH</defaultvalue>
+                    <model>
+                        <getter name="getSearchQueryType">
+                            <nullDecorator>tools.sapcx.commerce.reporting.enums.SearchQueryType.FLEXIBLESEARCH</nullDecorator>
+                        </getter>
+                    </model>
+                </attribute>
                 <attribute qualifier="emailRecipients" type="StringCollection">
                     <persistence type="property" />
                 </attribute>
                 <attribute qualifier="exportFormat" type="ReportExportFormat">
                     <persistence type="property" />
-                    <modifiers optional="false" />
                     <defaultvalue>tools.sapcx.commerce.reporting.enums.ReportExportFormat.EXCEL</defaultvalue>
+                    <model>
+                        <getter name="getExportFormat">
+                            <nullDecorator>tools.sapcx.commerce.reporting.enums.ReportExportFormat.EXCEL</nullDecorator>
+                        </getter>
+                    </model>
                 </attribute>
                 <attribute qualifier="compress" type="java.lang.Boolean">
                     <persistence type="property" />

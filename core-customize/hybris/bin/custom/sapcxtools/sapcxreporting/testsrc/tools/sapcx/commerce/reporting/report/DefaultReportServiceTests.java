@@ -56,8 +56,7 @@ public class DefaultReportServiceTests {
 		when(reportGenerator.getExtension()).thenReturn("csv");
 		when(reportGenerator.createReport(eq(fileConfiguration), eq(EMPTY_SEARCH_RESULT), any(File.class))).thenReturn(true);
 
-		service = new DefaultReportService();
-		service.setGenerators(Map.of(ReportExportFormat.CSV, reportGenerator));
+		service = new DefaultReportService(Map.of(ReportExportFormat.CSV, reportGenerator));
 	}
 
 	@Test
@@ -142,13 +141,12 @@ public class DefaultReportServiceTests {
 		when(fileUnabledToBeCreated.createNewFile()).thenReturn(false);
 		// doThrow(IOException.class).when(fileUnabledToBeCreated).createNewFile();
 
-		service = new DefaultReportService() {
+		service = new DefaultReportService(Map.of(ReportExportFormat.CSV, reportGenerator)) {
 			@Override
 			protected File getTemporaryReportFile(String filename) {
 				return fileUnabledToBeCreated;
 			}
 		};
-		service.setGenerators(Map.of(ReportExportFormat.CSV, reportGenerator));
 
 		Optional<File> reportFile = service.getReportFile(fileConfiguration, EMPTY_SEARCH_RESULT);
 
@@ -162,18 +160,16 @@ public class DefaultReportServiceTests {
 		when(fileUnabledToBeCreated.exists()).thenReturn(false);
 		doThrow(IOException.class).when(fileUnabledToBeCreated).createNewFile();
 
-		service = new DefaultReportService() {
+		service = new DefaultReportService(Map.of(ReportExportFormat.CSV, reportGenerator)) {
 			@Override
 			protected File getTemporaryReportFile(String filename) {
 				return fileUnabledToBeCreated;
 			}
 		};
-		service.setGenerators(Map.of(ReportExportFormat.CSV, reportGenerator));
 
 		Optional<File> reportFile = service.getReportFile(fileConfiguration, EMPTY_SEARCH_RESULT);
 
 		assertThat(reportFile).isNotPresent();
 		verify(reportGenerator, never()).createReport(eq(fileConfiguration), eq(EMPTY_SEARCH_RESULT), any(File.class));
 	}
-
 }

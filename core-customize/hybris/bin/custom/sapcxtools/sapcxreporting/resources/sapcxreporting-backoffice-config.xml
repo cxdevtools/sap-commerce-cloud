@@ -119,6 +119,7 @@
         <list-view:list-view>
             <list-view:column qualifier="id" hflex="true"/>
             <list-view:column qualifier="title" hflex="true"/>
+            <list-view:column qualifier="searchQueryType" width="150" hflex="false"/>
             <list-view:column qualifier="exportFormat" width="150" hflex="false"/>
             <list-view:column qualifier="compress" width="200" hflex="false"/>
             <list-view:column qualifier="emailEmptyResult" width="200" hflex="false"/>
@@ -188,6 +189,7 @@
                         </editorArea:attribute>
                     </editorArea:panel>
                     <editorArea:panel name="sapcxreporting.backoffice.panel.query">
+                        <editorArea:attribute qualifier="searchQueryType"/>
                         <editorArea:attribute qualifier="searchQuery">
                             <editorArea:editor-parameter>
                                 <editorArea:name>rows</editorArea:name>

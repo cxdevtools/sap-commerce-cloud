@@ -28,7 +28,7 @@ public class SolrReportDownloadFacade implements ReportDownloadFacade {
 				throw new IllegalArgumentException("Unknown report type '{}'! Please check configuration!");
 			}
 
-			GenericSearchResult searchResult = reportSearchFacade.search(query, Map.of());
+			GenericSearchResult searchResult = reportSearchFacade.search(query);
 			File reportFile = reportService.getReportFile(getQueryFileConfigurationData(title), searchResult)
 					.orElseThrow(() -> new FileNotFoundException("Report service did not provide a file!"));
 			return new SelfDeletingFileInputStream(reportFile);

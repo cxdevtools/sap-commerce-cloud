@@ -8,13 +8,21 @@
 
     <!-- Report -->
     <bean id="reportGeneratorJobPerformable" parent="abstractJobPerformable" class="tools.sapcx.commerce.reporting.generator.ReportGeneratorJobPerformable">
-        <constructor-arg name="genericSearchService" ref="cxGenericSearchService" />
+        <constructor-arg name="genericSearchServices" ref="cxGenericSearchServicesMap" />
         <constructor-arg name="reportService" ref="reportService" />
         <constructor-arg name="htmlEmailGenerator" ref="htmlEmailGenerator" />
         <constructor-arg name="htmlEmailService" ref="htmlEmailService" />
         <constructor-arg name="mimeService" ref="mimeService" />
         <constructor-arg name="queryConfigurationConverter" ref="queryConfigurationConverter"/>
     </bean>
+
+    <alias alias="cxGenericSearchServicesMap" name="defaultGenericSearchServicesMap" />
+    <util:map id="defaultGenericSearchServicesMap"
+              key-type="tools.sapcx.commerce.reporting.enums.SearchQueryType"
+              value-type="tools.sapcx.commerce.reporting.search.GenericSearchService">
+        <entry key="FLEXIBLESEARCH" value-ref="cxFlexibleSearchGenericSearchService" />
+        <entry key="IMPEXEXPORT" value-ref="cxImpExExportGenericSearchService" />
+    </util:map>
 
     <alias alias="reportService" name="cxReportService" />
     <bean id="cxReportService" class="tools.sapcx.commerce.reporting.report.DefaultReportService">
@@ -36,12 +44,17 @@
     <bean id="cxExcelReportGenerator" class="tools.sapcx.commerce.reporting.generator.excel.ExcelReportGenerator" />
 
     <!-- Search -->
-    <alias alias="cxGenericSearchService" name="cxFlexibleSearchGenericSearchService" />
-    <bean id="cxFlexibleSearchGenericSearchService" class="tools.sapcx.commerce.reporting.search.FlexibleSearchGenericSearchService">
+    <alias alias="cxFlexibleSearchGenericSearchService" name="defaultFlexibleSearchGenericSearchService" />
+    <bean id="defaultFlexibleSearchGenericSearchService" class="tools.sapcx.commerce.reporting.search.FlexibleSearchGenericSearchService">
         <constructor-arg name="userService" ref="userService" />
         <constructor-arg name="sessionService" ref="sessionService" />
         <constructor-arg name="catalogVersionService" ref="catalogVersionService" />
         <constructor-arg name="flexibleSearchService" ref="flexibleSearchService" />
+    </bean>
+
+    <alias alias="cxImpExExportGenericSearchService" name="defaultImpExExportGenericSearchService" />
+    <bean id="defaultImpExExportGenericSearchService" class="tools.sapcx.commerce.reporting.search.ImpExExportGenericSearchService">
+        <constructor-arg name="exportService" ref="exportService" />
     </bean>
 
     <!-- Report Download Facade -->

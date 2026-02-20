@@ -36,6 +36,7 @@ import org.assertj.core.util.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tools.sapcx.commerce.reporting.enums.SearchQueryType;
 import tools.sapcx.commerce.reporting.model.QueryReportConfigurationModel;
 import tools.sapcx.commerce.reporting.model.ReportGenerationScheduleModel;
 import tools.sapcx.commerce.reporting.report.ReportService;
@@ -52,7 +53,7 @@ public class ReportGeneratorJobPerformable extends AbstractJobPerformable<Report
 	private static final Logger LOG = LoggerFactory.getLogger(ReportGeneratorJobPerformable.class);
 	private static final int BYTES_TO_READ = 20;
 
-	private final GenericSearchService genericSearchService;
+	private final Map<SearchQueryType, GenericSearchService> genericSearchServices;
 	private final ReportService reportService;
 	private final HtmlEmailGenerator htmlEmailGenerator;
 	private final HtmlEmailService htmlEmailService;
@@ -60,13 +61,13 @@ public class ReportGeneratorJobPerformable extends AbstractJobPerformable<Report
 	private final Converter<QueryReportConfigurationModel, QueryFileConfigurationData> queryConfigurationConverter;
 
 	public ReportGeneratorJobPerformable(
-			GenericSearchService genericSearchService,
+			Map<SearchQueryType, GenericSearchService> genericSearchServices,
 			ReportService reportService,
 			HtmlEmailGenerator htmlEmailGenerator,
 			HtmlEmailService htmlEmailService,
 			MimeService mimeService,
 			Converter<QueryReportConfigurationModel, QueryFileConfigurationData> queryConfigurationConverter) {
-		this.genericSearchService = genericSearchService;
+		this.genericSearchServices = genericSearchServices;
 		this.reportService = reportService;
 		this.htmlEmailGenerator = htmlEmailGenerator;
 		this.htmlEmailService = htmlEmailService;
@@ -116,12 +117,19 @@ public class ReportGeneratorJobPerformable extends AbstractJobPerformable<Report
 	private boolean generateAndSendReport(QueryReportConfigurationModel report) {
 		String query = report.getSearchQuery();
 		Map<String, Object> params = reportService.getReportParameters(report);
+		Map<String, Object> configuration = reportService.getReportConfiguration(report);
 		LOG.debug(String.format("Executing query '%s' for report '%s'", query, report.getTitle()));
 
 		Optional<File> reportFile = Optional.empty();
 		Optional<File> zipFile = Optional.empty();
 		try {
-			GenericSearchResult searchResult = genericSearchService.search(query, params);
+			if (!genericSearchServices.containsKey(report.getSearchQueryType())) {
+				LOG.warn("Error executing query '{}' for report '{}' - query type '{}' not registered!", query, report.getTitle(), report.getSearchQueryType());
+				return false;
+			}
+
+			final GenericSearchService genericSearchService = genericSearchServices.get(report.getSearchQueryType());
+			final GenericSearchResult searchResult = genericSearchService.search(query, params, configuration);
 			if (searchResult.hasError()) {
 				LOG.warn(String.format("Error executing query '%s' for report '%s'", query, report.getTitle()));
 				return false;

@@ -32,6 +32,14 @@ public interface ReportService {
 	Map<String, Object> getReportParameters(QueryReportConfigurationModel report);
 
 	/**
+	 * Gets a map of the configured values with its name as key and the value
+	 *
+	 * @param report to get configuration from
+	 * @return the report configuration
+	 */
+	Map<String, Object> getReportConfiguration(QueryReportConfigurationModel report);
+
+	/**
 	 * Return the directory to be used for report generation.
 	 *
 	 * @return the report directory

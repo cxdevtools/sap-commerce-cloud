@@ -92,6 +92,17 @@ public class DefaultReportService implements ReportService {
 		return params;
 	}
 
+	@Override
+	public Map<String, Object> getReportConfiguration(QueryReportConfigurationModel report) {
+		return Map.of(
+				QueryReportConfigurationModel.CSVLINEBREAK, report.getCsvLineBreak(),
+				QueryReportConfigurationModel.CSVCOMMENTCHAR, report.getCsvCommentChar(),
+				QueryReportConfigurationModel.CSVFIELDSEPARATOR, report.getCsvFieldSeparator(),
+				QueryReportConfigurationModel.CSVTEXTSEPARATOR, report.getCsvTextSeparator(),
+				QueryReportConfigurationModel.CSVENCODING, report.getCsvEncoding()
+		);
+	}
+
 	public File getReportDirectory() {
 		File reportDir = FileUtils.getTempDirectory()
 				.toPath()

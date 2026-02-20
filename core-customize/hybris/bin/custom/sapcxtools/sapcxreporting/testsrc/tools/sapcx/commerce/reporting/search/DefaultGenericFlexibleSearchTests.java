@@ -53,6 +53,7 @@ public class DefaultGenericFlexibleSearchTests {
 	private static final String FLEXIBLESEARCH_ERROR = "query error";
 	private static final String FLEXIBLE_SEARCH_QUERY = "SELECT {pk} FROM {Product} WHERE {catalogVersion} IN (?catalogVersion)";
 	private static final ImmutableMap<String, Object> QUERY_PARAMS = ImmutableMap.of("catalogVersion", InMemoryModelFactory.createTestableItemModel(CatalogVersionModel.class));
+	private static final ImmutableMap<String, Object> CONFIG_PARAMS = ImmutableMap.of("configId1", "CfgValue1");
 
 	private Tenant tenant = mock(Tenant.class);
 	private Connection connection = mock(Connection.class);
@@ -111,7 +112,7 @@ public class DefaultGenericFlexibleSearchTests {
 
 	@Test
 	public void withEmptyQuery_returnsError() {
-		GenericSearchResult result = genericFlexibleSearch.search("", Map.of());
+		GenericSearchResult result = genericFlexibleSearch.search("");
 
 		verify(flexibleSearchService, never()).toPersistenceLayer(any());
 		verify(flexibleSearchService, never()).translate(any(FlexibleSearchQuery.class));
@@ -125,7 +126,7 @@ public class DefaultGenericFlexibleSearchTests {
 		values.add(ImmutableMap.of(header1, "First Row First Value", header2, "First Row Second Value"));
 		values.add(ImmutableMap.of(header1, "Second Row First Value", header2, "Second Row Second Value"));
 
-		GenericSearchResult result = genericFlexibleSearch.search(FLEXIBLE_SEARCH_QUERY, QUERY_PARAMS);
+		GenericSearchResult result = genericFlexibleSearch.search(FLEXIBLE_SEARCH_QUERY, QUERY_PARAMS, CONFIG_PARAMS);
 
 		verify(flexibleSearchService, times(1)).toPersistenceLayer(QUERY_PARAMS);
 		verify(flexibleSearchService, times(1)).translate(any(FlexibleSearchQuery.class));
@@ -149,7 +150,7 @@ public class DefaultGenericFlexibleSearchTests {
 
 		resultSetFake.withMatchingHeaderLabel();
 
-		GenericSearchResult result = genericFlexibleSearch.search(FLEXIBLE_SEARCH_QUERY, QUERY_PARAMS);
+		GenericSearchResult result = genericFlexibleSearch.search(FLEXIBLE_SEARCH_QUERY, QUERY_PARAMS, CONFIG_PARAMS);
 
 		verify(flexibleSearchService, times(1)).toPersistenceLayer(QUERY_PARAMS);
 		verify(flexibleSearchService, times(1)).translate(any(FlexibleSearchQuery.class));
@@ -173,7 +174,7 @@ public class DefaultGenericFlexibleSearchTests {
 
 		resultSetFake.withMatchingHeaderName();
 
-		GenericSearchResult result = genericFlexibleSearch.search(FLEXIBLE_SEARCH_QUERY, QUERY_PARAMS);
+		GenericSearchResult result = genericFlexibleSearch.search(FLEXIBLE_SEARCH_QUERY, QUERY_PARAMS, CONFIG_PARAMS);
 
 		verify(flexibleSearchService, times(1)).toPersistenceLayer(QUERY_PARAMS);
 		verify(flexibleSearchService, times(1)).translate(any(FlexibleSearchQuery.class));
@@ -193,7 +194,7 @@ public class DefaultGenericFlexibleSearchTests {
 	@Test
 	public void search_error() {
 		when(flexibleSearchService.translate(any())).thenThrow(new FlexibleSearchException(FLEXIBLESEARCH_ERROR));
-		GenericSearchResult result = genericFlexibleSearch.search(FLEXIBLE_SEARCH_QUERY, QUERY_PARAMS);
+		GenericSearchResult result = genericFlexibleSearch.search(FLEXIBLE_SEARCH_QUERY, QUERY_PARAMS, CONFIG_PARAMS);
 
 		verify(flexibleSearchService, times(1)).toPersistenceLayer(QUERY_PARAMS);
 		verify(flexibleSearchService, times(1)).translate(any(FlexibleSearchQuery.class));

@@ -12,7 +12,6 @@ import java.util.Optional;
 
 import com.hybris.cockpitng.actions.ActionContext;
 import com.hybris.cockpitng.actions.ActionResult;
-import com.hybris.cockpitng.actions.CockpitAction;
 
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 
@@ -22,54 +21,42 @@ import org.slf4j.LoggerFactory;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Messagebox;
 
+import tools.sapcx.commerce.reporting.enums.SearchQueryType;
 import tools.sapcx.commerce.reporting.model.QueryReportConfigurationModel;
 import tools.sapcx.commerce.reporting.report.ReportService;
 import tools.sapcx.commerce.reporting.report.data.QueryFileConfigurationData;
-import tools.sapcx.commerce.reporting.search.FlexibleSearchGenericSearchService;
 import tools.sapcx.commerce.reporting.search.GenericSearchResult;
 
 import jakarta.annotation.Resource;
+import tools.sapcx.commerce.reporting.search.GenericSearchService;
 
-public class ExecuteReportAction implements CockpitAction<QueryReportConfigurationModel, Object> {
+public class ExecuteReportAction extends AbstractReportAction {
 	private static final Logger LOG = LoggerFactory.getLogger(ExecuteReportAction.class);
 	private static final String CONFIRMATION = "executereport.confirmation";
 	private static final String SEARCH_ERROR = "executereport.errors.search";
 	private static final String REPORT_GENERATE_ERROR = "executereport.errors.generation";
 	private static final String FILE_READ_ERROR = "executereport.errors.fileread";
 
-	@Resource(name = "cxGenericSearchService")
-	private FlexibleSearchGenericSearchService flexibleSearchService;
-
-	@Resource(name = "cxReportService")
-	private ReportService dataReportService;
-
 	@Resource(name = "queryConfigurationConverter")
 	private Converter<QueryReportConfigurationModel, QueryFileConfigurationData> queryConfigurationConverter;
 
 	@Override
-	public ActionResult<Object> perform(ActionContext<QueryReportConfigurationModel> actionContext) {
-		QueryReportConfigurationModel report = actionContext.getData();
-
-		String query = report.getSearchQuery();
-		Map<String, Object> params = dataReportService.getReportParameters(report);
-
-		LOG.debug("Executing query {} with params {}", query, params);
-		GenericSearchResult searchResult = flexibleSearchService.search(query, params);
-
+	protected ActionResult<Object> processSearchResult(ActionContext<QueryReportConfigurationModel> actionContext, GenericSearchResult searchResult) {
+		final QueryReportConfigurationModel report = actionContext.getData();
 		if (searchResult.hasError()) {
 			return error(MessageFormat.format(actionContext.getLabel(SEARCH_ERROR), searchResult.getError()));
 		}
 
-		QueryFileConfigurationData queryFileConfigurationData = queryConfigurationConverter.convert(report);
-		Optional<File> reportFile = dataReportService.getReportFile(queryFileConfigurationData, searchResult);
+		final QueryFileConfigurationData queryFileConfigurationData = queryConfigurationConverter.convert(report);
+		final Optional<File> reportFile = dataReportService.getReportFile(queryFileConfigurationData, searchResult);
 		if (!reportFile.isPresent()) {
 			return error(actionContext.getLabel(REPORT_GENERATE_ERROR));
 		}
 
-		File media = reportFile.get();
+		final File media = reportFile.get();
 		try {
-			String extension = FilenameUtils.getExtension(media.getAbsolutePath());
-			String filename = defaultIfBlank(report.getTitle(), report.getId()) + "." + extension;
+			final String extension = FilenameUtils.getExtension(media.getAbsolutePath());
+			final String filename = defaultIfBlank(report.getTitle(), report.getId()) + "." + extension;
 			Filedownload.save(new FileInputStream(media), Files.probeContentType(media.toPath()), filename);
 			return success();
 		} catch (IOException e) {
@@ -82,18 +69,6 @@ public class ExecuteReportAction implements CockpitAction<QueryReportConfigurati
 				LOG.warn("Error deleting temporary media file at: " + media.getAbsolutePath(), e);
 			}
 		}
-	}
-
-	private ActionResult<Object> success() {
-		return new ActionResult<>(ActionResult.SUCCESS);
-	}
-
-	private ActionResult<Object> error(String msg) {
-		Messagebox.show(msg, "Error", Messagebox.OK, Messagebox.ERROR);
-
-		ActionResult<Object> result = new ActionResult<>(ActionResult.ERROR);
-		result.setResultMessage(msg);
-		return result;
 	}
 
 	@Override
