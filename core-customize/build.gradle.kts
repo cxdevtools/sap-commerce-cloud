@@ -114,7 +114,8 @@ val symlinkConfigTask: TaskProvider<Task> = tasks.register("symlinkConfig")
 val localConfig = file("hybris/config/local-config")
 mapOf(
     "10-local.properties" to file("hybris/config/cloud/common.properties"),
-    "20-local.properties" to file("hybris/config/cloud/persona/development.properties")
+    "20-local.properties" to file("hybris/config/cloud/persona/development.properties"),
+    "50-local.properties" to file("hybris/config/cloud/local-dev.properties")
 ).forEach{
     val symlinkTask = tasks.register<Exec>("symlink${it.key}") {
         val path = it.value.relativeTo(localConfig)
