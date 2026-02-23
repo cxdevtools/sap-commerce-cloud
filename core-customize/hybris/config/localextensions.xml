@@ -13,5 +13,8 @@
     <extension name="sapcxbackoffice"/>
     <extension name="sapcxreporting"/>
     <extension name="sapcxenvconfig"/>
+    
+    <!-- CXDEV Tools -->
+    <extension name="cxdevproxy"/>
   </extensions>
 </hybrisconfig>

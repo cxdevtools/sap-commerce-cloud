@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:util="http://www.springframework.org/schema/util"
+	   xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<bean id="cxUndertowProxyManager" class="me.cxdev.commerce.proxy.livecycle.UndertowProxyManager">
+		<property name="enabled" value="${cxdevproxy.enabled}" />
+
+		<property name="serverBindAddress" value="${cxdevproxy.server.bindaddress}" />
+		<property name="serverProtocol" value="${cxdevproxy.server.protocol}" />
+		<property name="serverPort" value="${cxdevproxy.server.port}" />
+
+		<property name="sslEnabled" value="${cxdevproxy.ssl.enabled}" />
+		<property name="sslKeystorePath" value="${cxdevproxy.ssl.keystore.path}" />
+		<property name="sslKeystorePassword" value="${cxdevproxy.ssl.keystore.password}" />
+		<property name="sslKeystoreAlias" value="${cxdevproxy.ssl.keystore.alias}" />
+
+		<property name="frontendProtocol" value="${cxdevproxy.proxy.frontend.protocol}" />
+		<property name="frontendHostname" value="${cxdevproxy.proxy.frontend.hostname}" />
+		<property name="frontendPort" value="${cxdevproxy.proxy.frontend.port}" />
+
+		<property name="backendProtocol" value="${cxdevproxy.proxy.backend.protocol}" />
+		<property name="backendHostname" value="${cxdevproxy.proxy.backend.hostname}" />
+		<property name="backendPort" value="${cxdevproxy.proxy.backend.port}" />
+		<property name="backendContexts" value="${cxdevproxy.proxy.backend.contexts}" />
+
+		<property name="localRouteHandlers" ref="cxLocalRouteHandlers" />
+		<property name="frontendHandlers" ref="cxFrontendProxyHandlers" />
+		<property name="backendHandlers" ref="cxBackendProxyHandlers" />
+	</bean>
+
+	<!-- Local Route Handlers -->
+	<alias name="cxDefaultLocalRouteHandlers" alias="cxLocalRouteHandlers"/>
+	<util:list id="cxDefaultLocalRouteHandlers" value-type="me.cxdev.commerce.proxy.livecycle.ProxyLocalRouteHandler">
+		<ref bean="cxStartupPageHandler"/>
+		<ref bean="cxStaticContentHandler"/>
+	</util:list>
+
+	<!-- Proxy Handlers -->
+	<alias name="cxDefaultFrontendProxyHandlers" alias="cxFrontendProxyHandlers"/>
+	<util:list id="cxDefaultFrontendProxyHandlers" value-type="me.cxdev.commerce.proxy.livecycle.ProxyHttpServerExchangeHandler">
+		<ref bean="cxForwardedHeadersHandler"/>
+	</util:list>
+
+	<alias name="cxDefaultBackendProxyHandlers" alias="cxBackendProxyHandlers"/>
+	<util:list id="cxDefaultBackendProxyHandlers" value-type="me.cxdev.commerce.proxy.livecycle.ProxyHttpServerExchangeHandler">
+		<ref bean="cxForwardedHeadersHandler"/>
+	</util:list>
+	
+	<import resource="classpath*:/cxdevproxy/config/cxdevproxy-handler-spring.xml"/>
+</beans>

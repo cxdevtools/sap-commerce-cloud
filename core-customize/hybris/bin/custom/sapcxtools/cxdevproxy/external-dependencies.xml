@@ -1,0 +1,95 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>me.cxdev</groupId>
+	<artifactId>cxdevproxy</artifactId>
+	<version>5.0.0-snapshot</version>
+	<packaging>jar</packaging>
+
+	<properties>
+		<smallrye.common.version>2.16.0</smallrye.common.version>
+		<graalvm.sdk.version>25.0.2</graalvm.sdk.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>io.undertow</groupId>
+			<artifactId>undertow-core</artifactId>
+			<version>2.3.23.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.xnio</groupId>
+			<artifactId>xnio-api</artifactId>
+			<version>3.8.17.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.xnio</groupId>
+			<artifactId>xnio-nio</artifactId>
+			<version>3.8.17.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.threads</groupId>
+			<artifactId>jboss-threads</artifactId>
+			<version>3.9.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.wildfly.client</groupId>
+			<artifactId>wildfly-client-config</artifactId>
+			<version>1.0.1.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.wildfly.common</groupId>
+			<artifactId>wildfly-common</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.smallrye.common</groupId>
+			<artifactId>smallrye-common-constraint</artifactId>
+			<version>${smallrye.common.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.smallrye.common</groupId>
+			<artifactId>smallrye-common-cpu</artifactId>
+			<version>${smallrye.common.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.smallrye.common</groupId>
+			<artifactId>smallrye-common-expression</artifactId>
+			<version>${smallrye.common.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.smallrye.common</groupId>
+			<artifactId>smallrye-common-function</artifactId>
+			<version>${smallrye.common.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.smallrye.common</groupId>
+			<artifactId>smallrye-common-net</artifactId>
+			<version>${smallrye.common.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.smallrye.common</groupId>
+			<artifactId>smallrye-common-os</artifactId>
+			<version>${smallrye.common.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.smallrye.common</groupId>
+			<artifactId>smallrye-common-ref</artifactId>
+			<version>${smallrye.common.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.graalvm.sdk</groupId>
+			<artifactId>nativeimage</artifactId>
+			<version>${graalvm.sdk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.graalvm.sdk</groupId>
+			<artifactId>word</artifactId>
+			<version>${graalvm.sdk.version}</version>
+		</dependency>
+	</dependencies>
+</project>
