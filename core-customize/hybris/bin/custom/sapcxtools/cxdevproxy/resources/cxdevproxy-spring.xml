@@ -50,5 +50,6 @@
 		<ref bean="cxForwardedHeadersHandler"/>
 	</util:list>
 	
+	<import resource="classpath:/cxdevproxy/config/cxdevproxy-jwt-spring.xml"/>
 	<import resource="classpath*:/cxdevproxy/config/cxdevproxy-handler-spring.xml"/>
 </beans>

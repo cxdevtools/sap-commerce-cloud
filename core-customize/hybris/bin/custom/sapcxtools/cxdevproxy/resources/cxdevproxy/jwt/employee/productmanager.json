@@ -1,0 +1,5 @@
+{
+  "sub": "productmanager",
+  "name": "Product Manager",
+  "authorities": ["ROLE_PRODUCTMANAGERGROUP", "ROLE_EMPLOYEEGROUP"]
+}

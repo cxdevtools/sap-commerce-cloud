@@ -1,0 +1,5 @@
+{
+  "sub": "besucher",
+  "name": "Franz Training",
+  "authorities": ["ROLE_B2BCUSTOMERGROUP", "ROLE_TRAININGGROUP"]
+}
