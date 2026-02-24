@@ -15,7 +15,7 @@ import tools.sapcx.commerce.toolkit.testing.testdoubles.config.ConfigurationServ
 @UnitTest
 public class ValueFieldOfConfigurationPropertyAccessorAttributeHandlerTests {
 	private ConfigurationServiceFake configurationService;
-	private ValueFieldOfConfigurationPropertyAccessorAttributeHandler handler = new ValueFieldOfConfigurationPropertyAccessorAttributeHandler();
+	private ValueFieldOfConfigurationPropertyAccessorAttributeHandler handler;
 
 	@Before
 	public void setUp() throws Exception {
@@ -23,7 +23,7 @@ public class ValueFieldOfConfigurationPropertyAccessorAttributeHandlerTests {
 		configurationService.setProperty("sample.key1", "custom value 1");
 		configurationService.setProperty("sample.key2", "custom value 2");
 
-		handler.setConfigurationService(configurationService);
+		handler = new ValueFieldOfConfigurationPropertyAccessorAttributeHandler(configurationService);
 	}
 
 	@Test
