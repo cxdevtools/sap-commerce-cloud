@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <extensioninfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="extensioninfo.xsd">
-    <extension abstractclassprefix="Generated" classprefix="CxReporting" jaloLogicFree="true" name="cxdevreporting" version="5.0.0-snapshot" usemaven="true">
+    <extension abstractclassprefix="Generated" classprefix="CxReporting" jaloLogicFree="true" name="cxdevreporting" version="5.0.0" usemaven="true">
         <requires-extension name="platformbackoffice"/>
         <requires-extension name="commercefacades"/>
         <requires-extension name="cxdevtoolkit"/>
