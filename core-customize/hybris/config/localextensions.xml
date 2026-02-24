@@ -8,7 +8,6 @@
     <extension name="samlssobackoffice"/>
 
     <!-- SAP CX Tools -->
-    <extension name="sapcxtemplate"/>
     <extension name="sapcommercetoolkit"/>
     <extension name="sapcxbackoffice"/>
     <extension name="sapcxreporting"/>
