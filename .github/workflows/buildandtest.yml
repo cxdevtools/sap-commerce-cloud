@@ -27,7 +27,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: "sapmachine"
-          java-version-file: "21"
+          java-version-file: ".java-version"
           cache: "gradle"
       - name: Validate Gradle wrapper
         uses: gradle/actions/wrapper-validation@v5
