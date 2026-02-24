@@ -1,49 +1,45 @@
 {
-    "commerceSuiteVersion": "2211-jdk21.5",
+    "commerceSuiteVersion": "2211-jdk21.6",
     "extensionPacks": [],
     "solr": {
         "location": "solr",
-        "solrVersion": "9.8"
+        "solrVersion": "9.10"
     },
     "extensions": [],
     "properties": [],
-    "storefrontAddons": [],
     "useCloudExtensionPack": false,
     "useConfig": {
         "extensions": {
-            "exclude": [],
-            "location": "hybris/config/localextensions.xml"
+            "location": "hybris/config/localextensions.xml",
+            "exclude": [ "cxdevproxy" ]
         },
-        "properties": [{
+        "properties": [
+            {
                 "location": "hybris/config/cloud/common.properties"
+            },
+            {
+                "persona": "development",
+                "location": "hybris/config/cloud/persona/development.properties"
+            },
+            {
+                "persona": "staging",
+                "location": "hybris/config/cloud/persona/staging.properties"
+            },
+            {
+                "persona": "production",
+                "location": "hybris/config/cloud/persona/production.properties"
             },
             {
                 "aspect": "api",
                 "location": "hybris/config/cloud/aspect/api.properties"
             },
             {
-                "aspect": "backoffice",
-                "location": "hybris/config/cloud/aspect/backoffice.properties"
-            },
-            {
                 "aspect": "backgroundProcessing",
                 "location": "hybris/config/cloud/aspect/backgroundprocessing.properties"
             },
             {
-                "aspect": "admin",
-                "location": "hybris/config/cloud/aspect/admin.properties"
-            },
-            {
-                "location": "hybris/config/cloud/persona/development.properties",
-                "persona": "development"
-            },
-            {
-                "location": "hybris/config/cloud/persona/staging.properties",
-                "persona": "staging"
-            },
-            {
-                "location": "hybris/config/cloud/persona/production.properties",
-                "persona": "production"
+                "aspect": "backoffice",
+                "location": "hybris/config/cloud/aspect/backoffice.properties"
             }
         ],
         "tests": {
@@ -52,16 +48,18 @@
             "packages": ["tools.sapcx.commerce.*"]
         }
     },
-    "aspects": [{
-            "name": "backoffice",
+    "aspects": [
+        {
+            "name": "api",
+            "properties": [],
             "webapps": [
                 {
                     "contextPath": "/hac",
                     "name": "hac"
                 },
                 {
-                    "contextPath": "/backoffice",
-                    "name": "backoffice"
+                    "contextPath": "/occ",
+                    "name": "commercewebservices"
                 },
                 {
                     "contextPath": "/medias",
@@ -86,22 +84,29 @@
                     "name": "hac"
                 },
                 {
-                    "contextPath": "/medias",
-                    "name": "mediaweb"
+                    "contextPath": "/odata2webservices",
+                    "name": "odata2webservices"
+                },
+                {
+                    "contextPath": "/authorizationserver",
+                    "name": "authorizationserver"
+                },
+                {
+                    "contextPath": "/resourceserver",
+                    "name": "resourceserver"
                 }
             ]
         },
         {
-            "name": "api",
-            "properties": [],
+            "name": "backoffice",
             "webapps": [
                 {
                     "contextPath": "/hac",
                     "name": "hac"
                 },
                 {
-                    "contextPath": "/occ",
-                    "name": "commercewebservices"
+                    "contextPath": "/backoffice",
+                    "name": "backoffice"
                 },
                 {
                     "contextPath": "/medias",
@@ -109,7 +114,7 @@
                 },
                 {
                     "contextPath": "/authorizationserver",
-                    "name": "oauth2"
+                    "name": "authorizationserver"
                 },
                 {
                     "contextPath": "/resourceserver",
