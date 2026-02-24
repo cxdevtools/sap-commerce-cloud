@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        extension: ["sapcommercetoolkit", "sapcxbackoffice", "sapcxreporting", "sapcxsearch", "sapcxenvconfig", "sapcxsinglesignon"]
+        extension: ["sapcommercetoolkit", "sapcxbackoffice", "sapcxreporting", "sapcxenvconfig"]
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
