@@ -1,10 +1,6 @@
 
 <Server port="${tomcat.internalserver.port}" shutdown="SHUTDOWN">
 
-  <!-- For security reasons remote JMX access is disabled. You can still use local process to access JMX beans. If you need to enable remote JMX - uncomment this listener
-  <Listener className="org.apache.catalina.mbeans.JmxRemoteLifecycleListener" rmiRegistryPortPlatform="${tomcat.jmx.port}" rmiServerPortPlatform="${tomcat.jmx.server.port}" />
-  -->
-
   <!-- If you want to use the jndi uncoment this listener
   <Listener className="de.hybris.tomcat.HybrisGlobalResourcesLifecycleListener"  dataSourceName="${db.pool.fromJNDI}"/>
   -->
@@ -76,13 +72,13 @@
                URIEncoding="UTF-8"
                SSLEnabled="true"
 					scheme="https"
-					secure="true"
-					clientAuth="false"
-   				sslProtocol = "TLS"
-   				keyAlias="${tomcat.ssl.keystore.alias}"
-   				keystoreFile="${tomcat.ssl.keystore.path}"
-   				keystorePass="${tomcat.ssl.keystore.password}"
-                />
+					secure="true">
+		<SSLHostConfig sslProtocol="TLS" certificateVerification="none">
+			<Certificate certificateKeystoreFile="${tomcat.ssl.keystore.path}"
+						 certificateKeystorePassword="${tomcat.ssl.keystore.password}"
+						 certificateKeyAlias="${tomcat.ssl.keystore.alias}"/>
+		</SSLHostConfig>
+	</Connector>
 
     <!--
     This might evaluate into 

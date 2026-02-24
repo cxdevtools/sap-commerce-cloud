@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="beans.xsd">
+    <bean class="me.cxdev.commerce.reporting.report.data.QueryFileConfigurationData">
+        <property name="title" type="java.lang.String"/>
+        <property name="exportFormat" type="java.lang.String"/>
+        <property name="compress" type="java.lang.Boolean"/>
+        <property name="csvEncoding" type="java.lang.String"/>
+        <property name="csvCommentChar" type="java.lang.Character"/>
+        <property name="csvFieldSeparator" type="java.lang.Character"/>
+        <property name="csvTextSeparator" type="java.lang.Character"/>
+        <property name="csvLineBreak" type="java.lang.String"/>
+        <property name="excelHighlightHeader" type="java.lang.Boolean"/>
+        <property name="excelFreezeHeader" type="java.lang.Boolean"/>
+        <property name="excelActivateFilter" type="java.lang.Boolean"/>
+        <property name="excelAutosizeColumns" type="java.lang.Boolean"/>
+        <property name="excelAlternatingLines" type="java.lang.Boolean"/>
+        <property name="maxResults" type="java.lang.Integer"/>
+        <property name="stringDateFormat" type="java.lang.String"/>
+    </bean>
+</beans>

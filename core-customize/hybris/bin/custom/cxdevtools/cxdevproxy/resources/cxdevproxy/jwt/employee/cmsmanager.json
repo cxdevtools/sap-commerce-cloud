@@ -1,0 +1,5 @@
+{
+  "sub": "cmsmanager",
+  "name": "CMS Manager",
+  "authorities": ["ROLE_CMSMANAGERGROUP", "ROLE_EMPLOYEEGROUP"]
+}

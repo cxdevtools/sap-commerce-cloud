@@ -1,0 +1,5 @@
+{
+  "sub": "admin",
+  "name": "Shop Admin",
+  "authorities": ["ROLE_ADMINGROUP", "ROLE_EMPLOYEEGROUP"]
+}

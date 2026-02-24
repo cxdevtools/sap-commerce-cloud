@@ -1,0 +1,27 @@
+{
+	// Prettify on save
+	"editor.formatOnSave": true,
+	// organize imports on save
+	"editor.codeActionsOnSave": {
+		"source.organizeImports": "explicit"
+	},
+	// Uses the project specific typescript version.
+	"typescript.tsdk": "node_modules/typescript/lib",
+	"prettier.configPath": ".prettierrc",
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+
+	//SonarLint
+	"sonarlint.connectedMode.project": {
+		"projectKey": "mynetzsch-spartacus"
+	},
+	"sonarlint.disableTelemetry": true,
+	"[xml]": {
+		"editor.defaultFormatter": "DotJoshJohnson.xml"
+	},
+	"[scss]": {
+		"editor.defaultFormatter": "vscode.css-language-features"
+	},
+	"[json]": {
+		"editor.defaultFormatter": "vscode.json-language-features"
+	}
+}

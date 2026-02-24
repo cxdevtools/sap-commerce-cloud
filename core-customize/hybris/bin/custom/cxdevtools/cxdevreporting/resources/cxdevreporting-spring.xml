@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/util
+           http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!-- Report -->
+    <bean id="reportGeneratorJobPerformable" parent="abstractJobPerformable" class="me.cxdev.commerce.reporting.generator.ReportGeneratorJobPerformable">
+        <constructor-arg name="genericSearchService" ref="cxGenericSearchService" />
+        <constructor-arg name="reportService" ref="reportService" />
+        <constructor-arg name="htmlEmailGenerator" ref="htmlEmailGenerator" />
+        <constructor-arg name="htmlEmailService" ref="htmlEmailService" />
+        <constructor-arg name="mimeService" ref="mimeService" />
+        <constructor-arg name="queryConfigurationConverter" ref="queryConfigurationConverter"/>
+    </bean>
+
+    <alias alias="reportService" name="cxReportService" />
+    <bean id="cxReportService" class="me.cxdev.commerce.reporting.report.DefaultReportService">
+        <constructor-arg name="generators" ref="reportGeneratorMap" />
+    </bean>
+
+    <alias alias="reportGeneratorMap" name="defaultReportGeneratorMap" />
+    <util:map id="defaultReportGeneratorMap"
+              key-type="me.cxdev.commerce.reporting.enums.ReportExportFormat"
+              value-type="me.cxdev.commerce.reporting.generator.ReportGenerator">
+        <entry key="CSV" value-ref="csvReportGenerator" />
+        <entry key="EXCEL" value-ref="excelReportGenerator" />
+    </util:map>
+
+    <alias alias="csvReportGenerator" name="cxCsvReportGenerator" />
+    <bean id="cxCsvReportGenerator" class="me.cxdev.commerce.reporting.generator.csv.CsvReportGenerator" />
+
+    <alias alias="excelReportGenerator" name="cxExcelReportGenerator" />
+    <bean id="cxExcelReportGenerator" class="me.cxdev.commerce.reporting.generator.excel.ExcelReportGenerator" />
+
+    <!-- Search -->
+    <alias alias="cxGenericSearchService" name="cxFlexibleSearchGenericSearchService" />
+    <bean id="cxFlexibleSearchGenericSearchService" class="me.cxdev.commerce.reporting.search.FlexibleSearchGenericSearchService">
+        <constructor-arg name="userService" ref="userService" />
+        <constructor-arg name="sessionService" ref="sessionService" />
+        <constructor-arg name="catalogVersionService" ref="catalogVersionService" />
+        <constructor-arg name="flexibleSearchService" ref="flexibleSearchService" />
+    </bean>
+
+    <!-- Report Download Facade -->
+    <alias alias="reportDownloadFacade" name="cxSolrReportDownloadFacade" />
+    <bean id="cxSolrReportDownloadFacade" class="me.cxdev.commerce.reporting.download.SolrReportDownloadFacade">
+        <constructor-arg name="reportService" ref="reportService"/>
+        <constructor-arg name="reportSearchFacades" ref="reportSearchFacadesMap"/>
+    </bean>
+    <alias alias="reportSearchFacadesMap" name="cxReportSearchFacadesMap" />
+    <util:map id="cxReportSearchFacadesMap"
+              key-type="java.lang.String"
+              value-type="me.cxdev.commerce.reporting.search.AbstractGenericSearchFacade">
+    </util:map>
+
+    <!-- Domain -->
+    <bean id="valueFieldOfConfigurationPropertyAccessorAttributeHandler" class="me.cxdev.commerce.reporting.domain.ValueFieldOfConfigurationPropertyAccessorAttributeHandler">
+        <constructor-arg name="configurationService" ref="configurationService"/>
+    </bean>
+
+    <bean id="reportGenerationScheduleInitDefaultInterceptor" class="me.cxdev.commerce.reporting.domain.ReportGenerationScheduleInitDefaultInterceptor">
+        <constructor-arg name="flexibleSearchService" ref="flexibleSearchService" />
+        <constructor-arg name="jobCode" value="${cxdevreporting.report.job.code}" />
+    </bean>
+    <bean id="reportGenerationScheduleInitDefaultInterceptorMapping" class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+        <property name="interceptor" ref="reportGenerationScheduleInitDefaultInterceptor"/>
+        <property name="typeCode" value="ReportGenerationSchedule"/>
+    </bean>
+
+    <bean id="queryConfigurationConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="me.cxdev.commerce.reporting.report.data.QueryFileConfigurationData"/>
+        <property name="populators">
+            <list>
+                <ref bean="queryReportConfigurationPopulator"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="queryReportConfigurationPopulator" class="me.cxdev.commerce.reporting.populators.QueryReportConfigurationPopulator"/>
+</beans>

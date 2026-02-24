@@ -1,5 +1,5 @@
 plugins {
-    id("com.diffplug.spotless") version("6.25.0")
+    id("com.diffplug.spotless") version("8.2.1")
 }
 
 repositories {
@@ -10,8 +10,8 @@ spotless {
     val importOrderConfigFile = project.file("core-customize/conventions/eclipse.importorder")
     val javaFormatterConfigFile = project.file("core-customize/conventions/eclipse-formatter-settings.xml")
     java {
-        target("core-customize/hybris/bin/custom/sapcxtools/**/*.java")
-        targetExclude("core-customize/hybris/bin/custom/sapcxtools/**/gensrc/**")
+        target("core-customize/hybris/bin/custom/cxdevtools/**/*.java")
+        targetExclude("core-customize/hybris/bin/custom/cxdevtools/**/gensrc/**")
         importOrderFile(importOrderConfigFile)
         eclipse().configFile(javaFormatterConfigFile)
         removeUnusedImports()
@@ -26,6 +26,6 @@ spotless {
     //        "js-storefront/*/src/**/*.ts",
     //        "js-storefront/*/src/**/*.html"
     //    )
-    //    prettier("2.5.1").configFile(frontendFormatterConfigFile)
+    //    prettier("3.5.3").configFile(frontendFormatterConfigFile)
     //}
 }

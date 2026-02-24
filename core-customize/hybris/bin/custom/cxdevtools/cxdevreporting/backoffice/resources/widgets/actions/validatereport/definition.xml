@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<action-definition id="me.cxdev.commerce.reporting.backoffice.action.validatereport"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/action-definition.xsd">
+    <name>Validate Report</name>
+    <description>Executes the query and verifies if it is valid.</description>
+    <author>CX DEV Tools</author>
+    <version>1.0</version>
+    <actionClassName>me.cxdev.commerce.reporting.backoffice.action.ValidateReportAction</actionClassName>
+    <inputType>me.cxdev.commerce.reporting.model.QueryReportConfigurationModel</inputType>
+    <outputType>java.lang.Object</outputType>
+    <iconUri>icons/icon_action_validatereport_default.png</iconUri>
+    <iconHoverUri>icons/icon_action_validatereport_hover.png</iconHoverUri>
+    <iconDisabledUri>icons/icon_action_validatereport_disabled.png</iconDisabledUri>
+</action-definition>

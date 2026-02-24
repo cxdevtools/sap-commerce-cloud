@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<extensioninfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="extensioninfo.xsd">
+    <extension abstractclassprefix="Generated" classprefix="CxEnvConfig" jaloLogicFree="true"
+        name="cxdevenvconfig" version="5.0.0" usemaven="true">
+        <requires-extension name="commercewebservices"/>
+        <coremodule generated="true" manager="de.hybris.platform.jalo.extension.GenericManager" packageroot="me.cxdev.commerce.config"/>
+    </extension>
+</extensioninfo>

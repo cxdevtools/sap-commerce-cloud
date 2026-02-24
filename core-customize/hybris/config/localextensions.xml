@@ -3,18 +3,14 @@
   <extensions>
     <path dir="${HYBRIS_BIN_DIR}"/>
 
-    <!-- Single Sign-On extension   -->
-    <extension name="samlsinglesignon"/>
-    <extension name="samlssobackoffice"/>
+    <!-- CX DEV Tools -->
+    <extension name="cxdevbackoffice"/>
+    <extension name="cxdevenvconfig"/>
+    <extension name="cxdevproxy"/>
+    <extension name="cxdevreporting"/>
+    <extension name="cxdevtoolkit"/>
 
-    <!-- SAP CX Tools -->
-    <extension name="sapcxtemplate"/>
-    <extension name="sapcommercetoolkit"/>
-    <extension name="sapcxbackoffice"/>
-    <extension name="sapcxreporting"/>
-    <extension name="sapcxsearch"/>
-    <extension name="sapcxenvconfig"/>
-    <extension name="sapcxsinglesignon"/>
-    <extension name="sapcxssoauth0"/>
+    <!-- Required for local search server -->
+    <extension name="solrserver"/>
   </extensions>
 </hybrisconfig>

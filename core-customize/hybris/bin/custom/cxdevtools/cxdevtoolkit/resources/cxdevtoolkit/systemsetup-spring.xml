@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<!-- Configurable System Setup -->
+	<bean id="cxdevtoolkitSystemSetup" class="me.cxdev.commerce.toolkit.setup.ToolkitSystemSetup">
+		<constructor-arg name="reliableSystemSetupExecutor" ref="cxdevtoolkitSystemSetupExecutor"/>
+		<constructor-arg name="performSystemSetup" value="${cxdevtoolkit.impeximport.environment.legacysystemsetup:true}"/>
+	</bean>
+	<bean id="cxdevtoolkitSystemSetupExecutor" class="me.cxdev.commerce.toolkit.setup.ReliableSystemSetupExecutor">
+		<constructor-arg name="validationService" ref="validationService"/>
+		<constructor-arg name="elementaryDataImporter" ref="elementaryDataImporter"/>
+		<constructor-arg name="releasePatchesImporter" ref="releasePatchImporter"/>
+		<constructor-arg name="essentialDataImporter" ref="essentialDataImporter"/>
+		<constructor-arg name="projectDataImporters" ref="cxdevtoolkitProjectDataImporters"/>
+	</bean>
+	<util:list id="cxdevtoolkitProjectDataImporters" value-type="me.cxdev.commerce.toolkit.setup.ImpExDataImporter">
+		<ref bean="platformOverlayImporter"/>
+		<ref bean="sampleDataImporter"/>
+		<ref bean="testDataImporter"/>
+		<ref bean="releasePatchReRunImporter"/>
+	</util:list>
+
+	<!-- Data Importers -->
+	<bean id="elementaryDataImporter" class="me.cxdev.commerce.toolkit.setup.importer.PrefixBasedDataImporter">
+		<property name="environment" ref="toolkitSystemSetupEnvironment"/>
+		<property name="impExDataImportExecutor" ref="toolkitImpExDataImportExecutor"/>
+		<property name="title" value="Elementary Data"/>
+		<property name="prefix" value="cxdevtoolkit.impeximport.elementarydata"/>
+	</bean>
+	<bean id="releasePatchImporter" class="me.cxdev.commerce.toolkit.setup.importer.ReleasePatchesImporter">
+		<property name="environment" ref="toolkitSystemSetupEnvironment"/>
+		<property name="impExDataImportExecutor" ref="toolkitImpExDataImportExecutor"/>
+		<property name="title" value="Release Patches (automatically)"/>
+		<property name="prefix" value="cxdevtoolkit.impeximport.releasepatch"/>
+	</bean>
+	<bean id="essentialDataImporter" class="me.cxdev.commerce.toolkit.setup.importer.PrefixBasedDataImporter">
+		<property name="environment" ref="toolkitSystemSetupEnvironment"/>
+		<property name="impExDataImportExecutor" ref="toolkitImpExDataImportExecutor"/>
+		<property name="title" value="Essential Data"/>
+		<property name="prefix" value="cxdevtoolkit.impeximport.essentialdata"/>
+	</bean>
+	<bean id="platformOverlayImporter" class="me.cxdev.commerce.toolkit.setup.importer.ProjectDataImporter">
+		<property name="environment" ref="toolkitSystemSetupEnvironment"/>
+		<property name="impExDataImportExecutor" ref="toolkitImpExDataImportExecutor"/>
+		<property name="title" value="Platform Overlays"/>
+		<property name="prefix" value="cxdevtoolkit.impeximport.overlay"/>
+		<property name="importOnInitialization" value="true"/>
+		<property name="allowManualImport" value="false"/>
+	</bean>
+	<bean id="sampleDataImporter" class="me.cxdev.commerce.toolkit.setup.importer.ProjectDataImporter">
+		<property name="environment" ref="toolkitSystemSetupEnvironment"/>
+		<property name="impExDataImportExecutor" ref="toolkitImpExDataImportExecutor"/>
+		<property name="title" value="Sample Data"/>
+		<property name="prefix" value="cxdevtoolkit.impeximport.sampledata"/>
+		<property name="importOnInitialization" value="#{${cxdevtoolkit.impeximport.environment.isdevelopment} || ${cxdevtoolkit.impeximport.environment.importsampledata}}"/>
+		<property name="allowManualImport" value="true"/>
+	</bean>
+	<bean id="testDataImporter" class="me.cxdev.commerce.toolkit.setup.importer.ProjectDataImporter">
+		<property name="environment" ref="toolkitSystemSetupEnvironment"/>
+		<property name="impExDataImportExecutor" ref="toolkitImpExDataImportExecutor"/>
+		<property name="title" value="Test Data"/>
+		<property name="prefix" value="cxdevtoolkit.impeximport.testdata"/>
+		<property name="importOnInitialization" value="#{${cxdevtoolkit.impeximport.environment.isdevelopment} || ${cxdevtoolkit.impeximport.environment.importtestdata}}"/>
+		<property name="allowManualImport" value="true"/>
+	</bean>
+	<bean id="releasePatchReRunImporter" class="me.cxdev.commerce.toolkit.setup.importer.ProjectDataImporter">
+		<property name="environment" ref="toolkitSystemSetupEnvironment"/>
+		<property name="impExDataImportExecutor" ref="toolkitImpExDataImportExecutor"/>
+		<property name="title" value="Release Patches (manual, re-run)"/>
+		<property name="prefix" value="cxdevtoolkit.impeximport.releasepatch"/>
+		<property name="importOnInitialization" value="false"/>
+		<property name="allowManualImport" value="true"/>
+	</bean>
+
+	<bean id="toolkitSystemSetupEnvironment" class="me.cxdev.commerce.toolkit.setup.SystemSetupEnvironment">
+		<constructor-arg name="configurationService" ref="configurationService"/>
+		<constructor-arg name="fileName" value="${cxdevtoolkit.impeximport.environment.configurationfile}"/>
+	</bean>
+	<bean id="toolkitImpExDataImportExecutor" class="me.cxdev.commerce.toolkit.impex.executor.SynchronousImpExDataImportExecutor">
+		<constructor-arg name="environment" ref="toolkitSystemSetupEnvironment"/>
+		<constructor-arg name="commonI18NService" ref="commonI18NService"/>
+		<constructor-arg name="importService" ref="importService"/>
+	</bean>
+</beans>

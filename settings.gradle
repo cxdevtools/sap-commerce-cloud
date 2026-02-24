@@ -1,2 +1,2 @@
-rootProject.name = 'sapcxtools-workspace'
+rootProject.name = 'cxdevtools-workspace'
 include 'core-customize'
