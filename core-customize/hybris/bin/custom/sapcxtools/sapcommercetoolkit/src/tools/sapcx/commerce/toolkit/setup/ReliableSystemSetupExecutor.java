@@ -44,20 +44,20 @@ public final class ReliableSystemSetupExecutor implements ApplicationContextAwar
 	private final ImpExDataImporter essentialDataImporter;
 	private final List<ImpExDataImporter> projectDataImporters;
 
-    public ReliableSystemSetupExecutor(
-            ValidationService validationService,
-            ImpExDataImporter elementaryDataImporter,
-            ImpExDataImporter releasePatchesImporter,
-            ImpExDataImporter essentialDataImporter,
+	public ReliableSystemSetupExecutor(
+			ValidationService validationService,
+			ImpExDataImporter elementaryDataImporter,
+			ImpExDataImporter releasePatchesImporter,
+			ImpExDataImporter essentialDataImporter,
 			List<ImpExDataImporter> projectDataImporters) {
-        this.validationService = validationService;
-        this.elementaryDataImporter = elementaryDataImporter;
-        this.releasePatchesImporter = releasePatchesImporter;
-        this.essentialDataImporter = essentialDataImporter;
-        this.projectDataImporters = projectDataImporters;
-    }
+		this.validationService = validationService;
+		this.elementaryDataImporter = elementaryDataImporter;
+		this.releasePatchesImporter = releasePatchesImporter;
+		this.essentialDataImporter = essentialDataImporter;
+		this.projectDataImporters = projectDataImporters;
+	}
 
-    public void reliableSetupPhases(final SystemSetupContext context) {
+	public void reliableSetupPhases(final SystemSetupContext context) {
 		Consumer<ImpExDataImporter> importData = importer -> importer.importData(context);
 
 		if (context.getType().isEssential()) {

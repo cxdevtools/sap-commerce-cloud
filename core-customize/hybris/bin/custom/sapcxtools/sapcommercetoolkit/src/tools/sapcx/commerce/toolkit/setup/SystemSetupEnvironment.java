@@ -46,13 +46,13 @@ public final class SystemSetupEnvironment {
 	private final ConfigurationService configurationService;
 	private FileBasedConfigurationBuilder<PropertiesConfiguration> persistentConfiguration;
 
-    public SystemSetupEnvironment(String fileName, ConfigurationService configurationService) {
+	public SystemSetupEnvironment(String fileName, ConfigurationService configurationService) {
 		this.fileName = fileName;
-        this.configurationService = configurationService;
+		this.configurationService = configurationService;
 		this.updatePersistentConfigurationBuilder();
-    }
+	}
 
-    public boolean useLegacyModeForImpEx() {
+	public boolean useLegacyModeForImpEx() {
 		return configurationService.getConfiguration().getBoolean(LEGACYMODEKEY, false);
 	}
 
