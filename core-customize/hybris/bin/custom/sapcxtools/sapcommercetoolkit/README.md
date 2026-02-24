@@ -372,4 +372,4 @@ them. And if you are missing a builder, feel free to raise an issue or to create
 
 _Licensed under the Apache License, Version 2.0, January 2004_
 
-_Copyright 2025, SAP CX Tools_
+_Copyright 2026, SAP CX Tools_
