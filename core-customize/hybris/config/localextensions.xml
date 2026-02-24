@@ -4,10 +4,11 @@
     <path dir="${HYBRIS_BIN_DIR}"/>
 
     <!-- CX DEV Tools -->
-    <extension name="cxdevtoolkit"/>
     <extension name="cxdevbackoffice"/>
-    <extension name="cxdevreporting"/>
     <extension name="cxdevenvconfig"/>
+    <extension name="cxdevproxy"/>
+    <extension name="cxdevreporting"/>
+    <extension name="cxdevtoolkit"/>
 
     <!-- Required for local search server -->
     <extension name="solrserver"/>

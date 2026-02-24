@@ -1,0 +1,5 @@
+{
+  "sub": "besteller",
+  "name": "Moritz Besteller",
+  "authorities": ["ROLE_B2BCUSTOMERGROUP", "ROLE_B2BCUSTOMERADMINGROUP"]
+}
