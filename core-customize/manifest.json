@@ -1,5 +1,5 @@
 {
-    "commerceSuiteVersion": "2211-jdk21.6",
+    "commerceSuiteVersion": "2211-jdk21.7",
     "extensionPacks": [],
     "solr": {
         "location": "solr",
@@ -43,9 +43,9 @@
             }
         ],
         "tests": {
-            "extensions": ["sapcommercetoolkit", "sapcxbackoffice", "sapcxreporting", "sapcxenvconfig"],
+            "extensions": ["cxdevtoolkit", "cxdevbackoffice", "cxdevreporting", "cxdevenvconfig"],
             "annotations": ["UnitTests", "IntegrationTests"],
-            "packages": ["tools.sapcx.commerce.*"]
+            "packages": ["me.cxdev.*"]
         }
     },
     "aspects": [

@@ -13,6 +13,17 @@ plugins {
     `maven-publish`
 }
 
+val solrVersionMap = mapOf(
+    /*
+     * version 8 unfortunately has a different download URL and is currently not working. But it is the version that is
+     * supplied with the standard zip, so we're fine unless the solr version is changed and then changed back in
+     * manifest.json
+     */
+    "8.11" to "8.11.2",
+    "9.2" to "9.2.1",
+    "9.5" to "9.5.0"
+)
+
 val dependencyDir = "../dependencies"
 val workingDir = project.projectDir
 val binDir = "${workingDir}/hybris/bin"
@@ -20,6 +31,13 @@ val binDir = "${workingDir}/hybris/bin"
 repositories {
     flatDir { dirs(dependencyDir) }
     mavenCentral()
+}
+
+val solrVersion = solrVersionMap[CCV2.manifest.solrVersion] ?: "9.2.1"
+val solrServer: Configuration by configurations.creating
+
+dependencies {
+    solrServer("org.apache.solr:solr:${solrVersion}")
 }
 
 hybris {
@@ -53,18 +71,49 @@ hybris {
     // When this mode is enabled, the bootstrapInclude configuration property is ignored.
     sparseBootstrap {
         enabled = true
-        alwaysIncluded = listOf<String>()
+        alwaysIncluded = listOf<String>("solrserver")
     }
 }
 
+tasks.register<Download>("fetchSolr") {
+    src(uri("https://archive.apache.org/dist/solr/solr/${solrVersion}/solr-${solrVersion}.tgz"))
+    dest("${dependencyDir}/solr-${solrVersion}.tgz")
+    overwrite(false)
+}
+
+val repackSolr = tasks.register<Zip>("repackSolr") {
+    dependsOn("fetchSolr")
+    from(tarTree("${dependencyDir}/solr-${solrVersion}.tgz"))
+    archiveFileName = "solr-${solrVersion}.zip"
+    destinationDirectory = file(dependencyDir)
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("solr") {
+            groupId = "org.apache.solr"
+            artifactId = "solr"
+            version = solrVersion
+
+            artifact(repackSolr.get().archiveFile)
+        }
+    }
+}
+
+tasks.named("yinstallSolr") {
+    // this task is available because of the solr-publication above.
+    dependsOn("publishSolrPublicationToMavenLocal")
+}
+
 tasks.ybuild {
+    dependsOn("publishSolrPublicationToMavenLocal")
     group = "build"
 }
 
-if (project.hasProperty("SAPCX_ARTEFACT_BASEURL") && project.hasProperty("SAPCX_ARTEFACT_USER") && project.hasProperty("SAPCX_ARTEFACT_PASSWORD")) {
-    val BASEURL = project.property("SAPCX_ARTEFACT_BASEURL") as String
-    val USER = project.property("SAPCX_ARTEFACT_USER") as String
-    val PASSWORD = project.property("SAPCX_ARTEFACT_PASSWORD") as String
+if (project.hasProperty("CXDEV_ARTEFACT_BASEURL") && project.hasProperty("CXDEV_ARTEFACT_USER") && project.hasProperty("CXDEV_ARTEFACT_PASSWORD")) {
+    val BASEURL = project.property("CXDEV_ARTEFACT_BASEURL") as String
+    val USER = project.property("CXDEV_ARTEFACT_USER") as String
+    val PASSWORD = project.property("CXDEV_ARTEFACT_PASSWORD") as String
     val AUTHORIZATION = Base64.getEncoder().encodeToString((USER + ":" + PASSWORD).toByteArray())
 
     val COMMERCE_VERSION = CCV2.manifest.effectiveVersion
@@ -159,6 +208,7 @@ tasks.register("setupLocalDevelopment") {
     description = "Setup local development"
     dependsOn(
         "bootstrapPlatform",
+        "yinstallSolr",
         "generateLocalDeveloperProperties",
         "installManifestAddons",
         "enableModeltMock"

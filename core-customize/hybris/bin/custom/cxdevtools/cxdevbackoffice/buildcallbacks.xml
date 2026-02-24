@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project name="cxdevbackoffice_buildcallbacks">
+	<macrodef name="cxdevbackoffice_before_build">
+		<sequential>
+			<register_sass_extension extensionname="cxdevbackoffice" />
+			<register_sass_extension extensionname="cxdevbackoffice" resources="resources" destination="" />
+		</sequential>
+	</macrodef>
+</project>

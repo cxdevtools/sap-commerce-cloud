@@ -5,11 +5,11 @@ on:
     branches: [develop]
     paths:
       - "core-customize/manifest.json"
-      - "core-customize/hybris/bin/custom/sapcxtools/**/*.java"
-      - "core-customize/hybris/bin/custom/sapcxtools/**/*-beans.xml"
-      - "core-customize/hybris/bin/custom/sapcxtools/**/*-items.xml"
-      - "core-customize/hybris/bin/custom/sapcxtools/**/extensioninfo.xml"
-      - "core-customize/hybris/bin/custom/sapcxtools/**/external-dependencies.xml"
+      - "core-customize/hybris/bin/custom/cxdevtools/**/*.java"
+      - "core-customize/hybris/bin/custom/cxdevtools/**/*-beans.xml"
+      - "core-customize/hybris/bin/custom/cxdevtools/**/*-items.xml"
+      - "core-customize/hybris/bin/custom/cxdevtools/**/extensioninfo.xml"
+      - "core-customize/hybris/bin/custom/cxdevtools/**/external-dependencies.xml"
   pull_request:
     branches: [main, develop]
   workflow_dispatch:
@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        extension: ["sapcommercetoolkit", "sapcxbackoffice", "sapcxreporting", "sapcxenvconfig"]
+        extension: ["cxdevtoolkit", "cxdevbackoffice", "cxdevreporting", "cxdevenvconfig"]
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
@@ -37,16 +37,16 @@ jobs:
           path: dependencies
       - name: SAP download config
         env:
-          SAPCX_ARTEFACT_BASEURL: ${{ secrets.SAPCX_ARTEFACT_BASEURL }}
-          SAPCX_ARTEFACT_USER: ${{ secrets.SAPCX_ARTEFACT_USER }}
-          SAPCX_ARTEFACT_PASSWORD: ${{ secrets.SAPCX_ARTEFACT_PASSWORD }}
+          CXDEV_ARTEFACT_BASEURL: ${{ secrets.CXDEV_ARTEFACT_BASEURL }}
+          CXDEV_ARTEFACT_USER: ${{ secrets.CXDEV_ARTEFACT_USER }}
+          CXDEV_ARTEFACT_PASSWORD: ${{ secrets.CXDEV_ARTEFACT_PASSWORD }}
         shell: bash
         run: |
           mkdir -p ${HOME}/.gradle
           echo "GRADLE_USER_HOME=${HOME}/.gradle" >> $GITHUB_ENV
-          echo "SAPCX_ARTEFACT_BASEURL=${SAPCX_ARTEFACT_BASEURL}" >> ${HOME}/.gradle/gradle.properties
-          echo "SAPCX_ARTEFACT_USER=${SAPCX_ARTEFACT_USER}" >> ${HOME}/.gradle/gradle.properties
-          echo "SAPCX_ARTEFACT_PASSWORD=${SAPCX_ARTEFACT_PASSWORD}" >> ${HOME}/.gradle/gradle.properties
+          echo "CXDEV_ARTEFACT_BASEURL=${CXDEV_ARTEFACT_BASEURL}" >> ${HOME}/.gradle/gradle.properties
+          echo "CXDEV_ARTEFACT_USER=${CXDEV_ARTEFACT_USER}" >> ${HOME}/.gradle/gradle.properties
+          echo "CXDEV_ARTEFACT_PASSWORD=${CXDEV_ARTEFACT_PASSWORD}" >> ${HOME}/.gradle/gradle.properties
       - name: SAP Commerce environment
         run: |
           echo "HYBRIS_OPT_CONFIG_DIR=$GITHUB_WORKSPACE/core-customize/hybris/config/local-config" >> $GITHUB_ENV

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<solr>
+	<str name="coreRootDirectory">${solr.data.home:./}</str>
+	<str name="modules">${solr.modules:analysis-extras,hybris}</str>
+
+	<solrcloud>
+		<str name="host">${host:}</str>
+		<int name="hostPort">${jetty.port:8983}</int>
+		<str name="hostContext">${hostContext:solr}</str>
+
+		<bool name="genericCoreNodeNames">${genericCoreNodeNames:true}</bool>
+
+		<int name="zkClientTimeout">${zkClientTimeout:30000}</int>
+		<int name="distribUpdateSoTimeout">${distribUpdateSoTimeout:600000}</int>
+		<int name="distribUpdateConnTimeout">${distribUpdateConnTimeout:60000}</int>
+		
+		<!-- Settings without ZK ACLs (default) -->
+		<str name="zkACLProvider">${zkACLProvider:org.apache.solr.common.cloud.DefaultZkACLProvider}</str>
+		<str name="zkCredentialsProvider">${zkCredentialsProvider:org.apache.solr.common.cloud.DefaultZkCredentialsProvider}</str>
+		<str name="zkCredentialsInjector">${zkCredentialsInjector:org.apache.solr.common.cloud.DefaultZkCredentialsInjector}</str>
+		<!-- Settings for ZK ACLs -->
+		<!--<str name="zkACLProvider">${zkACLProvider:org.apache.solr.common.cloud.DigestZkACLProvider}</str>-->
+		<!--<str name="zkCredentialsProvider">${zkCredentialsProvider:org.apache.solr.common.cloud.DigestZkCredentialsProvider}</str>-->
+		<!--<str name="zkCredentialsInjector">${zkCredentialsInjector:org.apache.solr.common.cloud.VMParamsZkCredentialsInjector}</str>-->
+
+		<bool name="distributedClusterStateUpdates">${distributedClusterStateUpdates:true}</bool>
+		<bool name="distributedCollectionConfigSetExecution">${distributedCollectionConfigSetExecution:true}</bool>
+		<int name="minStateByteLenForCompression">${minStateByteLenForCompression:-1}</int>
+		<str name="stateCompressor">${stateCompressor:org.apache.solr.common.util.ZLibCompressor}</str>
+	</solrcloud>
+
+	<shardHandlerFactory name="shardHandlerFactory" class="HttpShardHandlerFactory">
+		<int name="socketTimeout">${socketTimeout:600000}</int>
+		<int name="connTimeout">${connTimeout:60000}</int>
+	</shardHandlerFactory>
+
+	<!-- Settings for affinity replica placement plugin -->
+	<!--<replicaPlacementFactory class="org.apache.solr.cluster.placement.plugins.AffinityPlacementFactory"/>-->
+</solr>

@@ -1,6 +1,6 @@
 # Contributing
 
-## SAP CX Tools Contributor License Agreement
+## CX DEV Tools Contributor License Agreement
 
 - You will only submit contributions where you have authored 100% of the content.
 - You will only submit contributions to which you have the necessary rights. This means that if you are employed you
@@ -42,7 +42,7 @@ Please add the following lines to your pull request description:
 ```markdown
 ---
 
-I hereby agree to the terms of the SAP CX Tools Contributor License Agreement.
+I hereby agree to the terms of the CX DEV Tools Contributor License Agreement.
 ```
 
 ## Coding Conventions
@@ -120,64 +120,3 @@ Use American English spelling rules when writing documentation as well as for co
   - `WARN`: potential usage or configuration errors that should not halt execution
   - `INFO`: information the users might want to know but not by default
   - `DEBUG`: information the developers might want to know to understand execution
-
-## Extensions
-
-All of the extensions have their own repository and are integrated using `git subtree` into this repository or into project. This
-procedure was choosen for two major reasons:
-
-1. A centralized repository holding defined releases of the individual extensions and guaranteeing the compatibility with the standard.
-1. The individual extension repositories allow a clean integration into projects, i.e. direct integration of the source code.
-
-### How-to use
-
-In order to use an extension from the sapcx.tools you can either download the build artefact from our build pipeline (work in progress) or
-integration the extension directly into your repository using git subtree. The following commands shall give you a guidance on how to
-integration the extensions into your local repository. Keep in mind, that you need to run these commands from the root of your project.
-For the sake of simplicity, we assume that you use the default CCv2 repository layout for your project:
-
-- The following command is used to add an extension "foobar" into your repository:
-`git subtree add --squash --message="add extension foobar from SAP CX Tools" --prefix=core-customize/hybris/bin/custom/sapcxtools/foobar git@github.com:sapcxtools/foobar.git main`
-- For future updates, please use the following command:
-`git subtree pull --squash --message="update extension foobar from SAP CX Tools" --prefix=core-customize/hybris/bin/custom/sapcxtools/foobar git@github.com:sapcxtools/foobar.git main`
-- If you want to push changes from the local repository into the extension, please use:
-`git subtree push --prefix=core-customize/hybris/bin/custom/sapcxtools/foobar git@github.com:sapcxtools/foobar.git feature/<name-of-your-feature>`
-
-Please note, we typically use `--squash` to reduce the number of commits within your project repository. If you want the whole history
-available in your project, feel free to leave out this parameter. Still, we do not recommend this. We also do not recommend to pull other
-branches than main. This could lead to conflicts once you want to update back to main.
-
-### Guidelines for the individual extension repositories
-
-Before merging a feature into the `main` branch of an extension, a github workflow sends the feature-branch to the centralized repository.
-Let's assume a new feature `feature/my-idea` was pushed via `git subtree push` into extension `foobar`. The workflow checks out the
-centralized repository, and creates a branch called `foobar/feature/my-idea`. Then it performs a `git subtree pull` command without
-`--squash` and pointing to the feature branch `feature/my-idea` from the `foobar` extension. It pushes the new branch to the centralized
-repository.
-
-The centralized repository now also runs a github workflow that automatically creates a pull-request into the `develop` branch for this
-feature. With that pull-request, the default workflows from the centralized repository are executed, verifying if everything is fine. In
-addition, the repository maintainer will perform custom reviews and may ask you for changes. You can perform your changes within your
-project repository and by pushing those to the extension repository `foobar` by updating your feature-branch `feature/my-idea`. This can
-be done by running the same `git subtree push` command as before, after you have made your changes in the project repository.
-
-The github workflow will detect your updates and updates the feature-branch on the centralized repository by resetting it to the previous
-state, typically develop, and run `git subtree pull` just like the first time. We need to reset the feature-branch `foobar/feature/my-idea`
-first, otherwise we would get an additional merge commit for every update of the the feature-branch.
-
-Once the pull-request from feature-branch `foobar/feature/my-idea` was accepted and merged into `develop` the feature-branch `feature-my-idea`
-will also be removed from the extensions repository. Another github workflow is triggered that automatically pulls the changes with the 
-`develop` branch of the centralized repository and updates the `develop` branch of the extensions repository by running:
-`git subtree pull --squash --message="merge feature/my-idea into develop" --prefix=core-customize/hybris/bin/custom/sapcxtools/foobar git@github.com:sapcxtools/foobar.git develop`
-
-When the next version of SAP CX tools is released, the same action is done, all included extensions are triggered to also merge their 
-`develop` branches into their `main` branches, just like the centralized repository. After the release we recommend you to run an update
-as mentioned above. Again, we do not recommend to skip the `--squash` option, as you will see all your commits twice in the history.
-
-__CAUTION:__ For those who use this repository itself to develop on features, please make sure that you do not push your changes from the
-extensions to the extensions repositories using `git subtree push`. This will be done automatically for you, once your pull-request has
-been accepted and merged into `develop`. Also make sure that you only use the pattern `feature/<name>` for your feature-branches, so there
-won't be any kind of conflicts with the feature-branches that have automatically been created.
-
-While this process seems to be complicated, it guarantees that all extensions included in SAP CX tools are interoperatable and work
-individually, with only their own dependencies resolved. If you have questions, feel free to get in touch with us in the discussion board.

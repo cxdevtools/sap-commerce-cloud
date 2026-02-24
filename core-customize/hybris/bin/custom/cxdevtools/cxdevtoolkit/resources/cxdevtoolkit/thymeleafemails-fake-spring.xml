@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<beans profile="cxdevtoolkit-fake-localmails">
+		<alias name="storeLocallyHtmlEmailServiceFake" alias="htmlEmailService"/>
+		<bean id="storeLocallyHtmlEmailServiceFake" class="me.cxdev.commerce.toolkit.email.fake.StoreLocallyHtmlEmailServiceFake">
+			<constructor-arg name="modelService" ref="modelService"/>
+			<constructor-arg name="mediaService" ref="mediaService"/>
+			<constructor-arg name="method" value="${cxdevtoolkit.fakes.htmlEmailService.localstorage.method}"/>
+			<constructor-arg name="directory" value="${cxdevtoolkit.fakes.htmlEmailService.localstorage.directory}"/>
+			<constructor-arg name="filenamePattern" value="${cxdevtoolkit.fakes.htmlEmailService.localstorage.filenamepattern}"/>
+			<constructor-arg name="extension" value="${cxdevtoolkit.fakes.htmlEmailService.localstorage.extension}"/>
+			<constructor-arg name="mediaFolder" value="${cxdevtoolkit.fakes.htmlEmailService.localstorage.mediafolder}"/>
+		</bean>
+
+		<bean id="cleanupLocallyHtmlEmailsPerformable" parent="abstractGenericMaintenanceJobPerformable">
+			<property name="maintenanceCleanupStrategy">
+				<bean class="me.cxdev.commerce.toolkit.email.fake.RemoveLocallyHtmlEmailsMaintenanceCleanupStrategy">
+					<constructor-arg name="modelService" ref="modelService"/>
+					<constructor-arg name="daysToKeepLocalEmails" value="${cxdevtoolkit.fakes.htmlEmailService.localstorage.daysToKeep}"/>
+				</bean>
+			</property>
+		</bean>
+	</beans>
+</beans>

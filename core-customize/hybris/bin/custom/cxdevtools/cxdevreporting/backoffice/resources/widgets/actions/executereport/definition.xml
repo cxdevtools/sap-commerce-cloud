@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<action-definition id="me.cxdev.commerce.reporting.backoffice.action.executereport"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/action-definition.xsd">
+    <name>Download Report</name>
+    <description>Executes the query and downloads the generated report.</description>
+    <author>CX DEV Tools</author>
+    <version>1.0</version>
+    <actionClassName>me.cxdev.commerce.reporting.backoffice.action.ExecuteReportAction</actionClassName>
+    <inputType>me.cxdev.commerce.reporting.model.QueryReportConfigurationModel</inputType>
+    <outputType>java.lang.Object</outputType>
+    <iconUri>icons/icon_action_exportreport_default.png</iconUri>
+    <iconHoverUri>icons/icon_action_exportreport_hover.png</iconHoverUri>
+    <iconDisabledUri>icons/icon_action_exportreport_disabled.png</iconDisabledUri>
+</action-definition>

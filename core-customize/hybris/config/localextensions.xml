@@ -3,10 +3,13 @@
   <extensions>
     <path dir="${HYBRIS_BIN_DIR}"/>
 
-    <!-- SAP CX Tools -->
-    <extension name="sapcommercetoolkit"/>
-    <extension name="sapcxbackoffice"/>
-    <extension name="sapcxreporting"/>
-    <extension name="sapcxenvconfig"/>
+    <!-- CX DEV Tools -->
+    <extension name="cxdevtoolkit"/>
+    <extension name="cxdevbackoffice"/>
+    <extension name="cxdevreporting"/>
+    <extension name="cxdevenvconfig"/>
+
+    <!-- Required for local search server -->
+    <extension name="solrserver"/>
   </extensions>
 </hybrisconfig>

@@ -31,7 +31,7 @@ core-customize/hybris/temp/
 core-customize/hybris/data/
 core-customize/hybris/config/local-config/
 
-# only allow sapcxtools extension
+# only allow cxdevtools extension
 core-customize/hybris/bin/modules/
 core-customize/hybris/bin/platform/
 

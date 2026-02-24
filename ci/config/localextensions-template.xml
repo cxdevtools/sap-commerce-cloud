@@ -3,7 +3,7 @@
   <extensions>
     <path dir="${HYBRIS_BIN_DIR}"/>
 
-    <!-- SAP CX Tools -->
+    <!-- CX DEV Tools -->
     <extension name="EXTENSIONNAME"/>
   </extensions>
 </hybrisconfig>
