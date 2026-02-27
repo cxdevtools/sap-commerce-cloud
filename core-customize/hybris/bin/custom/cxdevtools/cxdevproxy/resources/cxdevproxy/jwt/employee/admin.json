@@ -1,5 +1,12 @@
 {
   "sub": "admin",
-  "name": "Shop Admin",
-  "authorities": ["ROLE_ADMINGROUP", "ROLE_EMPLOYEEGROUP"]
+  "name": "Admin",
+  "aud": "backoffice",
+  "client_id": "backoffice",
+  "scope": [
+    "basic"
+  ],
+  "authorities": [
+    "ROLE_ADMINGROUP"
+  ]
 }

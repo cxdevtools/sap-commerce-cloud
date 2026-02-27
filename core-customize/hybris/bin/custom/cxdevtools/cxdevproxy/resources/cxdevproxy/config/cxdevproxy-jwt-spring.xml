@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	   xmlns:util="http://www.springframework.org/schema/util"
-	   xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 	<!-- JWT Handling -->
-	<bean id="cxJwtTokenService" class="me.cxdev.commerce.proxy.service.JwtTokenService">
-		<property name="keystorePath" value="${cxdevproxy.ssl.keystore.path}" />
-		<property name="keystorePassword" value="${cxdevproxy.ssl.keystore.password}" />
-		<property name="keystoreAlias" value="${cxdevproxy.ssl.keystore.alias}" />
+	<alias alias="jwtTokenService" name="cxJwtTokenService" />
+	<bean id="cxJwtTokenService" class="me.cxdev.commerce.jwt.service.CxJwtTokenService">
+		<property name="templatePathPrefix" value="${cxdevproxy.proxy.jwt.templatepath}" />
+		<property name="tokenValidity" value="${cxdevproxy.proxy.jwt.validity}"/>
+		<property name="jwkSource" ref="jwkSource"/>
 	</bean>
 </beans>

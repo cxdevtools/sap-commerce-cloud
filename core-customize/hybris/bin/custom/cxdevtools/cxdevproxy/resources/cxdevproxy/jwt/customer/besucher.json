@@ -1,5 +1,0 @@
-{
-  "sub": "besucher",
-  "name": "Max Besucher",
-  "authorities": ["ROLE_B2BCUSTOMERGROUP"]
-}

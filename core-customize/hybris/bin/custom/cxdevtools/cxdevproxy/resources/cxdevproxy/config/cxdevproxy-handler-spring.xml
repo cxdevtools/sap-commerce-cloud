@@ -1,46 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	   xmlns:util="http://www.springframework.org/schema/util"
-	   xsi:schemaLocation="
-           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<!-- Conditional Handlers -->
-	<bean abstract="true" id="cxNotCondition" class="me.cxdev.commerce.proxy.condition.NotCondition"/>
-	<bean abstract="true" id="cxAndCondition" class="me.cxdev.commerce.proxy.condition.AndCondition"/>
-	<bean abstract="true" id="cxOrCondition" class="me.cxdev.commerce.proxy.condition.OrCondition"/>
-	<bean abstract="true" id="cxHttpMethodCondition" class="me.cxdev.commerce.proxy.condition.HttpMethodCondition"/>
-	<bean abstract="true" id="cxPathCondition" class="me.cxdev.commerce.proxy.condition.PathStartsWithCondition"/>
-	<bean abstract="true" id="cxHeaderCondition" class="me.cxdev.commerce.proxy.condition.HeaderExistsCondition"/>
-	<bean abstract="true" id="cxParameterCondition" class="me.cxdev.commerce.proxy.condition.QueryParameterExistsCondition"/>
-
-	<bean id="cxIsAdminConsole" parent="cxPathCondition">
-		<property name="prefix" value="${hac.webroot:/hac}" />
-	</bean>
-	<bean id="cxIsBackoffice" parent="cxPathCondition">
-		<property name="prefix" value="${backoffice.webroot:/backoffice}" />
-	</bean>
-	<bean id="cxIsOcc" parent="cxPathCondition">
-		<property name="prefix" value="${commercewebservices.webroot:/occ}" />
-	</bean>
-	<bean id="cxIsSmartEdit" parent="cxOrCondition">
-		<property name="conditions">
-			<list>
-				<bean parent="cxPathCondition">
-					<property name="prefix" value="${commercewebservices.webroot:/smarteditwebservices}" />
-				</bean>
-				<bean parent="cxPathCondition">
-					<property name="prefix" value="${permissionswebservices.webroot:/permissionswebservices}" />
-				</bean>
-			</list>
-		</property>
-	</bean>
-
-	<!-- Jwt Injector Handler -->
-	<bean id="cxJwtInjectorHandler" class="me.cxdev.commerce.proxy.handler.JwtInjectorHandler">
-		<property name="jwtTokenService" ref="cxJwtTokenService" />
-	</bean>
+	<!-- Default Handler -->
+	<bean id="cxStartupPageHandler" class="me.cxdev.commerce.proxy.handler.StartupPageHandler"/>
+	<bean id="cxStaticContentHandler" class="me.cxdev.commerce.proxy.handler.StaticContentHandler" />
 
 	<!-- Forwarded-For Header Handler -->
 	<bean id="cxForwardedHeadersHandler" class="me.cxdev.commerce.proxy.handler.ForwardedHeadersHandler">
@@ -49,7 +13,13 @@
 		<property name="serverPort" value="${cxdevproxy.server.port}" />
 	</bean>
 
-	<!-- Default Handler -->
-	<bean id="cxStartupPageHandler" class="me.cxdev.commerce.proxy.handler.StartupPageHandler"/>
-	<bean id="cxStaticContentHandler" class="me.cxdev.commerce.proxy.handler.StaticContentHandler" />
+	<!-- Prepared CORS Injector Handler, needs to be activated if needed -->
+	<bean id="cxCorsInjectorHandler" class="me.cxdev.commerce.proxy.handler.CorsInjectorHandler">
+		<property name="allowCredentials" value="false" />
+	</bean>
+
+	<!-- Prepared JWT Injector Handler, needs to be activated if needed -->
+	<bean id="cxJwtInjectorHandler" class="me.cxdev.commerce.proxy.handler.JwtInjectorHandler">
+		<property name="jwtTokenService" ref="cxJwtTokenService" />
+	</bean>
 </beans>

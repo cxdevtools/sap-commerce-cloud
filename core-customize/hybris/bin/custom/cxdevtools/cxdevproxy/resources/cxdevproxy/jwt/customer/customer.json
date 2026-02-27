@@ -1,5 +1,0 @@
-{
-  "sub": "customer@cxdev.me",
-  "name": "Default Customer",
-  "authorities": ["ROLE_B2BCUSTOMERGROUP"]
-}

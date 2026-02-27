@@ -51,12 +51,20 @@ public class ConditionalDelegateHandler implements ProxyHttpServerExchangeHandle
 		}
 	}
 
+	public void setCondition(ExchangeCondition condition) {
+		this.conditions = List.of(condition);
+	}
+
 	public void setConditions(List<ExchangeCondition> conditions) {
-		this.conditions = conditions;
+		this.conditions = List.copyOf(conditions);
+	}
+
+	public void setDelegate(ProxyHttpServerExchangeHandler delegate) {
+		this.delegates = List.of(delegate);
 	}
 
 	public void setDelegates(List<ProxyHttpServerExchangeHandler> delegates) {
-		this.delegates = delegates;
+		this.delegates = List.copyOf(delegates);
 	}
 
 	public void setRequireAllConditions(boolean requireAllConditions) {

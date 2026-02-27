@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean abstract="true" id="cxNotCondition" class="me.cxdev.commerce.proxy.condition.NotCondition"/>
+	<bean abstract="true" id="cxAndCondition" class="me.cxdev.commerce.proxy.condition.AndCondition"/>
+	<bean abstract="true" id="cxOrCondition" class="me.cxdev.commerce.proxy.condition.OrCondition"/>
+	<bean abstract="true" id="cxHttpMethodCondition" class="me.cxdev.commerce.proxy.condition.HttpMethodCondition"/>
+	<bean abstract="true" id="cxPathStartsWithCondition" class="me.cxdev.commerce.proxy.condition.PathStartsWithCondition"/>
+	<bean abstract="true" id="cxPathRegexCondition" class="me.cxdev.commerce.proxy.condition.PathRegexCondition"/>
+	<bean abstract="true" id="cxPathAntMatcherCondition" class="me.cxdev.commerce.proxy.condition.PathAntMatcherCondition"/>
+	<bean abstract="true" id="cxHeaderExistsCondition" class="me.cxdev.commerce.proxy.condition.HeaderExistsCondition"/>
+	<bean abstract="true" id="cxCookieExistsCondition" class="me.cxdev.commerce.proxy.condition.CookieExistsCondition"/>
+	<bean abstract="true" id="cxQueryParameterExistsCondition" class="me.cxdev.commerce.proxy.condition.QueryParameterExistsCondition"/>
+
+	<bean id="cxIsAuthorizationServer" parent="cxPathStartsWithCondition">
+		<property name="prefix" value="/authorizationserver" />
+	</bean>
+	<bean id="cxIsAdminConsole" parent="cxPathStartsWithCondition">
+		<property name="prefix" value="${hac.webroot:/hac}" />
+	</bean>
+	<bean id="cxIsBackoffice" parent="cxPathStartsWithCondition">
+		<property name="prefix" value="${backoffice.webroot:/backoffice}" />
+	</bean>
+	<bean id="cxIsOcc" parent="cxPathStartsWithCondition">
+		<property name="prefix" value="${commercewebservices.webroot:/occ}" />
+	</bean>
+	<bean id="cxIsSmartEdit" parent="cxOrCondition">
+		<property name="conditions">
+			<list>
+				<bean parent="cxPathStartsWithCondition">
+					<property name="prefix" value="${commercewebservices.webroot:/smarteditwebservices}" />
+				</bean>
+				<bean parent="cxPathStartsWithCondition">
+					<property name="prefix" value="${permissionswebservices.webroot:/permissionswebservices}" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="cxHasAuthorizationHeader" parent="cxHeaderExistsCondition">
+		<property name="headerName" value="Authorization"/>
+	</bean>
+
+	<bean id="cxHasMockUser" parent="cxAndCondition">
+		<property name="conditions">
+			<list>
+				<ref bean="cxHasMockUserIdCondition"/>
+				<ref bean="cxHasMockUserTypeCondition"/>
+			</list>
+		</property>
+	</bean>
+	<bean id="cxHasMockUserIdCondition" parent="cxCookieExistsCondition">
+		<property name="cookieName" value="cxdevproxy_user_id" />
+	</bean>
+	<bean id="cxHasMockUserTypeCondition" parent="cxCookieExistsCondition">
+		<property name="cookieName" value="cxdevproxy_user_type" />
+	</bean>
+</beans>

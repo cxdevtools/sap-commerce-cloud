@@ -1,0 +1,11 @@
+{
+  "sub": "visitor@cxdev.me",
+  "name": "B2C Visitor",
+  "client_id": "storefront",
+  "scope": [
+    "basic"
+  ],
+  "authorities": [
+    "ROLE_ANONYMOUS"
+  ]
+}

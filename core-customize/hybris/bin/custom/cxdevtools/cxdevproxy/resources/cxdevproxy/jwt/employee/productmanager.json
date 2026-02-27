@@ -1,5 +1,12 @@
 {
   "sub": "productmanager",
   "name": "Product Manager",
-  "authorities": ["ROLE_PRODUCTMANAGERGROUP", "ROLE_EMPLOYEEGROUP"]
+  "aud": "backoffice",
+  "client_id": "backoffice",
+  "scope": [
+    "basic"
+  ],
+  "authorities": [
+    "ROLE_PRODUCTMANAGERGROUP"
+  ]
 }

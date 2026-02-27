@@ -8,14 +8,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import me.cxdev.commerce.jwt.service.CxJwtTokenService;
+import me.cxdev.commerce.jwt.service.JwtTokenService;
 import me.cxdev.commerce.proxy.livecycle.ProxyHttpServerExchangeHandler;
-import me.cxdev.commerce.proxy.service.JwtTokenService;
 
 /**
  * Interceptor that injects a mocked JWT into the HTTP request before routing it to the backend.
  * <p>
  * It checks the incoming request for a specific cookie ({@code cxdev_user}) set by the
- * proxy's developer portal. If found, it requests a signed JWT from the {@link JwtTokenService}
+ * proxy's developer portal. If found, it requests a signed JWT from the {@link CxJwtTokenService}
  * and appends it as an standard {@code Authorization: Bearer <token>} header.
  * </p>
  */

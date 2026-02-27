@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <extensioninfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="extensioninfo.xsd">
     <extension abstractclassprefix="Generated" classprefix="CxDevProxy" jaloLogicFree="true" name="cxdevproxy" version="5.1.0-snapshot" usemaven="true">
+        <requires-extension name="oauth2commons"/>
         <coremodule generated="true" manager="de.hybris.platform.jalo.extension.GenericManager" packageroot="me.cxdev.commerce.proxy"/>
     </extension>
 </extensioninfo>
