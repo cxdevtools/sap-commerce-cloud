@@ -57,16 +57,26 @@
         </div>
     </div>
 
-    <h2 class="section-title">🛍️ Customers (Storefront)</h2>
+    <h2 class="section-title">🛍️ Customers (B2C Storefront)</h2>
     <div class="grid">
-        <div class="card" onclick="setUser('besucher', 'customer')" data-id="customer/besucher">
-            <h3>besucher</h3><p>Max Besucher</p>
+        <div class="card" onclick="setUser('visitor@cxdev.me', 'customer')" data-id="customer/visitor@cxdev.me">
+            <h3>visitor</h3><p>B2C Visitor</p>
         </div>
-        <div class="card" onclick="setUser('besteller', 'customer')" data-id="customer/besteller">
-            <h3>besteller</h3><p>Moritz Besteller</p>
+        <div class="card" onclick="setUser('customer@cxdev.me', 'customer')" data-id="customer/customer@cxdev.me">
+            <h3>customer</h3><p>B2C Customer</p>
         </div>
-        <div class="card" onclick="setUser('training', 'customer')" data-id="customer/training">
-            <h3>training</h3><p>Franz Training</p>
+    </div>
+
+    <h2 class="section-title">🛍️ Customers (B2B Storefront)</h2>
+    <div class="grid">
+        <div class="card" onclick="setUser('b2bcustomer@cxdev.me', 'customer')" data-id="customer/b2bcustomer@cxdev.me">
+            <h3>b2bcustomer</h3><p>B2B Customer</p>
+        </div>
+        <div class="card" onclick="setUser('b2bapprover@cxdev.me', 'customer')" data-id="customer/b2bapprover@cxdev.me">
+            <h3>b2bapprover</h3><p>B2B Approver</p>
+        </div>
+        <div class="card" onclick="setUser('b2bmanager@cxdev.me', 'customer')" data-id="customer/b2bmanager@cxdev.me">
+            <h3>b2bmanager</h3><p>B2B Manager</p>
         </div>
     </div>
 </div>
@@ -109,10 +119,10 @@
             // Generate Deeplinks dynamically based on current host
             const baseUrl = window.location.protocol + "//" + window.location.host;
             const links = [
-                { name: "HAC", path: "/hac/" },
-                { name: "Backoffice", path: "/backoffice/" },
-                { name: "SmartEdit", path: "/smartedit/" },
-                { name: "Storefront", path: "/" }
+                { type: "employee", name: "HAC", path: "/hac/" },
+                { type: "employee", name: "Backoffice", path: "/backoffice/" },
+                { type: "employee", name: "SmartEdit", path: "/smartedit/" },
+                { type: "customer", name: "Storefront", path: "/" }
             ];
 
             const linksContainer = document.getElementById('links-container');
@@ -121,7 +131,9 @@
                 a.href = baseUrl + link.path;
                 a.className = 'link-btn';
                 a.innerText = link.name;
-                linksContainer.appendChild(a);
+                if (link.type == currentUserType) {
+                    linksContainer.appendChild(a);
+                }
             });
             document.getElementById('deeplinks-section').style.display = 'block';
         }
