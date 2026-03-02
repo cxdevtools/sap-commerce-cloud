@@ -45,7 +45,7 @@ import org.xnio.ssl.XnioSsl;
 
 import me.cxdev.commerce.proxy.handler.ProxyRouteHandler;
 import me.cxdev.commerce.proxy.interceptor.ProxyExchangeInterceptor;
-import me.cxdev.commerce.proxy.trust.AcceptAllTrustManager;
+import me.cxdev.commerce.proxy.ssl.AcceptAllTrustManager;
 import me.cxdev.commerce.proxy.util.ResourcePathUtils;
 import me.cxdev.commerce.proxy.util.TimeUtils;
 

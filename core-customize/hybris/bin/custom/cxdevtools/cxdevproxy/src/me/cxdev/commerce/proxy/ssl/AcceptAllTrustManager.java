@@ -1,4 +1,4 @@
-package me.cxdev.commerce.proxy.trust;
+package me.cxdev.commerce.proxy.ssl;
 
 import java.net.Socket;
 import java.security.cert.X509Certificate;
