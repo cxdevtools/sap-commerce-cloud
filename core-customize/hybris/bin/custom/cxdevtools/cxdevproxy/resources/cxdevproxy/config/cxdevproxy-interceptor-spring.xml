@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- Forwarded-For Header Interceptor -->
+	<bean id="cxForwardedHeadersInterceptor" class="me.cxdev.commerce.proxy.interceptor.ForwardedHeadersInterceptor">
+		<property name="serverHostname" value="${cxdevproxy.server.hostname}" />
+		<property name="serverProtocol" value="${cxdevproxy.server.protocol}" />
+		<property name="serverPort" value="${cxdevproxy.server.port}" />
+	</bean>
+
+	<!-- Prepared CORS Injector Interceptor, needs to be activated if needed -->
+	<bean id="cxCorsInjectorInterceptor" class="me.cxdev.commerce.proxy.interceptor.CorsInjectorInterceptor">
+		<property name="allowCredentials" value="false" />
+	</bean>
+
+	<!-- Prepared JWT Injector Interceptor, needs to be activated if needed -->
+	<bean id="cxJwtInjectorInterceptor" class="me.cxdev.commerce.proxy.interceptor.JwtInjectorInterceptor">
+		<property name="jwtTokenService" ref="cxJwtTokenService" />
+	</bean>
+</beans>

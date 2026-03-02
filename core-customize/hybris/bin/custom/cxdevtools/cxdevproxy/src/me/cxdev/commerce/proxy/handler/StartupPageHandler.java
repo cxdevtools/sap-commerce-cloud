@@ -18,8 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
-import me.cxdev.commerce.proxy.livecycle.ProxyLocalRouteHandler;
-
 /**
  * Intercepts incoming requests while the SAP Commerce server is still in its startup phase.
  * <p>
@@ -28,7 +26,7 @@ import me.cxdev.commerce.proxy.livecycle.ProxyLocalRouteHandler;
  * serves an auto-refreshing "503 Service Unavailable" maintenance page using native Java ResourceBundles.
  * </p>
  */
-public class StartupPageHandler implements ProxyLocalRouteHandler, TenantListener, InitializingBean {
+public class StartupPageHandler implements ProxyRouteHandler, TenantListener, InitializingBean {
 
 	private static final Logger LOG = LoggerFactory.getLogger(StartupPageHandler.class);
 	private static final String BUNDLE_BASE_NAME = "localization/cxdevproxy-locales";

@@ -1,4 +1,4 @@
-package me.cxdev.commerce.proxy.handler;
+package me.cxdev.commerce.proxy.interceptor;
 
 import java.net.InetSocketAddress;
 
@@ -8,8 +8,6 @@ import io.undertow.util.Headers;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import me.cxdev.commerce.proxy.livecycle.ProxyHttpServerExchangeHandler;
 
 /**
  * Interceptor that ensures the {@code X-Forwarded-*} headers are correctly populated
@@ -21,8 +19,8 @@ import me.cxdev.commerce.proxy.livecycle.ProxyHttpServerExchangeHandler;
  * to correctly resolve absolute URLs, avoid redirect loops, and determine the security context.
  * </p>
  */
-public class ForwardedHeadersHandler implements ProxyHttpServerExchangeHandler {
-	private static final Logger LOG = LoggerFactory.getLogger(ForwardedHeadersHandler.class);
+public class ForwardedHeadersInterceptor implements ProxyExchangeInterceptor {
+	private static final Logger LOG = LoggerFactory.getLogger(ForwardedHeadersInterceptor.class);
 
 	private String serverProtocol;
 	private String serverHostname;

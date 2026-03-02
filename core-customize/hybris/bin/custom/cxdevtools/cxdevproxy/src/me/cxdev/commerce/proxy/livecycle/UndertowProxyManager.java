@@ -2,6 +2,7 @@ package me.cxdev.commerce.proxy.livecycle;
 
 import static java.util.function.Predicate.isEqual;
 import static java.util.function.Predicate.not;
+import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,8 +11,14 @@ import java.net.URI;
 import java.security.KeyStore;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
-import javax.net.ssl.*;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 
 import de.hybris.bootstrap.config.ExtensionInfo;
 import de.hybris.bootstrap.config.WebExtensionModule;
@@ -29,12 +36,18 @@ import io.undertow.server.handlers.proxy.ProxyHandler;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.SmartLifecycle;
 import org.xnio.OptionMap;
 import org.xnio.Xnio;
 import org.xnio.ssl.XnioSsl;
 
+import me.cxdev.commerce.proxy.handler.ProxyRouteHandler;
+import me.cxdev.commerce.proxy.interceptor.ProxyExchangeInterceptor;
 import me.cxdev.commerce.proxy.trust.AcceptAllTrustManager;
+import me.cxdev.commerce.proxy.util.ResourcePathUtils;
+import me.cxdev.commerce.proxy.util.TimeUtils;
 
 /**
  * Manages the lifecycle of an embedded Undertow reverse proxy server for SAP Commerce.
@@ -45,7 +58,7 @@ import me.cxdev.commerce.proxy.trust.AcceptAllTrustManager;
  * It also supports intercepting requests via custom local route handlers.
  * </p>
  */
-public class UndertowProxyManager implements SmartLifecycle {
+public class UndertowProxyManager implements SmartLifecycle, InitializingBean, DisposableBean {
 	private static final Logger LOG = LoggerFactory.getLogger(UndertowProxyManager.class);
 
 	// Spring Injected Properties
@@ -67,20 +80,111 @@ public class UndertowProxyManager implements SmartLifecycle {
 	private String frontendProtocol;
 	private String frontendHostname;
 	private int frontendPort;
+	private String frontendRulesFilePath;
 	private String backendProtocol;
 	private String backendHostname;
 	private int backendPort;
+	private String backendRulesFilePath;
 	private String backendContexts;
 
-	// List of Local Routes
-	private List<ProxyLocalRouteHandler> localRouteHandlers;
+	// Rule Engine
+	private long groovyRuleReloadIntervalMs = 5000;
+	private GroovyRuleEngineService groovyRuleEngineService;
 
-	// Proxy Handlers
-	private List<ProxyHttpServerExchangeHandler> frontendHandlers;
-	private List<ProxyHttpServerExchangeHandler> backendHandlers;
+	// Thread-safe references for hot-reloading handlers
+	private final AtomicReference<List<ProxyExchangeInterceptor>> frontendHandlersRef = new AtomicReference<>();
+	private final AtomicReference<List<ProxyExchangeInterceptor>> backendHandlersRef = new AtomicReference<>();
+
+	// Watcher Status
+	private ScheduledExecutorService watcherExecutor;
+	private File frontendScriptFile;
+	private File backendScriptFile;
+	private long lastModifiedFrontend = 0;
+	private long lastModifiedBackend = 0;
+
+	// List of Local Routes
+	private List<ProxyRouteHandler> routeHandlers;
 
 	private Undertow server;
 	private boolean running = false;
+
+	/**
+	 * Initializes the proxy manager after all Spring properties have been set.
+	 * Prepares the atomic handler lists, resolves the Groovy script files,
+	 * triggers the initial script evaluation, and starts the file watcher for hot-reloading.
+	 */
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		frontendHandlersRef.set(List.of());
+		backendHandlersRef.set(List.of());
+
+		if (groovyRuleEngineService != null) {
+			frontendScriptFile = groovyRuleEngineService.resolveScriptFile(frontendRulesFilePath);
+			backendScriptFile = groovyRuleEngineService.resolveScriptFile(backendRulesFilePath);
+
+			reloadFrontendRulesIfChanged();
+			reloadBackendRulesIfChanged();
+
+			startFileWatcher();
+		}
+	}
+
+	/**
+	 * Starts a daemon thread that periodically checks the Groovy rule scripts for modifications.
+	 * If changes are detected, the scripts are recompiled and smoothly hot-swapped.
+	 */
+	private void startFileWatcher() {
+		watcherExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
+			Thread thread = new Thread(r, "CxDevProxy-RuleWatcher");
+			thread.setDaemon(true);
+			return thread;
+		});
+
+		watcherExecutor.scheduleWithFixedDelay(() -> {
+			reloadFrontendRulesIfChanged();
+			reloadBackendRulesIfChanged();
+		}, groovyRuleReloadIntervalMs, groovyRuleReloadIntervalMs, TimeUnit.MILLISECONDS);
+
+		LOG.info("Started Groovy Rule Watcher for dynamic hot-reloading every {} ms.", groovyRuleReloadIntervalMs);
+	}
+
+	/**
+	 * Evaluates the frontend Groovy script if the file has been modified since the last check.
+	 * Replaces the active handlers atomically to ensure zero proxy downtime.
+	 */
+	private void reloadFrontendRulesIfChanged() {
+		if (frontendScriptFile != null && frontendScriptFile.exists()) {
+			long currentModified = frontendScriptFile.lastModified();
+			if (currentModified > lastModifiedFrontend) {
+				LOG.info("Detected change in frontend rules script. Compiling and reloading...");
+				List<ProxyExchangeInterceptor> newHandlers = groovyRuleEngineService.evaluateScript(frontendScriptFile);
+				if (newHandlers != null && !newHandlers.isEmpty()) {
+					frontendHandlersRef.set(newHandlers); // ATOMIC SWAP!
+					lastModifiedFrontend = currentModified;
+					LOG.info("Frontend rules successfully reloaded. Active handlers: {}", newHandlers.size());
+				}
+			}
+		}
+	}
+
+	/**
+	 * Evaluates the backend Groovy script if the file has been modified since the last check.
+	 * Replaces the active handlers atomically to ensure zero proxy downtime.
+	 */
+	private void reloadBackendRulesIfChanged() {
+		if (backendScriptFile != null && backendScriptFile.exists()) {
+			long currentModified = backendScriptFile.lastModified();
+			if (currentModified > lastModifiedBackend) {
+				LOG.info("Detected change in backend rules script. Compiling and reloading...");
+				List<ProxyExchangeInterceptor> newHandlers = groovyRuleEngineService.evaluateScript(backendScriptFile);
+				if (newHandlers != null && !newHandlers.isEmpty()) {
+					backendHandlersRef.set(newHandlers); // ATOMIC SWAP!
+					lastModifiedBackend = currentModified;
+					LOG.info("Backend rules successfully reloaded. Active handlers: {}", newHandlers.size());
+				}
+			}
+		}
+	}
 
 	/**
 	 * Starts the embedded Undertow proxy server.
@@ -122,13 +226,13 @@ public class UndertowProxyManager implements SmartLifecycle {
 			LOG.info("Active backend routing contexts: {}", activeBackendContexts);
 
 			HttpHandler routingHandler = exchange -> {
-				// 1. Check if a local route handler wants to intercept the request
-				if (localRouteHandlers != null) {
-					for (ProxyLocalRouteHandler localHandler : localRouteHandlers) {
-						if (localHandler.matches(exchange)) {
+				// 1. Check if a route handler wants to intercept the request
+				if (routeHandlers != null) {
+					for (ProxyRouteHandler handler : routeHandlers) {
+						if (handler.matches(exchange)) {
 							LOG.debug("Serving request {} {} with local handler {}.", exchange.getRequestMethod(), exchange.getRequestURI(),
-									localHandler.getClass().getSimpleName());
-							localHandler.handleRequest(exchange);
+									handler.getClass().getSimpleName());
+							handler.handleRequest(exchange);
 							return;
 						}
 					}
@@ -193,10 +297,10 @@ public class UndertowProxyManager implements SmartLifecycle {
 	 * Routes the incoming HTTP request to either the backend or the frontend proxy handler
 	 * based on the request path and the determined backend contexts.
 	 *
-	 * @param exchange         The current HTTP server exchange.
-	 * @param backendContexts  The list of context paths mapped to the backend.
-	 * @param backendHandler   The handler responsible for backend routing.
-	 * @param frontendHandler  The handler responsible for frontend routing.
+	 * @param exchange        The current HTTP server exchange.
+	 * @param backendContexts The list of context paths mapped to the backend.
+	 * @param backendHandler  The handler responsible for backend routing.
+	 * @param frontendHandler The handler responsible for frontend routing.
 	 * @throws Exception If an error occurs during routing.
 	 */
 	private void routeRequest(HttpServerExchange exchange, List<String> backendContexts, HttpHandler backendHandler, HttpHandler frontendHandler) throws Exception {
@@ -214,14 +318,19 @@ public class UndertowProxyManager implements SmartLifecycle {
 
 	/**
 	 * Wraps the base frontend handler with any configured custom interceptors/handlers.
+	 * Pulls the handlers atomically from the reference to ensure thread-safety during hot-reloads.
 	 *
 	 * @param next The base proxy handler.
 	 * @return A chained HTTP handler applying all configured frontend rules.
 	 */
 	protected HttpHandler applyFrontendRules(HttpHandler next) {
 		return exchange -> {
-			if (frontendHandlers != null) {
-				frontendHandlers.forEach(handler -> handler.apply(exchange));
+			List<ProxyExchangeInterceptor> currentHandlers = frontendHandlersRef.get();
+			for (ProxyExchangeInterceptor handler : emptyIfNull(currentHandlers)) {
+				handler.apply(exchange);
+				if (exchange.isResponseStarted() || exchange.isComplete()) {
+					break;
+				}
 			}
 			next.handleRequest(exchange);
 		};
@@ -229,14 +338,19 @@ public class UndertowProxyManager implements SmartLifecycle {
 
 	/**
 	 * Wraps the base backend handler with any configured custom interceptors/handlers.
+	 * Pulls the handlers atomically from the reference to ensure thread-safety during hot-reloads.
 	 *
 	 * @param next The base proxy handler.
 	 * @return A chained HTTP handler applying all configured backend rules.
 	 */
 	protected HttpHandler applyBackendRules(HttpHandler next) {
 		return exchange -> {
-			if (backendHandlers != null) {
-				backendHandlers.forEach(handler -> handler.apply(exchange));
+			List<ProxyExchangeInterceptor> currentHandlers = backendHandlersRef.get();
+			for (ProxyExchangeInterceptor handler : emptyIfNull(currentHandlers)) {
+				handler.apply(exchange);
+				if (exchange.isResponseStarted() || exchange.isComplete()) {
+					break;
+				}
 			}
 			next.handleRequest(exchange);
 		};
@@ -296,7 +410,7 @@ public class UndertowProxyManager implements SmartLifecycle {
 	}
 
 	/**
-	 * Stops the embedded Undertow proxy server and releases resources.
+	 * Stops the embedded Undertow proxy server and updates the running state.
 	 */
 	@Override
 	public void stop() {
@@ -304,6 +418,16 @@ public class UndertowProxyManager implements SmartLifecycle {
 			LOG.info("Stopping embedded Undertow proxy...");
 			server.stop();
 			running = false;
+		}
+	}
+
+	/**
+	 * Shuts down the background file watcher executor when the Spring context is destroyed.
+	 */
+	@Override
+	public void destroy() throws Exception {
+		if (watcherExecutor != null && !watcherExecutor.isShutdown()) {
+			watcherExecutor.shutdownNow();
 		}
 	}
 
@@ -317,7 +441,7 @@ public class UndertowProxyManager implements SmartLifecycle {
 		return Integer.MAX_VALUE;
 	}
 
-	// --- Setters for Spring Injection ---
+	// --- Standard Setters ---
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
@@ -367,6 +491,14 @@ public class UndertowProxyManager implements SmartLifecycle {
 		this.frontendPort = frontendPort;
 	}
 
+	/**
+	 * Sets the file path for the frontend Groovy rules.
+	 * Automatically normalizes the path to ensure a valid ResourceLoader prefix.
+	 */
+	public void setFrontendRulesFilePath(String frontendRulesFilePath) {
+		this.frontendRulesFilePath = ResourcePathUtils.normalizeFilePath(frontendRulesFilePath, "frontend rules");
+	}
+
 	public void setBackendProtocol(String backendProtocol) {
 		this.backendProtocol = backendProtocol;
 	}
@@ -379,19 +511,33 @@ public class UndertowProxyManager implements SmartLifecycle {
 		this.backendPort = backendPort;
 	}
 
+	/**
+	 * Sets the file path for the backend Groovy rules.
+	 * Automatically normalizes the path to ensure a valid ResourceLoader prefix.
+	 */
+	public void setBackendRulesFilePath(String backendRulesFilePath) {
+		this.backendRulesFilePath = ResourcePathUtils.normalizeFilePath(backendRulesFilePath, "backend rules");
+	}
+
 	public void setBackendContexts(String backendContexts) {
 		this.backendContexts = backendContexts;
 	}
 
-	public void setLocalRouteHandlers(List<ProxyLocalRouteHandler> localRouteHandlers) {
-		this.localRouteHandlers = localRouteHandlers;
+	/**
+	 * Smart setter allowing human-readable time intervals like "5s", "10m", "1h", etc.
+	 * Fallback to milliseconds if no unit is provided.
+	 *
+	 * @param interval The interval string from Spring properties.
+	 */
+	public void setGroovyRuleReloadInterval(String interval) {
+		this.groovyRuleReloadIntervalMs = TimeUtils.parseIntervalToMillis(interval, 5000L, "Groovy rule reload interval");
 	}
 
-	public void setFrontendHandlers(List<ProxyHttpServerExchangeHandler> frontendHandlers) {
-		this.frontendHandlers = frontendHandlers;
+	public void setGroovyRuleEngineService(GroovyRuleEngineService groovyRuleEngineService) {
+		this.groovyRuleEngineService = groovyRuleEngineService;
 	}
 
-	public void setBackendHandlers(List<ProxyHttpServerExchangeHandler> backendHandlers) {
-		this.backendHandlers = backendHandlers;
+	public void setRouteHandlers(List<ProxyRouteHandler> routeHandlers) {
+		this.routeHandlers = routeHandlers;
 	}
 }

@@ -4,22 +4,12 @@
 
 	<!-- Default Handler -->
 	<bean id="cxStartupPageHandler" class="me.cxdev.commerce.proxy.handler.StartupPageHandler"/>
-	<bean id="cxStaticContentHandler" class="me.cxdev.commerce.proxy.handler.StaticContentHandler" />
-
-	<!-- Forwarded-For Header Handler -->
-	<bean id="cxForwardedHeadersHandler" class="me.cxdev.commerce.proxy.handler.ForwardedHeadersHandler">
-		<property name="serverHostname" value="${cxdevproxy.server.hostname}" />
-		<property name="serverProtocol" value="${cxdevproxy.server.protocol}" />
-		<property name="serverPort" value="${cxdevproxy.server.port}" />
+	<bean id="cxTemplateRenderingHandler" class="me.cxdev.commerce.proxy.handler.TemplateRenderingHandler">
+		<constructor-arg name="baseLocation" value="${cxdevproxy.proxy.ui.baselocation}" />
+		<constructor-arg name="configurationService" ref="configurationService" />
+		<constructor-arg name="messageSource" ref="cxProxyMessageSource" />
 	</bean>
-
-	<!-- Prepared CORS Injector Handler, needs to be activated if needed -->
-	<bean id="cxCorsInjectorHandler" class="me.cxdev.commerce.proxy.handler.CorsInjectorHandler">
-		<property name="allowCredentials" value="false" />
-	</bean>
-
-	<!-- Prepared JWT Injector Handler, needs to be activated if needed -->
-	<bean id="cxJwtInjectorHandler" class="me.cxdev.commerce.proxy.handler.JwtInjectorHandler">
-		<property name="jwtTokenService" ref="cxJwtTokenService" />
+	<bean id="cxStaticContentHandler" class="me.cxdev.commerce.proxy.handler.StaticContentHandler">
+		<constructor-arg name="baseLocation" value="${cxdevproxy.proxy.ui.baselocation}" />
 	</bean>
 </beans>

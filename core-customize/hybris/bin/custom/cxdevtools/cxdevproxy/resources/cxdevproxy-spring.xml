@@ -21,37 +21,48 @@
 		<property name="frontendProtocol" value="${cxdevproxy.proxy.frontend.protocol}" />
 		<property name="frontendHostname" value="${cxdevproxy.proxy.frontend.hostname}" />
 		<property name="frontendPort" value="${cxdevproxy.proxy.frontend.port}" />
+		<property name="frontendRulesFilePath" value="${cxdevproxy.proxy.frontend.rules}"/>
 
 		<property name="backendProtocol" value="${cxdevproxy.proxy.backend.protocol}" />
 		<property name="backendHostname" value="${cxdevproxy.proxy.backend.hostname}" />
 		<property name="backendPort" value="${cxdevproxy.proxy.backend.port}" />
+		<property name="backendRulesFilePath" value="${cxdevproxy.proxy.backend.rules}"/>
 		<property name="backendContexts" value="${cxdevproxy.proxy.backend.contexts}" />
 
-		<property name="localRouteHandlers" ref="cxLocalRouteHandlers" />
-		<property name="frontendHandlers" ref="cxFrontendProxyHandlers" />
-		<property name="backendHandlers" ref="cxBackendProxyHandlers" />
+		<property name="routeHandlers" ref="cxRouteHandlers" />
+		<property name="groovyRuleEngineService">
+			<bean class="me.cxdev.commerce.proxy.livecycle.GroovyRuleEngineService" />
+		</property>
+		<property name="groovyRuleReloadInterval" value="${cxdevproxy.proxy.rules.reloadinterval}"/>
 	</bean>
 
-	<!-- Local Route Handlers -->
-	<alias name="cxDefaultLocalRouteHandlers" alias="cxLocalRouteHandlers"/>
-	<util:list id="cxDefaultLocalRouteHandlers" value-type="me.cxdev.commerce.proxy.livecycle.ProxyLocalRouteHandler">
+	<alias alias="cxProxyMessageSource" name="cxDefaultProxyMessageSource" />
+	<bean id="cxDefaultProxyMessageSource" class="me.cxdev.commerce.proxy.i18n.ClasspathMergingMessageSource">
+		<property name="baseName" value="${cxdevproxy.proxy.ui.messages.basename}" />
+		<property name="cacheRefreshIntervalMillis" value="${cxdevproxy.proxy.ui.messages.reloadinterval}"/>
+		<property name="useCodeAsDefaultMessage" value="${cxdevproxy.proxy.ui.messages.codeasfallback}"/>
+	</bean>
+
+	<alias alias="cxJwtTokenService" name="cxDefaultJwtTokenService" />
+	<bean id="cxDefaultJwtTokenService" class="me.cxdev.commerce.jwt.service.CxJwtTokenService">
+		<property name="templatePathPrefix" value="${cxdevproxy.proxy.jwt.templatepath}" />
+		<property name="tokenValidity" value="${cxdevproxy.proxy.jwt.validity}"/>
+		<property name="jwkSource" ref="jwkSource"/>
+	</bean>
+
+	<!-- Route Handlers -->
+	<alias name="cxDefaultRouteHandlers" alias="cxRouteHandlers"/>
+	<util:list id="cxDefaultRouteHandlers" value-type="me.cxdev.commerce.proxy.handler.ProxyRouteHandler">
 		<ref bean="cxStartupPageHandler"/>
+		<ref bean="cxTemplateRenderingHandler"/>
 		<ref bean="cxStaticContentHandler"/>
 	</util:list>
 
-	<!-- Proxy Handlers -->
-	<alias name="cxDefaultFrontendProxyHandlers" alias="cxFrontendProxyHandlers"/>
-	<util:list id="cxDefaultFrontendProxyHandlers" value-type="me.cxdev.commerce.proxy.livecycle.ProxyHttpServerExchangeHandler">
-		<ref bean="cxForwardedHeadersHandler"/>
-	</util:list>
-
-	<alias name="cxDefaultBackendProxyHandlers" alias="cxBackendProxyHandlers"/>
-	<util:list id="cxDefaultBackendProxyHandlers" value-type="me.cxdev.commerce.proxy.livecycle.ProxyHttpServerExchangeHandler">
-		<ref bean="cxForwardedHeadersHandler"/>
-	</util:list>
-
-	<import resource="classpath:/cxdevproxy/config/cxdevproxy-jwt-spring.xml"/>
-	<import resource="classpath:/cxdevproxy/config/cxdevproxy-conditions-spring.xml"/>
+	<!-- Proxy Handler and Interceptor -->
 	<import resource="classpath:/cxdevproxy/config/cxdevproxy-handler-spring.xml"/>
+	<import resource="classpath:/cxdevproxy/config/cxdevproxy-interceptor-spring.xml"/>
+	<import resource="classpath:/cxdevproxy/config/cxdevproxy-conditions-spring.xml"/>
+
+	<!-- Additions -->
 	<import resource="classpath*:/cxdevproxy/config/cxdevproxy-additions-spring.xml"/>
 </beans>

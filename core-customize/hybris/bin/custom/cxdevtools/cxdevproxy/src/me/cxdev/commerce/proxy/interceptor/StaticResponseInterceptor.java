@@ -1,16 +1,14 @@
-package me.cxdev.commerce.proxy.handler;
+package me.cxdev.commerce.proxy.interceptor;
 
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.Headers;
-
-import me.cxdev.commerce.proxy.livecycle.ProxyHttpServerExchangeHandler;
 
 /**
  * Short-circuits the request and returns a predefined status code and payload.
  * Useful for mocking endpoints that do not yet exist in the backend API,
  * or for simulating specific error states (e.g., forcing a 500 Internal Server Error).
  */
-public class StaticResponseHandler implements ProxyHttpServerExchangeHandler {
+public class StaticResponseInterceptor implements ProxyExchangeInterceptor {
 	private int statusCode = 200;
 	private String contentType = "application/json";
 	private String responseBody = "{}";

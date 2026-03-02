@@ -1,4 +1,4 @@
-package me.cxdev.commerce.proxy.handler;
+package me.cxdev.commerce.proxy.interceptor;
 
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.Cookie;
@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 
 import me.cxdev.commerce.jwt.service.CxJwtTokenService;
 import me.cxdev.commerce.jwt.service.JwtTokenService;
-import me.cxdev.commerce.proxy.livecycle.ProxyHttpServerExchangeHandler;
 
 /**
  * Interceptor that injects a mocked JWT into the HTTP request before routing it to the backend.
@@ -20,8 +19,8 @@ import me.cxdev.commerce.proxy.livecycle.ProxyHttpServerExchangeHandler;
  * and appends it as an standard {@code Authorization: Bearer <token>} header.
  * </p>
  */
-public class JwtInjectorHandler implements ProxyHttpServerExchangeHandler {
-	private static final Logger LOG = LoggerFactory.getLogger(JwtInjectorHandler.class);
+public class JwtInjectorInterceptor implements ProxyExchangeInterceptor {
+	private static final Logger LOG = LoggerFactory.getLogger(JwtInjectorInterceptor.class);
 	private static final String USER_ID_COOKIE_NAME = "cxdevproxy_user_id";
 	private static final String USER_TYPE_COOKIE_NAME = "cxdevproxy_user_type";
 

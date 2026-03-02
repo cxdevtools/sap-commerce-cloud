@@ -1,15 +1,21 @@
-package me.cxdev.commerce.proxy.condition;
+package me.cxdev.commerce.proxy.interceptor.condition;
 
 import io.undertow.server.HttpServerExchange;
 
 import org.apache.commons.lang3.StringUtils;
 
+import me.cxdev.commerce.proxy.interceptor.ProxyExchangeInterceptorCondition;
+
 /**
  * Condition that matches if a specific cookie is present in the request.
  * Useful for routing based on feature toggles, A/B tests, or specific mock users.
  */
-public class CookieExistsCondition implements ExchangeCondition {
-	private String cookieName;
+class CookieExistsCondition implements ProxyExchangeInterceptorCondition {
+	private final String cookieName;
+
+	CookieExistsCondition(String cookieName) {
+		this.cookieName = cookieName;
+	}
 
 	@Override
 	public boolean matches(HttpServerExchange exchange) {
@@ -17,9 +23,5 @@ public class CookieExistsCondition implements ExchangeCondition {
 			return false;
 		}
 		return exchange.getRequestCookie(cookieName) != null;
-	}
-
-	public void setCookieName(String cookieName) {
-		this.cookieName = cookieName;
 	}
 }

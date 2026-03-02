@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CX Dev Proxy - Portal</title>
+    <title>#{page.title:CX Dev Proxy - Portal}</title>
     <style>
         :root { --primary: #0056b3; --bg: #f4f7f6; --card-bg: #ffffff; --text: #333; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 2rem; }
@@ -25,64 +25,83 @@
         .links-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; }
         .link-btn { display: block; text-align: center; background-color: var(--primary); color: white; text-decoration: none; padding: 1rem; border-radius: 8px; font-weight: bold; transition: background 0.2s; }
         .link-btn:hover { background-color: #004494; }
+
+        /* Logout Button Styles */
+        .logout-btn { display: inline-block; margin-top: 1rem; background-color: #dc3545; color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; font-weight: bold; cursor: pointer; border: none; font-size: 0.9rem;}
+        .logout-btn:hover { background-color: #c82333; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🚀 CX Dev Proxy</h1>
+    <h1>🚀 #{heading.main:CX Dev Proxy}</h1>
 
     <div id="active-user-banner" class="status-banner">
-        Currently logged in as: <br>
+        #{msg.loggedin:Currently logged in as:} <br>
         <strong id="active-user-id">None</strong>
         (<em id="active-user-type">None</em>)
+        <br>
+        <button class="logout-btn" onclick="logout()">#{btn.logout:Clear Mock User}</button>
     </div>
 
     <div id="deeplinks-section" style="display: none;">
-        <h2 class="section-title">🔗 Application Deep Links</h2>
+        <h2 class="section-title">🔗 #{heading.links:Application Deep Links}</h2>
         <div class="links-grid" id="links-container">
         </div>
     </div>
 
-    <h2 class="section-title">🏢 Employees (Internal Apps)</h2>
+    <h2 class="section-title">🏢 #{tab.employee:Employees (Internal Apps)}</h2>
     <div class="grid">
         <div class="card" onclick="setUser('admin', 'employee')" data-id="employee/admin">
-            <h3>admin</h3><p>Admin with Full Access</p>
+            <h3>admin</h3><p>#{user.employee.admin:Admin with Full Access}</p>
         </div>
         <div class="card" onclick="setUser('cmsmanager', 'employee')" data-id="employee/cmsmanager">
-            <h3>cmsmanager</h3><p>SmartEdit & CMS Access</p>
+            <h3>cmsmanager</h3><p>#{user.employee.cms:SmartEdit & CMS Access}</p>
         </div>
         <div class="card" onclick="setUser('productmanager', 'employee')" data-id="employee/productmanager">
-            <h3>productmanager</h3><p>PIM & Backoffice Access</p>
+            <h3>productmanager</h3><p>#{user.employee.pim:PIM & Backoffice Access}</p>
         </div>
     </div>
 
-    <h2 class="section-title">🛍️ Customers (B2C Storefront)</h2>
-    <div class="grid">
+    <h2 id="title-b2c" class="section-title">🛍️ #{tab.b2c:Customers (B2C Storefront)}</h2>
+    <div id="grid-b2c" class="grid">
         <div class="card" onclick="setUser('visitor@cxdev.me', 'customer')" data-id="customer/visitor@cxdev.me">
-            <h3>visitor</h3><p>B2C Visitor</p>
+            <h3>visitor</h3><p>#{user.anonymous:B2C Visitor}</p>
         </div>
         <div class="card" onclick="setUser('customer@cxdev.me', 'customer')" data-id="customer/customer@cxdev.me">
-            <h3>customer</h3><p>B2C Customer</p>
+            <h3>customer</h3><p>#{user.customer:B2C Customer}</p>
         </div>
     </div>
 
-    <h2 class="section-title">🛍️ Customers (B2B Storefront)</h2>
-    <div class="grid">
+    <h2 id="title-b2b" class="section-title">🏢 #{tab.b2b:Customers (B2B Storefront)}</h2>
+    <div id="grid-b2b" class="grid">
         <div class="card" onclick="setUser('b2bcustomer@cxdev.me', 'customer')" data-id="customer/b2bcustomer@cxdev.me">
-            <h3>b2bcustomer</h3><p>B2B Customer</p>
+            <h3>b2bcustomer</h3><p>#{user.b2b.customer:B2B Customer}</p>
         </div>
         <div class="card" onclick="setUser('b2bapprover@cxdev.me', 'customer')" data-id="customer/b2bapprover@cxdev.me">
-            <h3>b2bapprover</h3><p>B2B Approver</p>
+            <h3>b2bapprover</h3><p>#{user.b2b.approver:B2B Approver}</p>
         </div>
         <div class="card" onclick="setUser('b2bmanager@cxdev.me', 'customer')" data-id="customer/b2bmanager@cxdev.me">
-            <h3>b2bmanager</h3><p>B2B Manager</p>
+            <h3>b2bmanager</h3><p>#{user.b2b.manager:B2B Manager}</p>
         </div>
     </div>
 </div>
 
 <script>
-    // Utils: Read Cookie
+    const showB2C = %{cxdevproxy.proxy.ui.login.showB2C:false};
+    const showB2B = %{cxdevproxy.proxy.ui.login.showB2B:false};
+
+    // Hide sections if properties are false
+    if (!showB2C) {
+        document.getElementById('title-b2c').style.display = 'none';
+        document.getElementById('grid-b2c').style.display = 'none';
+    }
+    if (!showB2B) {
+        document.getElementById('title-b2b').style.display = 'none';
+        document.getElementById('grid-b2b').style.display = 'none';
+    }
+
+    // --- Utils ---
     function getCookie(name) {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);
@@ -90,17 +109,26 @@
         return null;
     }
 
-    // Action: Set User and Reload
-    function setUser(userId, userType) {
-        // Expire in 1 day
+    function setCookie(name, value, days = 7) {
         const date = new Date();
-        date.setTime(date.getTime() + (24*60*60*1000));
-        document.cookie = `cxdevproxy_user_id=${userId}; expires=${date.toUTCString()}; path=/`;
-        document.cookie = `cxdevproxy_user_type=${userType}; expires=${date.toUTCString()}; path=/`;
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        document.cookie = `${name}=${value}; expires=${date.toUTCString()}; path=/`;
+    }
+
+    // --- Actions ---
+    function setUser(userId, userType) {
+        setCookie('cxdevproxy_user_id', userId, 1);
+        setCookie('cxdevproxy_user_type', userType, 1);
         window.location.reload();
     }
 
-    // Init: Check Current State
+    function logout() {
+        setCookie('cxdevproxy_user_id', '', -1); // Expire immediately
+        setCookie('cxdevproxy_user_type', '', -1);
+        window.location.reload();
+    }
+
+    // --- Init ---
     window.onload = function() {
         const currentUserId = getCookie('cxdevproxy_user_id');
         const currentUserType = getCookie('cxdevproxy_user_type');
@@ -116,7 +144,7 @@
             const activeCard = document.querySelector(`.card[data-id="${currentUserType}/${currentUserId}"]`);
             if(activeCard) activeCard.classList.add('active');
 
-            // Generate Deeplinks dynamically based on current host
+            // Generate Deeplinks
             const baseUrl = window.location.protocol + "//" + window.location.host;
             const links = [
                 { type: "employee", name: "HAC", path: "/hac/" },
@@ -126,16 +154,22 @@
             ];
 
             const linksContainer = document.getElementById('links-container');
+            let linksAdded = false;
+
             links.forEach(link => {
-                const a = document.createElement('a');
-                a.href = baseUrl + link.path;
-                a.className = 'link-btn';
-                a.innerText = link.name;
-                if (link.type == currentUserType) {
+                if (link.type === currentUserType) {
+                    const a = document.createElement('a');
+                    a.href = baseUrl + link.path;
+                    a.className = 'link-btn';
+                    a.innerText = link.name;
                     linksContainer.appendChild(a);
+                    linksAdded = true;
                 }
             });
-            document.getElementById('deeplinks-section').style.display = 'block';
+
+            if (linksAdded) {
+                document.getElementById('deeplinks-section').style.display = 'block';
+            }
         }
     };
 </script>

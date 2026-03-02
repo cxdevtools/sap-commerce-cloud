@@ -1,4 +1,4 @@
-package me.cxdev.commerce.proxy.handler;
+package me.cxdev.commerce.proxy.interceptor;
 
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.Headers;
@@ -6,15 +6,13 @@ import io.undertow.util.HttpString;
 
 import org.apache.commons.lang3.StringUtils;
 
-import me.cxdev.commerce.proxy.livecycle.ProxyHttpServerExchangeHandler;
-
 /**
  * Injects configurable CORS (Cross-Origin Resource Sharing) headers into the response.
- * Acts as an "Auto-CORS" handler by dynamically echoing the incoming 'Origin' header
+ * Acts as an "Auto-CORS" modifier by dynamically echoing the incoming 'Origin' header
  * back to the client. If no Origin header is present in the request, no CORS headers
  * are injected.
  */
-public class CorsInjectorHandler implements ProxyHttpServerExchangeHandler {
+public class CorsInjectorInterceptor implements ProxyExchangeInterceptor {
 	private String allowedMethods = "GET, POST, PUT, DELETE, OPTIONS, PATCH";
 	private String allowedHeaders = "Authorization, Content-Type, Accept, Origin, X-Requested-With";
 	private boolean allowCredentials = false;

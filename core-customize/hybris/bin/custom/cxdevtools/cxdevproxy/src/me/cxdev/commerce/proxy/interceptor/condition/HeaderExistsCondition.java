@@ -1,15 +1,21 @@
-package me.cxdev.commerce.proxy.condition;
+package me.cxdev.commerce.proxy.interceptor.condition;
 
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.HttpString;
 
 import org.apache.commons.lang3.StringUtils;
 
+import me.cxdev.commerce.proxy.interceptor.ProxyExchangeInterceptorCondition;
+
 /**
  * Condition that matches if the request contains a specific HTTP header.
  */
-public class HeaderExistsCondition implements ExchangeCondition {
-	private String headerName;
+class HeaderExistsCondition implements ProxyExchangeInterceptorCondition {
+	private final String headerName;
+
+	HeaderExistsCondition(String headerName) {
+		this.headerName = headerName;
+	}
 
 	@Override
 	public boolean matches(HttpServerExchange exchange) {
@@ -17,9 +23,5 @@ public class HeaderExistsCondition implements ExchangeCondition {
 			return false;
 		}
 		return exchange.getRequestHeaders().contains(new HttpString(headerName));
-	}
-
-	public void setHeaderName(String headerName) {
-		this.headerName = headerName;
 	}
 }

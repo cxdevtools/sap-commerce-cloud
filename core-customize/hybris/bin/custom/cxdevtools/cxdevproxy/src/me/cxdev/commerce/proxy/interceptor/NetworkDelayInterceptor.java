@@ -1,4 +1,4 @@
-package me.cxdev.commerce.proxy.handler;
+package me.cxdev.commerce.proxy.interceptor;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -6,8 +6,6 @@ import io.undertow.server.HttpServerExchange;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import me.cxdev.commerce.proxy.livecycle.ProxyHttpServerExchangeHandler;
 
 /**
  * Artificially delays the request processing to simulate network latency
@@ -17,8 +15,8 @@ import me.cxdev.commerce.proxy.livecycle.ProxyHttpServerExchangeHandler;
  * Note: Uses Thread.sleep() which blocks the current worker thread.
  * </p>
  */
-public class NetworkDelayHandler implements ProxyHttpServerExchangeHandler {
-	private static final Logger LOG = LoggerFactory.getLogger(NetworkDelayHandler.class);
+public class NetworkDelayInterceptor implements ProxyExchangeInterceptor {
+	private static final Logger LOG = LoggerFactory.getLogger(NetworkDelayInterceptor.class);
 
 	private long minDelayInMillis = 1000;
 	private long maxDelayInMillis = 1000;

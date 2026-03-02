@@ -1,5 +1,6 @@
-package me.cxdev.commerce.proxy.livecycle;
+package me.cxdev.commerce.proxy.handler;
 
+import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 
 /**
@@ -7,7 +8,7 @@ import io.undertow.server.HttpServerExchange;
  * bypassing the standard routing to the frontend or backend.
  * Useful for serving local HTML pages or mocking endpoints.
  */
-public interface ProxyLocalRouteHandler {
+public interface ProxyRouteHandler extends HttpHandler {
 	/**
 	 * Determines if this handler is responsible for the current request.
 	 *
@@ -15,12 +16,4 @@ public interface ProxyLocalRouteHandler {
 	 * @return true if this handler should process the request, false otherwise
 	 */
 	boolean matches(HttpServerExchange exchange);
-
-	/**
-	 * Processes the request and sends a direct response to the client.
-	 *
-	 * @param exchange the current HTTP server exchange
-	 * @throws Exception if an error occurs during processing
-	 */
-	void handleRequest(HttpServerExchange exchange) throws Exception;
 }

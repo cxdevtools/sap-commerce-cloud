@@ -1,14 +1,20 @@
-package me.cxdev.commerce.proxy.condition;
+package me.cxdev.commerce.proxy.interceptor.condition;
 
 import io.undertow.server.HttpServerExchange;
 
 import org.apache.commons.lang3.StringUtils;
 
+import me.cxdev.commerce.proxy.interceptor.ProxyExchangeInterceptorCondition;
+
 /**
  * Condition that matches if the request path starts with a specific prefix.
  */
-public class PathStartsWithCondition implements ExchangeCondition {
+class PathStartsWithCondition implements ProxyExchangeInterceptorCondition {
 	private String prefix;
+
+	PathStartsWithCondition(String prefix) {
+		this.prefix = prefix;
+	}
 
 	@Override
 	public boolean matches(HttpServerExchange exchange) {
@@ -16,9 +22,5 @@ public class PathStartsWithCondition implements ExchangeCondition {
 			return false;
 		}
 		return exchange.getRequestPath().startsWith(prefix);
-	}
-
-	public void setPrefix(String prefix) {
-		this.prefix = prefix;
 	}
 }

@@ -1,15 +1,21 @@
-package me.cxdev.commerce.proxy.condition;
+package me.cxdev.commerce.proxy.interceptor.condition;
 
 import io.undertow.server.HttpServerExchange;
 
 import org.apache.commons.lang3.StringUtils;
 
+import me.cxdev.commerce.proxy.interceptor.ProxyExchangeInterceptorCondition;
+
 /**
  * Condition that matches if the HTTP request method (e.g., GET, POST)
  * equals the configured method.
  */
-public class HttpMethodCondition implements ExchangeCondition {
-	private String method;
+class HttpMethodCondition implements ProxyExchangeInterceptorCondition {
+	private final String method;
+
+	HttpMethodCondition(String method) {
+		this.method = method;
+	}
 
 	@Override
 	public boolean matches(HttpServerExchange exchange) {
@@ -17,9 +23,5 @@ public class HttpMethodCondition implements ExchangeCondition {
 			return false;
 		}
 		return exchange.getRequestMethod().toString().equalsIgnoreCase(method);
-	}
-
-	public void setMethod(String method) {
-		this.method = method;
 	}
 }
