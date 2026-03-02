@@ -32,6 +32,8 @@ public class StaticContentHandler implements ProxyRouteHandler, ResourceLoaderAw
 	// A lightweight MIME type map for the most common web assets
 	private static final Map<String, String> MIME_TYPES = new HashMap<>();
 	static {
+		MIME_TYPES.put("", "text/plain");
+		MIME_TYPES.put("txt", "text/plain");
 		MIME_TYPES.put("css", "text/css");
 		MIME_TYPES.put("js", "application/javascript");
 		MIME_TYPES.put("json", "application/json");
