@@ -86,7 +86,7 @@ public class GroovyRuleEngineService implements ApplicationContextAware, Resourc
 
 		ImportCustomizer importCustomizer = new ImportCustomizer();
 		importCustomizer.addStarImports("me.cxdev.commerce.proxy.interceptor");
-		importCustomizer.addStaticStars("me.cxdev.commerce.proxy.interceptor.ProxyInterceptor");
+		importCustomizer.addStaticStars("me.cxdev.commerce.proxy.interceptor.Interceptors");
 		importCustomizer.addStaticStars("me.cxdev.commerce.proxy.interceptor.condition.Conditions");
 
 		CompilerConfiguration config = new CompilerConfiguration();

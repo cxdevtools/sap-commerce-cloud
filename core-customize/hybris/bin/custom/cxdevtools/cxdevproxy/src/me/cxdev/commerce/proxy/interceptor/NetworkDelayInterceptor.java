@@ -7,6 +7,8 @@ import io.undertow.server.HttpServerExchange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import me.cxdev.commerce.proxy.util.TimeUtils;
+
 /**
  * Artificially delays the request processing to simulate network latency
  * or a slow backend environment. Perfect for testing frontend loading states.
@@ -15,11 +17,27 @@ import org.slf4j.LoggerFactory;
  * Note: Uses Thread.sleep() which blocks the current worker thread.
  * </p>
  */
-public class NetworkDelayInterceptor implements ProxyExchangeInterceptor {
+class NetworkDelayInterceptor implements ProxyExchangeInterceptor {
 	private static final Logger LOG = LoggerFactory.getLogger(NetworkDelayInterceptor.class);
+	private static final long DEFAULT_DELAY_INMILLIS = 1000L;
 
-	private long minDelayInMillis = 1000;
-	private long maxDelayInMillis = 1000;
+	private long minDelayInMillis;
+	private long maxDelayInMillis;
+
+	/**
+	 * Convenience constructor to assign a fixed delay (sets both min and max to the same value).
+	 */
+	NetworkDelayInterceptor(String delay) {
+		this.minDelayInMillis = TimeUtils.parseIntervalToMillis(delay, DEFAULT_DELAY_INMILLIS, "Network delay interceptor interval");
+		this.maxDelayInMillis = this.minDelayInMillis;
+	}
+
+	NetworkDelayInterceptor(String minDelay, String maxDelay) {
+		this.minDelayInMillis = TimeUtils.parseIntervalToMillis(minDelay, DEFAULT_DELAY_INMILLIS, "Network minimum delay interceptor interval");
+		;
+		this.maxDelayInMillis = TimeUtils.parseIntervalToMillis(maxDelay, DEFAULT_DELAY_INMILLIS, "Network maximum delay interceptor interval");
+		;
+	}
 
 	@Override
 	public void apply(HttpServerExchange exchange) {
@@ -49,21 +67,5 @@ public class NetworkDelayInterceptor implements ProxyExchangeInterceptor {
 			return minDelayInMillis;
 		}
 		return ThreadLocalRandom.current().nextLong(minDelayInMillis, maxDelayInMillis + 1);
-	}
-
-	public void setMinDelayInMillis(long minDelayInMillis) {
-		this.minDelayInMillis = minDelayInMillis;
-	}
-
-	public void setMaxDelayInMillis(long maxDelayInMillis) {
-		this.maxDelayInMillis = maxDelayInMillis;
-	}
-
-	/**
-	 * Convenience setter to assign a fixed delay (sets both min and max to the same value).
-	 */
-	public void setDelayInMillis(long delayInMillis) {
-		this.minDelayInMillis = delayInMillis;
-		this.maxDelayInMillis = delayInMillis;
 	}
 }

@@ -1,7 +1,5 @@
 package me.cxdev.commerce.proxy.interceptor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import io.undertow.server.HttpServerExchange;
@@ -17,7 +15,7 @@ import org.slf4j.LoggerFactory;
  * This can be changed to OR logic by setting {@code requireAllConditions} to {@code false}.
  * </p>
  */
-public class ProxyInterceptor implements ProxyExchangeInterceptor {
+class ProxyInterceptor implements ProxyExchangeInterceptor {
 	private static final Logger LOG = LoggerFactory.getLogger(ProxyInterceptor.class);
 
 	private List<ProxyExchangeInterceptorCondition> conditions;
@@ -26,7 +24,7 @@ public class ProxyInterceptor implements ProxyExchangeInterceptor {
 	// If true, acts as AND. If false, acts as OR.
 	private boolean requireAllConditions = true;
 
-	private ProxyInterceptor(
+	ProxyInterceptor(
 			List<ProxyExchangeInterceptorCondition> conditions,
 			List<ProxyExchangeInterceptor> interceptors,
 			boolean requireAllConditions) {
@@ -56,35 +54,6 @@ public class ProxyInterceptor implements ProxyExchangeInterceptor {
 			for (ProxyExchangeInterceptor delegate : interceptors) {
 				delegate.apply(exchange);
 			}
-		}
-	}
-
-	public static Builder interceptor() {
-		return new Builder();
-	}
-
-	public static class Builder {
-		private final List<ProxyExchangeInterceptorCondition> conditions = new ArrayList<>();
-		private boolean requireAllConditions = true;
-
-		public Builder constrainedBy(ProxyExchangeInterceptorCondition... conditions) {
-			if (conditions != null) {
-				this.conditions.addAll(Arrays.asList(conditions));
-			}
-			return this;
-		}
-
-		public Builder requireAll(boolean value) {
-			this.requireAllConditions = value;
-			return this;
-		}
-
-		public ProxyInterceptor perform(ProxyExchangeInterceptor... interceptor) {
-			List<ProxyExchangeInterceptor> interceptorAsList = interceptor != null ? Arrays.asList(interceptor) : List.of();
-			return new ProxyInterceptor(this.conditions, interceptorAsList, this.requireAllConditions);
-		}
-
-		private Builder() {
 		}
 	}
 }

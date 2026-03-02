@@ -1,21 +1,20 @@
 package me.cxdev.commerce.proxy.interceptor;
 
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import io.undertow.server.HttpServerExchange;
+import io.undertow.util.HttpString;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-@ExtendWith(MockitoExtension.class)
-class ProxyInterceptorTest {
+import jakarta.ws.rs.HttpMethod;
 
+@ExtendWith(MockitoExtension.class)
+class InterceptorsTest {
 	@Mock
 	private HttpServerExchange exchangeMock;
 
@@ -31,24 +30,29 @@ class ProxyInterceptorTest {
 	@Mock
 	private ProxyExchangeInterceptor delegate2;
 
+	@BeforeEach
+	void setUp() {
+		lenient().when(exchangeMock.getRequestMethod()).thenReturn(HttpString.tryFromString(HttpMethod.OPTIONS));
+	}
+
 	// --- 1. Edge Cases & Fail-Safes ---
 
 	@Test
 	void testApplyWithEmptyConditionsOrDelegates() throws Exception {
 		// Test empty setup
-		ProxyInterceptor emptyInterceptor = ProxyInterceptor.interceptor().perform();
+		ProxyExchangeInterceptor emptyInterceptor = Interceptors.interceptor().perform();
 		emptyInterceptor.apply(exchangeMock);
 		verifyNoInteractions(exchangeMock);
 
 		// Test with conditions but no delegates
-		ProxyInterceptor noDelegates = ProxyInterceptor.interceptor()
+		ProxyExchangeInterceptor noDelegates = Interceptors.interceptor()
 				.constrainedBy(cond1)
 				.perform();
 		noDelegates.apply(exchangeMock);
 		verifyNoInteractions(cond1, exchangeMock);
 
 		// Test null safety in builder
-		ProxyInterceptor nullSafety = ProxyInterceptor.interceptor()
+		ProxyExchangeInterceptor nullSafety = Interceptors.interceptor()
 				.constrainedBy((ProxyExchangeInterceptorCondition[]) null)
 				.perform((ProxyExchangeInterceptor[]) null);
 		nullSafety.apply(exchangeMock);
@@ -62,7 +66,7 @@ class ProxyInterceptorTest {
 		when(cond1.matches(exchangeMock)).thenReturn(true);
 		when(cond2.matches(exchangeMock)).thenReturn(true);
 
-		ProxyInterceptor interceptor = ProxyInterceptor.interceptor()
+		ProxyExchangeInterceptor interceptor = Interceptors.interceptor()
 				.constrainedBy(cond1, cond2)
 				.requireAll(true) // default, but explicit for test
 				.perform(delegate1, delegate2);
@@ -83,7 +87,7 @@ class ProxyInterceptorTest {
 		when(cond1.matches(exchangeMock)).thenReturn(true);
 		when(cond2.matches(exchangeMock)).thenReturn(false);
 
-		ProxyInterceptor interceptor = ProxyInterceptor.interceptor()
+		ProxyExchangeInterceptor interceptor = Interceptors.interceptor()
 				.constrainedBy(cond1, cond2)
 				.perform(delegate1);
 
@@ -102,7 +106,7 @@ class ProxyInterceptorTest {
 		when(cond1.matches(exchangeMock)).thenReturn(false);
 		when(cond2.matches(exchangeMock)).thenReturn(true);
 
-		ProxyInterceptor interceptor = ProxyInterceptor.interceptor()
+		ProxyExchangeInterceptor interceptor = Interceptors.interceptor()
 				.constrainedBy(cond1, cond2)
 				.requireAll(false) // Act as OR
 				.perform(delegate1);
@@ -118,7 +122,7 @@ class ProxyInterceptorTest {
 		when(cond1.matches(exchangeMock)).thenReturn(false);
 		when(cond2.matches(exchangeMock)).thenReturn(false);
 
-		ProxyInterceptor interceptor = ProxyInterceptor.interceptor()
+		ProxyExchangeInterceptor interceptor = Interceptors.interceptor()
 				.constrainedBy(cond1, cond2)
 				.requireAll(false)
 				.perform(delegate1);
@@ -136,7 +140,7 @@ class ProxyInterceptorTest {
 		// If cond1 is false in an AND logic, cond2 should not even be evaluated
 		when(cond1.matches(exchangeMock)).thenReturn(false);
 
-		ProxyInterceptor interceptor = ProxyInterceptor.interceptor()
+		ProxyExchangeInterceptor interceptor = Interceptors.interceptor()
 				.constrainedBy(cond1, cond2)
 				.perform(delegate1);
 
@@ -152,7 +156,7 @@ class ProxyInterceptorTest {
 		// If cond1 is true in an OR logic, cond2 should not even be evaluated
 		when(cond1.matches(exchangeMock)).thenReturn(true);
 
-		ProxyInterceptor interceptor = ProxyInterceptor.interceptor()
+		ProxyExchangeInterceptor interceptor = Interceptors.interceptor()
 				.constrainedBy(cond1, cond2)
 				.requireAll(false)
 				.perform(delegate1);

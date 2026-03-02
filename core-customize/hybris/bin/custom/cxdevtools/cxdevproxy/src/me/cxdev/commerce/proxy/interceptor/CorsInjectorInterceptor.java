@@ -6,6 +6,8 @@ import io.undertow.util.HttpString;
 
 import org.apache.commons.lang3.StringUtils;
 
+import jakarta.ws.rs.HttpMethod;
+
 /**
  * Injects configurable CORS (Cross-Origin Resource Sharing) headers into the response.
  * Acts as an "Auto-CORS" modifier by dynamically echoing the incoming 'Origin' header
@@ -39,7 +41,7 @@ public class CorsInjectorInterceptor implements ProxyExchangeInterceptor {
 		}
 
 		// If it's a preflight OPTIONS request, answer it immediately
-		if (exchange.getRequestMethod().toString().equalsIgnoreCase("OPTIONS")) {
+		if (HttpMethod.OPTIONS.equalsIgnoreCase(exchange.getRequestMethod().toString())) {
 			exchange.setStatusCode(200);
 			exchange.endExchange();
 		}

@@ -26,7 +26,6 @@ import me.cxdev.commerce.jwt.service.CxJwtTokenService;
 
 @ExtendWith(MockitoExtension.class)
 class JwtInjectorInterceptorTest {
-
 	@Mock
 	private CxJwtTokenService jwtTokenServiceMock;
 
