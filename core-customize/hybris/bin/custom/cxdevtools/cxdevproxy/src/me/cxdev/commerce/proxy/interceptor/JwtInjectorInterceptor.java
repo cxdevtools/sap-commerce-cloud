@@ -33,10 +33,11 @@ public class JwtInjectorInterceptor implements ProxyExchangeInterceptor {
 	 */
 	@Override
 	public void apply(HttpServerExchange exchange) {
-		Cookie userIdCookie = exchange.getRequestCookie(USER_ID_COOKIE_NAME);
 		Cookie userTypeCookie = exchange.getRequestCookie(USER_TYPE_COOKIE_NAME);
+		Cookie userIdCookie = exchange.getRequestCookie(USER_ID_COOKIE_NAME);
 
-		if (userIdCookie != null && StringUtils.isNotBlank(userIdCookie.getValue())) {
+		if (userTypeCookie != null && StringUtils.isNotBlank(userTypeCookie.getValue()) &&
+				userIdCookie != null && StringUtils.isNotBlank(userIdCookie.getValue())) {
 			String userType = userTypeCookie.getValue();
 			String userId = userIdCookie.getValue();
 			String token = jwtTokenService.getOrGenerateToken(userType, userId);
