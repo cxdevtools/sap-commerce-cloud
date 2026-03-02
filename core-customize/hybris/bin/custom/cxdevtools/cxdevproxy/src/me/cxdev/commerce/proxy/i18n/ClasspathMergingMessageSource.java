@@ -42,7 +42,11 @@ public class ClasspathMergingMessageSource extends AbstractMessageSource {
 	 * @param interval The interval string from Spring properties.
 	 */
 	public void setCacheRefreshIntervalMillis(String interval) {
-		this.cacheRefreshIntervalMillis = TimeUtils.parseIntervalToMillis(interval, 5000L, "Message cache refresh interval");
+		try {
+			this.cacheRefreshIntervalMillis = TimeUtils.parseIntervalToMillis(interval, "Message cache refresh interval");
+		} catch (NumberFormatException e) {
+			LOG.warn("Invalid refresh interval {} for message source, using current value '{}'.", interval, this.cacheRefreshIntervalMillis);
+		}
 	}
 
 	@Override

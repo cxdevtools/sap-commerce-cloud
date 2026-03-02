@@ -530,7 +530,11 @@ public class UndertowProxyManager implements SmartLifecycle, InitializingBean, D
 	 * @param interval The interval string from Spring properties.
 	 */
 	public void setGroovyRuleReloadInterval(String interval) {
-		this.groovyRuleReloadIntervalMs = TimeUtils.parseIntervalToMillis(interval, 5000L, "Groovy rule reload interval");
+		try {
+			this.groovyRuleReloadIntervalMs = TimeUtils.parseIntervalToMillis(interval, "Groovy rule reload interval");
+		} catch (NumberFormatException e) {
+			LOG.warn("Invalid refresh interval {} for rule reloading, using current value '{}'.", interval, this.groovyRuleReloadIntervalMs);
+		}
 	}
 
 	public void setGroovyRuleEngineService(GroovyRuleEngineService groovyRuleEngineService) {

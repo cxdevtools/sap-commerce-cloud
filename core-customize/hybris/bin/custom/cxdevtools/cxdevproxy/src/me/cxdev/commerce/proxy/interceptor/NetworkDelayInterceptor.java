@@ -19,7 +19,6 @@ import me.cxdev.commerce.proxy.util.TimeUtils;
  */
 class NetworkDelayInterceptor implements ProxyExchangeInterceptor {
 	private static final Logger LOG = LoggerFactory.getLogger(NetworkDelayInterceptor.class);
-	private static final long DEFAULT_DELAY_INMILLIS = 1000L;
 
 	private long minDelayInMillis;
 	private long maxDelayInMillis;
@@ -28,14 +27,14 @@ class NetworkDelayInterceptor implements ProxyExchangeInterceptor {
 	 * Convenience constructor to assign a fixed delay (sets both min and max to the same value).
 	 */
 	NetworkDelayInterceptor(String delay) {
-		this.minDelayInMillis = TimeUtils.parseIntervalToMillis(delay, DEFAULT_DELAY_INMILLIS, "Network delay interceptor interval");
+		this.minDelayInMillis = TimeUtils.parseIntervalToMillis(delay, "Network delay interceptor interval");
 		this.maxDelayInMillis = this.minDelayInMillis;
 	}
 
 	NetworkDelayInterceptor(String minDelay, String maxDelay) {
-		this.minDelayInMillis = TimeUtils.parseIntervalToMillis(minDelay, DEFAULT_DELAY_INMILLIS, "Network minimum delay interceptor interval");
+		this.minDelayInMillis = TimeUtils.parseIntervalToMillis(minDelay, "Network minimum delay interceptor interval");
 		;
-		this.maxDelayInMillis = TimeUtils.parseIntervalToMillis(maxDelay, DEFAULT_DELAY_INMILLIS, "Network maximum delay interceptor interval");
+		this.maxDelayInMillis = TimeUtils.parseIntervalToMillis(maxDelay, "Network maximum delay interceptor interval");
 		;
 	}
 
