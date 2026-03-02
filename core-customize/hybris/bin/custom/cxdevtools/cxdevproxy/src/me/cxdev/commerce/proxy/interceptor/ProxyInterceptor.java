@@ -21,17 +21,17 @@ public class ProxyInterceptor implements ProxyExchangeInterceptor {
 	private static final Logger LOG = LoggerFactory.getLogger(ProxyInterceptor.class);
 
 	private List<ProxyExchangeInterceptorCondition> conditions;
-	private List<ProxyExchangeInterceptor> delegates;
+	private List<ProxyExchangeInterceptor> interceptors;
 
 	// If true, acts as AND. If false, acts as OR.
 	private boolean requireAllConditions = true;
 
 	private ProxyInterceptor(
 			List<ProxyExchangeInterceptorCondition> conditions,
-			List<ProxyExchangeInterceptor> delegates,
+			List<ProxyExchangeInterceptor> interceptors,
 			boolean requireAllConditions) {
 		this.conditions = List.copyOf(conditions);
-		this.delegates = List.copyOf(delegates);
+		this.interceptors = List.copyOf(interceptors);
 		this.requireAllConditions = requireAllConditions;
 	}
 
@@ -43,7 +43,7 @@ public class ProxyInterceptor implements ProxyExchangeInterceptor {
 	 */
 	@Override
 	public void apply(HttpServerExchange exchange) {
-		if (conditions == null || conditions.isEmpty() || delegates == null || delegates.isEmpty()) {
+		if (conditions == null || conditions.isEmpty() || interceptors == null || interceptors.isEmpty()) {
 			return;
 		}
 
@@ -52,8 +52,8 @@ public class ProxyInterceptor implements ProxyExchangeInterceptor {
 				: conditions.stream().anyMatch(c -> c.matches(exchange));
 
 		if (match) {
-			LOG.debug("Conditions met. Executing {} delegate handler(s) for {}", delegates.size(), exchange.getRequestPath());
-			for (ProxyExchangeInterceptor delegate : delegates) {
+			LOG.debug("Conditions met. Executing {} delegate handler(s) for {}", interceptors.size(), exchange.getRequestPath());
+			for (ProxyExchangeInterceptor delegate : interceptors) {
 				delegate.apply(exchange);
 			}
 		}
@@ -80,7 +80,8 @@ public class ProxyInterceptor implements ProxyExchangeInterceptor {
 		}
 
 		public ProxyInterceptor perform(ProxyExchangeInterceptor... interceptor) {
-			return new ProxyInterceptor(this.conditions, Arrays.asList(interceptor), this.requireAllConditions);
+			List<ProxyExchangeInterceptor> interceptorAsList = interceptor != null ? Arrays.asList(interceptor) : List.of();
+			return new ProxyInterceptor(this.conditions, interceptorAsList, this.requireAllConditions);
 		}
 
 		private Builder() {
