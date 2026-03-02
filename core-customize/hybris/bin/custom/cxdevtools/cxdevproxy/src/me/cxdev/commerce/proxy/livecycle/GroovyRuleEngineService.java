@@ -39,6 +39,7 @@ import me.cxdev.commerce.proxy.interceptor.condition.Conditions;
 public class GroovyRuleEngineService implements ApplicationContextAware, ResourceLoaderAware {
 	private static final Logger LOG = LoggerFactory.getLogger(GroovyRuleEngineService.class);
 	private static final String CONDITION_BEAN_PREFIX = "cxdevproxyCondition";
+	private static final String INTERCEPTOR_BEAN_PREFIX = "cxdevproxyInterceptor";
 
 	private ApplicationContext applicationContext;
 	private ResourceLoader resourceLoader;
@@ -60,8 +61,15 @@ public class GroovyRuleEngineService implements ApplicationContextAware, Resourc
 
 		Map<String, ProxyExchangeInterceptor> handlers = applicationContext.getBeansOfType(ProxyExchangeInterceptor.class);
 		for (Map.Entry<String, ProxyExchangeInterceptor> entry : handlers.entrySet()) {
-			binding.setVariable(entry.getKey(), entry.getValue());
-			LOG.debug("Bound Spring handler bean '{}' to Groovy Context", entry.getKey());
+			String beanName = entry.getKey();
+			String bindingName = beanName;
+			if (beanName.startsWith(INTERCEPTOR_BEAN_PREFIX) && beanName.length() > INTERCEPTOR_BEAN_PREFIX.length()) {
+				String stripped = beanName.substring(INTERCEPTOR_BEAN_PREFIX.length());
+				bindingName = Character.toLowerCase(stripped.charAt(0)) + stripped.substring(1);
+			}
+
+			binding.setVariable(bindingName, entry.getValue());
+			LOG.debug("Bound Spring interceptor bean '{}' as '{}' to Groovy Context", beanName, bindingName);
 		}
 
 		Map<String, ProxyExchangeInterceptorCondition> conditions = applicationContext.getBeansOfType(ProxyExchangeInterceptorCondition.class);
@@ -78,7 +86,8 @@ public class GroovyRuleEngineService implements ApplicationContextAware, Resourc
 
 		ImportCustomizer importCustomizer = new ImportCustomizer();
 		importCustomizer.addStarImports("me.cxdev.commerce.proxy.interceptor");
-		importCustomizer.addStaticStars("me.cxdev.commerce.proxy.condition.Conditions");
+		importCustomizer.addStaticStars("me.cxdev.commerce.proxy.interceptor.ProxyInterceptor");
+		importCustomizer.addStaticStars("me.cxdev.commerce.proxy.interceptor.condition.Conditions");
 
 		CompilerConfiguration config = new CompilerConfiguration();
 		config.addCompilationCustomizers(importCustomizer);
