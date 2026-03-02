@@ -14,15 +14,13 @@ import me.cxdev.commerce.proxy.interceptor.ProxyExchangeInterceptorCondition;
 class OrCondition implements ProxyExchangeInterceptorCondition {
 	private final List<ProxyExchangeInterceptorCondition> conditions;
 
-	OrCondition(ProxyExchangeInterceptorCondition[] conditions) {
+	OrCondition(ProxyExchangeInterceptorCondition... conditions) {
+		assert conditions != null;
 		this.conditions = Arrays.asList(conditions);
 	}
 
 	@Override
 	public boolean matches(HttpServerExchange exchange) {
-		if (conditions == null || conditions.isEmpty()) {
-			return false;
-		}
 		return conditions.stream().anyMatch(c -> c.matches(exchange));
 	}
 }

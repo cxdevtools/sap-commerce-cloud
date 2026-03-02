@@ -11,14 +11,12 @@ class NotCondition implements ProxyExchangeInterceptorCondition {
 	private final ProxyExchangeInterceptorCondition condition;
 
 	NotCondition(ProxyExchangeInterceptorCondition condition) {
+		assert condition != null;
 		this.condition = condition;
 	}
 
 	@Override
 	public boolean matches(HttpServerExchange exchange) {
-		if (condition == null) {
-			return false; // Fail-safe if not properly configured
-		}
 		return !condition.matches(exchange);
 	}
 }

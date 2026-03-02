@@ -15,14 +15,12 @@ class AndCondition implements ProxyExchangeInterceptorCondition {
 	private final List<ProxyExchangeInterceptorCondition> conditions;
 
 	AndCondition(ProxyExchangeInterceptorCondition[] conditions) {
+		assert conditions != null;
 		this.conditions = Arrays.asList(conditions);
 	}
 
 	@Override
 	public boolean matches(HttpServerExchange exchange) {
-		if (conditions == null || conditions.isEmpty()) {
-			return false;
-		}
 		return conditions.stream().allMatch(c -> c.matches(exchange));
 	}
 }

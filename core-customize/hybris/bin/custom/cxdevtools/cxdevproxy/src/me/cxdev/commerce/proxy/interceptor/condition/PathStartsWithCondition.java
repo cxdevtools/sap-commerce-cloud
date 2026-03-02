@@ -19,7 +19,7 @@ class PathStartsWithCondition implements ProxyExchangeInterceptorCondition {
 	@Override
 	public boolean matches(HttpServerExchange exchange) {
 		if (StringUtils.isBlank(prefix)) {
-			return false;
+			return true;
 		}
 		return exchange.getRequestPath().startsWith(prefix);
 	}
