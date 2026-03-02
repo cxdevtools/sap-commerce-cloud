@@ -23,13 +23,15 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+
+import me.cxdev.commerce.proxy.util.ResourcePathUtils;
+import me.cxdev.commerce.proxy.util.TimeUtils;
 
 /**
  * Service responsible for loading JWT templates, generating signed tokens, and caching them.
@@ -124,38 +126,11 @@ public class CxJwtTokenService implements JwtTokenService, InitializingBean, Res
 	}
 
 	public void setTemplatePathPrefix(String templatePathPrefix) {
-		if (StringUtils.isNotBlank(templatePathPrefix)) {
-			this.templatePathPrefix = templatePathPrefix;
-		}
+		this.templatePathPrefix = ResourcePathUtils.normalizeDirectoryPath(templatePathPrefix, "Template path in JwtTokenService");
 	}
 
-	/**
-	 * Smart setter that parses strings like "1d", "10h", "60m", "3600s", "3600000ms" into milliseconds.
-	 * Falls back to raw milliseconds if no unit is provided.
-	 */
 	public void setTokenValidity(String validity) {
-		if (StringUtils.isBlank(validity)) {
-			return;
-		}
-		String val = validity.trim().toLowerCase();
-		try {
-			if (val.endsWith("ms")) {
-				this.tokenValidityMs = Long.parseLong(val.replace("ms", ""));
-			} else if (val.endsWith("s")) {
-				this.tokenValidityMs = Long.parseLong(val.replace("s", "")) * 1000L;
-			} else if (val.endsWith("m")) {
-				this.tokenValidityMs = Long.parseLong(val.replace("m", "")) * 60 * 1000L;
-			} else if (val.endsWith("h")) {
-				this.tokenValidityMs = Long.parseLong(val.replace("h", "")) * 60 * 60 * 1000L;
-			} else if (val.endsWith("d")) {
-				this.tokenValidityMs = Long.parseLong(val.replace("d", "")) * 24 * 60 * 60 * 1000L;
-			} else {
-				this.tokenValidityMs = Long.parseLong(val); // default to ms
-			}
-			LOG.info("Configured JWT token validity to {} ms", this.tokenValidityMs);
-		} catch (NumberFormatException e) {
-			LOG.error("Invalid token validity format '{}'. Using default of 1 hour.", validity);
-		}
+		this.tokenValidityMs = TimeUtils.parseIntervalToMillis(validity, "Token validity for JwtTokenService");
 	}
 
 	public void setJwkSource(JWKSource<SecurityContext> jwkSource) {
