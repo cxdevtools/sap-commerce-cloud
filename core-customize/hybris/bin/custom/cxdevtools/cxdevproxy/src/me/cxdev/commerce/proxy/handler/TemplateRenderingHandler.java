@@ -13,6 +13,7 @@ import io.undertow.server.HttpServerExchange;
 import io.undertow.util.Headers;
 import io.undertow.util.Methods;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -146,6 +147,9 @@ public class TemplateRenderingHandler implements ProxyRouteHandler, ResourceLoad
 			}
 
 			String resolvedMessage = messageSource.getMessage(key, null, defaultValue, locale);
+			if (resolvedMessage == null) {
+				resolvedMessage = key;
+			}
 			matcher.appendReplacement(sb, Matcher.quoteReplacement(resolvedMessage));
 		}
 		matcher.appendTail(sb);
@@ -155,7 +159,7 @@ public class TemplateRenderingHandler implements ProxyRouteHandler, ResourceLoad
 
 	private Locale determineLocale(HttpServerExchange exchange) {
 		String acceptLanguage = exchange.getRequestHeaders().getFirst(Headers.ACCEPT_LANGUAGE);
-		if (acceptLanguage != null && !acceptLanguage.isEmpty()) {
+		if (StringUtils.isNotBlank(acceptLanguage)) {
 			String primaryTag = acceptLanguage.split(",")[0].trim();
 			try {
 				return Locale.forLanguageTag(primaryTag);
