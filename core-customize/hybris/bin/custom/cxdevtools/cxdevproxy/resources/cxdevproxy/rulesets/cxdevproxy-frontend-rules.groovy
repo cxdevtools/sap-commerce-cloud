@@ -1,3 +1,3 @@
 def interceptor = []
-interceptor << cxForwardedHeadersInterceptor
+interceptor << forwardedHeaders
 return interceptor

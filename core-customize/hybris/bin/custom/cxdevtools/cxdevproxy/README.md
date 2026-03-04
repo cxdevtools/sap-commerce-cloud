@@ -102,7 +102,7 @@ If you write your own Spring beans for Conditions or Interceptors, follow this p
 
 **Available Pre-bound Variables:**
 * **Conditions:** `isOcc`, `isSmartEdit`, `isBackoffice`, `isAdminConsole`, `isAuthorizationServer`, `hasMockUser`, `hasAuthorizationHeader`
-* **Interceptors:** `cxForwardedHeadersInterceptor`, `cxJwtInjectorInterceptor`, `cxCorsInjectorInterceptor`
+* **Interceptors:** `forwardedHeaders`, `jwtInjector`, `corsInjector`
 
 ---
 
@@ -123,7 +123,7 @@ The most basic setup simply applies standard proxy headers unconditionally:
 
 ```groovy
 return [
-cxForwardedHeadersInterceptor
+    forwardedHeaders
 ]
 ```
 
@@ -133,34 +133,30 @@ You should never mutate the state of injected Spring beans directly. Instead, wr
 
 ```groovy
 // 1. Combine pre-configured conditions seamlessly using static logical operators
-def jwtCondition = and(
-or(isOcc, isSmartEdit),
-hasMockUser,
-not(hasAuthorizationHeader)
-)
+def jwtCondition = and(or(isOcc, isSmartEdit), hasMockUser, not(hasAuthorizationHeader))
 
 // 2. Simple API Mocking with inline JSON
 def mockCartCall = interceptor()
-.constrainedBy( pathMatches("/**/carts/current"), isMethod("GET") )
-.perform( jsonResponse('{"type": "cartWsDTO", "totalItems": 5}') )
+    .constrainedBy( isMethod("GET"), pathMatches("/**/carts/current") )
+    .perform( jsonResponse('{"type": "cartWsDTO", "totalItems": 5}') )
 
 // 3. Simulating Latency
 def slowCheckout = interceptor()
-.constrainedBy( pathMatches("/**/orders"), isMethod("POST") )
-.perform( networkDelay("1s", "3s") )
+    .constrainedBy( isMethod("POST"), pathMatches("/**/orders") )
+    .perform( networkDelay("1s", "3s") )
 
 return [
-cxForwardedHeadersInterceptor, // Always execute
+    forwardedHeaders, // Always execute
 
     // Execute JWT Injector only if the complex condition is met
     interceptor()
         .constrainedBy(jwtCondition)
-        .perform(cxJwtInjectorInterceptor),
+        .perform(jwtInjector),
 
     // Execute CORS Injector only for OCC requests
     interceptor()
         .constrainedBy(isOcc)
-        .perform(cxCorsInjectorInterceptor),
+        .perform(corsInjector),
         
     mockCartCall,
     slowCheckout
@@ -171,9 +167,7 @@ cxForwardedHeadersInterceptor, // Always execute
 
 ## 🔑 JWT Mocking Deep Dive
 
-The `cxJwtInjectorInterceptor` is the heart of the local authentication bypass. It intercepts requests (when conditions match) and injects a dynamically signed JWT.
-
-
+The `jwtInjector` is the heart of the local authentication bypass. It intercepts requests (when conditions match) and injects a dynamically signed JWT.
 
 > **⚠️ IMPORTANT: OAuth Client ID Requirement**
 > By default, our provided B2C and B2B user templates use `storefront` as the `client_id`. This breaks with the SAP Commerce default (which uses `mobile_android` for OCC).
