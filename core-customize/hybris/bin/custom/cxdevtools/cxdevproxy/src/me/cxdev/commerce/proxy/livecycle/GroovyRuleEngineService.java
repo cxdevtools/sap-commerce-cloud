@@ -101,7 +101,7 @@ public class GroovyRuleEngineService implements ApplicationContextAware, Resourc
 	 */
 	public File resolveScriptFile(String locationPath) {
 		try {
-			Resource resource = resourceLoader.getResource("classpath:" + locationPath);
+			Resource resource = resourceLoader.getResource(locationPath);
 			if (resource.exists()) {
 				// This works flawlessly in local Hybris because extensions are exploded folders
 				return resource.getFile();
