@@ -217,10 +217,10 @@ public class UndertowProxyManager implements SmartLifecycle, InitializingBean, D
 					.setConnectionsPerThread(20);
 
 			HttpHandler baseFrontendHandler = ProxyHandler.builder().setProxyClient(frontendClient).build();
-			HttpHandler baseBackendHandler = ProxyHandler.builder().setProxyClient(backendClient).setMaxRequestTime(30000).build();
+			HttpHandler finalFrontendHandler = applyRules(frontendHandlersRef.get(), baseFrontendHandler);
 
-			HttpHandler finalFrontendHandler = applyFrontendRules(baseFrontendHandler);
-			HttpHandler finalBackendHandler = applyBackendRules(baseBackendHandler);
+			HttpHandler baseBackendHandler = ProxyHandler.builder().setProxyClient(backendClient).setMaxRequestTime(30000).build();
+			HttpHandler finalBackendHandler = applyRules(backendHandlersRef.get(), baseBackendHandler);
 
 			List<String> activeBackendContexts = determineBackendContexts();
 			LOG.info("Active backend routing contexts: {}", activeBackendContexts);
@@ -304,9 +304,8 @@ public class UndertowProxyManager implements SmartLifecycle, InitializingBean, D
 	 * @throws Exception If an error occurs during routing.
 	 */
 	private void routeRequest(HttpServerExchange exchange, List<String> backendContexts, HttpHandler backendHandler, HttpHandler frontendHandler) throws Exception {
-		String path = exchange.getRequestPath();
+		String path = StringUtils.stripToEmpty(exchange.getRequestPath());
 		boolean isBackendRequest = backendContexts.stream().anyMatch(path::startsWith);
-
 		if (isBackendRequest) {
 			LOG.debug("Serving request {} {} with backend handler.", exchange.getRequestMethod(), exchange.getRequestURI());
 			backendHandler.handleRequest(exchange);
@@ -317,42 +316,24 @@ public class UndertowProxyManager implements SmartLifecycle, InitializingBean, D
 	}
 
 	/**
-	 * Wraps the base frontend handler with any configured custom interceptors/handlers.
-	 * Pulls the handlers atomically from the reference to ensure thread-safety during hot-reloads.
+	 * Wraps the base handler with any configured custom interceptors/handlers.
 	 *
+	 * @param interceptors The custom interceptors.
 	 * @param next The base proxy handler.
 	 * @return A chained HTTP handler applying all configured frontend rules.
 	 */
-	protected HttpHandler applyFrontendRules(HttpHandler next) {
+	protected HttpHandler applyRules(List<ProxyExchangeInterceptor> interceptors, HttpHandler next) {
 		return exchange -> {
-			List<ProxyExchangeInterceptor> currentHandlers = frontendHandlersRef.get();
-			for (ProxyExchangeInterceptor handler : emptyIfNull(currentHandlers)) {
-				handler.apply(exchange);
+			for (ProxyExchangeInterceptor interceptor : emptyIfNull(interceptors)) {
+				interceptor.apply(exchange);
 				if (exchange.isResponseStarted() || exchange.isComplete()) {
 					break;
 				}
 			}
-			next.handleRequest(exchange);
-		};
-	}
 
-	/**
-	 * Wraps the base backend handler with any configured custom interceptors/handlers.
-	 * Pulls the handlers atomically from the reference to ensure thread-safety during hot-reloads.
-	 *
-	 * @param next The base proxy handler.
-	 * @return A chained HTTP handler applying all configured backend rules.
-	 */
-	protected HttpHandler applyBackendRules(HttpHandler next) {
-		return exchange -> {
-			List<ProxyExchangeInterceptor> currentHandlers = backendHandlersRef.get();
-			for (ProxyExchangeInterceptor handler : emptyIfNull(currentHandlers)) {
-				handler.apply(exchange);
-				if (exchange.isResponseStarted() || exchange.isComplete()) {
-					break;
-				}
+			if (!exchange.isResponseStarted() && !exchange.isComplete()) {
+				next.handleRequest(exchange);
 			}
-			next.handleRequest(exchange);
 		};
 	}
 
