@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="cxdevproxyConditionIsAuthorizationServer" class="me.cxdev.commerce.proxy.interceptor.condition.Conditions" factory-method="pathStartsWith">
+		<constructor-arg value="${authorizationserver.webroot:/authorizationserver}" />
+	</bean>
+
+	<bean id="cxdevproxyConditionIsAdminConsole" class="me.cxdev.commerce.proxy.interceptor.condition.Conditions" factory-method="pathStartsWith">
+		<constructor-arg value="${hac.webroot:/hac}" />
+	</bean>
+
+	<bean id="cxdevproxyConditionIsBackoffice" class="me.cxdev.commerce.proxy.interceptor.condition.Conditions" factory-method="pathStartsWith">
+		<constructor-arg value="${backoffice.webroot:/backoffice}" />
+	</bean>
+
+	<bean id="cxdevproxyConditionIsOcc" class="me.cxdev.commerce.proxy.interceptor.condition.Conditions" factory-method="pathStartsWith">
+		<constructor-arg value="${commercewebservices.webroot:/occ}" />
+	</bean>
+
+	<bean id="cxdevproxyConditionIsSmartEdit" class="me.cxdev.commerce.proxy.interceptor.condition.Conditions" factory-method="or">
+		<constructor-arg>
+			<array>
+				<bean class="me.cxdev.commerce.proxy.interceptor.condition.Conditions" factory-method="pathStartsWith">
+					<constructor-arg value="${commercewebservices.webroot:/smarteditwebservices}" />
+				</bean>
+				<bean class="me.cxdev.commerce.proxy.interceptor.condition.Conditions" factory-method="pathStartsWith">
+					<constructor-arg value="${permissionswebservices.webroot:/permissionswebservices}" />
+				</bean>
+			</array>
+		</constructor-arg>
+	</bean>
+
+	<bean id="cxdevproxyConditionHasAuthorizationHeader" class="me.cxdev.commerce.proxy.interceptor.condition.Conditions" factory-method="hasHeader">
+		<constructor-arg value="Authorization"/>
+	</bean>
+
+	<bean id="cxdevproxyConditionHasMockUser" class="me.cxdev.commerce.proxy.interceptor.condition.Conditions" factory-method="and">
+		<constructor-arg>
+			<array>
+				<bean class="me.cxdev.commerce.proxy.interceptor.condition.Conditions" factory-method="hasCookie">
+					<constructor-arg value="cxdevproxy_user_id" />
+				</bean>
+				<bean class="me.cxdev.commerce.proxy.interceptor.condition.Conditions" factory-method="hasCookie">
+					<constructor-arg value="cxdevproxy_user_type" />
+				</bean>
+			</array>
+		</constructor-arg>
+	</bean>
+</beans>

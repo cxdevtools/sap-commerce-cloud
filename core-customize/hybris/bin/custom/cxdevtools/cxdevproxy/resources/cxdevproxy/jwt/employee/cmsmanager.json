@@ -1,5 +1,13 @@
 {
   "sub": "cmsmanager",
   "name": "CMS Manager",
-  "authorities": ["ROLE_CMSMANAGERGROUP", "ROLE_EMPLOYEEGROUP"]
+  "aud": "smartedit",
+  "client_id": "smartedit",
+  "scope": [
+    "basic"
+  ],
+  "authorities": [
+    "ROLE_ADMINGROUP",
+    "ROLE_CMSMANAGERGROUP"
+  ]
 }

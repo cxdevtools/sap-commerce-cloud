@@ -18,8 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
-import me.cxdev.commerce.proxy.livecycle.ProxyLocalRouteHandler;
-
 /**
  * Intercepts incoming requests while the SAP Commerce server is still in its startup phase.
  * <p>
@@ -28,10 +26,9 @@ import me.cxdev.commerce.proxy.livecycle.ProxyLocalRouteHandler;
  * serves an auto-refreshing "503 Service Unavailable" maintenance page using native Java ResourceBundles.
  * </p>
  */
-public class StartupPageHandler implements ProxyLocalRouteHandler, TenantListener, InitializingBean {
-
+public class StartupPageHandler implements ProxyRouteHandler, TenantListener, InitializingBean {
 	private static final Logger LOG = LoggerFactory.getLogger(StartupPageHandler.class);
-	private static final String BUNDLE_BASE_NAME = "localization/cxdevproxy-locales";
+	private static final String BUNDLE_BASE_NAME = "cxdevproxy/i18n/messages";
 
 	// volatile ensures thread visibility between Hybris startup threads and Undertow worker threads
 	private volatile boolean masterTenantReady = false;
@@ -82,8 +79,8 @@ public class StartupPageHandler implements ProxyLocalRouteHandler, TenantListene
 		try {
 			// Loads the message bundle natively from the classpath, bypassing the Hybris DB
 			ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_BASE_NAME, requestLocale);
-			title = bundle.getString("cxdevproxy.startup.page.title");
-			message = bundle.getString("cxdevproxy.startup.page.message");
+			title = bundle.getString("startup.page.title");
+			message = bundle.getString("startup.page.message");
 		} catch (MissingResourceException e) {
 			LOG.warn("Could not find message bundle '{}' or keys for locale '{}'. Falling back to default text.", BUNDLE_BASE_NAME, requestLocale);
 		}
