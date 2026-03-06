@@ -118,13 +118,47 @@ if (project.hasProperty("CXDEV_ARTEFACT_BASEURL") && project.hasProperty("CXDEV_
 
     val COMMERCE_VERSION = CCV2.manifest.effectiveVersion
     tasks.register<Download>("downloadPlatform") {
-        src(BASEURL + "/commerce/hybris-commerce-suite-${COMMERCE_VERSION}.zip")
-        dest(file("${dependencyDir}/hybris-commerce-suite-${COMMERCE_VERSION}.zip"))
-        header("Authorization", "Basic ${AUTHORIZATION}")
+        val targetFile = file("${dependencyDir}/hybris-commerce-suite-${COMMERCE_VERSION}.zip")
+
+        src("$BASEURL/commerce/hybris-commerce-suite-${COMMERCE_VERSION}.zip")
+        dest(targetFile)
+
+        header("Authorization", "Basic $AUTHORIZATION")
+
         overwrite(false)
         tempAndMove(true)
         onlyIfModified(true)
         useETag(true)
+
+        doFirst {
+            logger.lifecycle("=== Download Platform Debug ===")
+            logger.lifecycle("Source URL: $BASEURL/commerce/hybris-commerce-suite-${COMMERCE_VERSION}.zip")
+            logger.lifecycle("Destination: ${targetFile.absolutePath}")
+            logger.lifecycle("Destination exists: ${targetFile.exists()}")
+            logger.lifecycle("Dependency dir: ${file(dependencyDir).absolutePath}")
+
+            if (file(dependencyDir).exists()) {
+                logger.lifecycle("Directory content:")
+                file(dependencyDir).listFiles()?.forEach {
+                    logger.lifecycle(" - ${it.name}")
+                }
+            }
+        }
+
+        doLast {
+            logger.lifecycle("=== Download completed ===")
+            logger.lifecycle("File exists after download: ${targetFile.exists()}")
+            logger.lifecycle("File size: ${targetFile.length()}")
+
+            logger.lifecycle("Dependency dir: ${file(dependencyDir).absolutePath}")
+
+            if (file(dependencyDir).exists()) {
+                logger.lifecycle("Directory content:")
+                file(dependencyDir).listFiles()?.forEach {
+                    logger.lifecycle(" - ${it.name}")
+                }
+            }
+        }
     }
 
     tasks.named("bootstrapPlatform") {
