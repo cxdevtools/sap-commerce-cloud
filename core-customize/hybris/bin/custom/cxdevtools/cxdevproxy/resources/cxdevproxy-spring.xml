@@ -10,7 +10,6 @@
 		<property name="enabled" value="${cxdevproxy.enabled}" />
 
 		<property name="serverBindAddress" value="${cxdevproxy.server.bindaddress}" />
-		<property name="serverProtocol" value="${cxdevproxy.server.protocol}" />
 		<property name="serverPort" value="${cxdevproxy.server.port}" />
 
 		<property name="sslEnabled" value="${cxdevproxy.ssl.enabled}" />
