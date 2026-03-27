@@ -202,20 +202,29 @@ public class UndertowProxyManager implements SmartLifecycle, InitializingBean, D
 		LOG.info("Starting embedded Undertow proxy (Protocol: {})...", this.serverProtocol);
 
 		try {
+			XnioSsl frontendSslContext = "https".equalsIgnoreCase(frontendProtocol) ? createTrustAllXnioSsl(frontendHostname) : null;
 			String frontendUrl = frontendProtocol + "://" + frontendHostname + ":" + frontendPort;
 			LoadBalancingProxyClient frontendClient = new LoadBalancingProxyClient()
-					.addHost(new URI(frontendUrl), createTrustAllXnioSsl(frontendHostname))
+					.addHost(new URI(frontendUrl), frontendSslContext)
 					.setConnectionsPerThread(20);
 
+			XnioSsl backendSslContext = "https".equalsIgnoreCase(backendProtocol) ? createTrustAllXnioSsl(backendHostname) : null;
 			String backendUrl = backendProtocol + "://" + backendHostname + ":" + backendPort;
 			LoadBalancingProxyClient backendClient = new LoadBalancingProxyClient()
-					.addHost(new URI(backendUrl), createTrustAllXnioSsl(backendHostname))
+					.addHost(new URI(backendUrl), backendSslContext)
 					.setConnectionsPerThread(20);
 
-			HttpHandler baseFrontendHandler = ProxyHandler.builder().setProxyClient(frontendClient).build();
+			HttpHandler baseFrontendHandler = ProxyHandler.builder()
+					.setProxyClient(frontendClient)
+					.setReuseXForwarded(true)
+					.build();
 			HttpHandler finalFrontendHandler = applyRules(frontendHandlersRef.get(), baseFrontendHandler);
 
-			HttpHandler baseBackendHandler = ProxyHandler.builder().setProxyClient(backendClient).setMaxRequestTime(30000).build();
+			HttpHandler baseBackendHandler = ProxyHandler.builder()
+					.setProxyClient(backendClient)
+					.setMaxRequestTime(30000)
+					.setReuseXForwarded(true)
+					.build();
 			HttpHandler finalBackendHandler = applyRules(backendHandlersRef.get(), baseBackendHandler);
 
 			List<String> activeBackendContexts = determineBackendContexts();

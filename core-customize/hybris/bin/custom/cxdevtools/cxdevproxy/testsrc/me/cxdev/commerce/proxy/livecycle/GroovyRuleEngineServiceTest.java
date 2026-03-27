@@ -54,7 +54,6 @@ class GroovyRuleEngineServiceTest {
 
 		// Setup Spring ApplicationContext mocks with custom bean names to test the prefix stripping
 		Map<String, ProxyExchangeInterceptor> interceptors = new HashMap<>();
-		interceptors.put("cxdevproxyInterceptorForwardedHeaders", mockInterceptor);
 		interceptors.put("customInterceptorWithoutPrefix", mockInterceptor); // Edge case
 
 		Map<String, ProxyExchangeInterceptorCondition> conditions = new HashMap<>();
@@ -129,8 +128,7 @@ class GroovyRuleEngineServiceTest {
 		assertNotNull(result, "Result list should not be null");
 		assertEquals(2, result.size(), "Script should return exactly two interceptors");
 
-		// Assert that the first returned interceptor is the exact mock instance we injected,
-		// proving that 'forwardedHeaders' was successfully bound to 'cxdevproxyInterceptorForwardedHeaders'
+		// Assert that the first returned interceptor is the exact mock instance we injected
 		assertEquals(mockInterceptor, result.get(0));
 	}
 
