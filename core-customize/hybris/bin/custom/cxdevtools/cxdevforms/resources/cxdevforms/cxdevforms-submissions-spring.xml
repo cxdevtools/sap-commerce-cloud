@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="cxDynamicFormSubmissionObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
+    <bean id="cxDynamicFormSubmissionMessageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+        <property name="basename" value="localization/cxdevforms-submissions"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+        <property name="fallbackToSystemLocale" value="false"/>
+        <property name="defaultLocale" value="en"/>
+    </bean>
+    <bean id="cxDynamicFormSubmissionFileValidator" class="me.cxdev.commerce.forms.submission.RejectingSubmissionFileValidator"/>
+    <bean id="cxDynamicFormSubmissionValidator" class="me.cxdev.commerce.forms.submission.DynamicFormSubmissionValidator">
+        <constructor-arg ref="cxDynamicFormSubmissionFileValidator"/>
+    </bean>
+    <bean id="cxDynamicFormSubmissionSnapshotService" class="me.cxdev.commerce.forms.submission.SubmissionSnapshotService">
+        <constructor-arg ref="cxDynamicFormSubmissionObjectMapper"/>
+        <constructor-arg ref="commonI18NService"/>
+    </bean>
+    <bean id="cxDynamicFormSubmissionPresentationService" class="me.cxdev.commerce.forms.submission.SubmissionPresentationService">
+        <constructor-arg ref="cxDynamicFormSubmissionSnapshotService"/>
+        <constructor-arg ref="cxDynamicFormSubmissionMessageSource"/>
+    </bean>
+    <bean id="cxDynamicFormSubmissionTransactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+        <constructor-arg ref="txManager"/>
+    </bean>
+    <alias name="cxDynamicFormSubmissionService" alias="dynamicFormSubmissionService"/>
+    <bean id="cxDynamicFormSubmissionService" class="me.cxdev.commerce.forms.service.impl.DefaultDynamicFormSubmissionService">
+        <constructor-arg ref="modelService"/>
+        <constructor-arg ref="userService"/>
+        <constructor-arg ref="baseSiteService"/>
+        <constructor-arg ref="commonI18NService"/>
+        <constructor-arg ref="eventService"/>
+        <constructor-arg ref="cxDynamicFormSubmissionTransactionTemplate"/>
+        <constructor-arg ref="cxDynamicFormSubmissionSnapshotService"/>
+    </bean>
+    <alias name="cxDynamicFormSubmissionFacade" alias="dynamicFormSubmissionFacade"/>
+    <bean id="cxDynamicFormSubmissionFacade" class="me.cxdev.commerce.forms.facade.impl.DefaultDynamicFormSubmissionFacade">
+        <constructor-arg ref="dynamicFormService"/>
+        <constructor-arg ref="cxDynamicFormSubmissionService"/>
+        <constructor-arg ref="cxDynamicFormSubmissionValidator"/>
+    </bean>
+</beans>

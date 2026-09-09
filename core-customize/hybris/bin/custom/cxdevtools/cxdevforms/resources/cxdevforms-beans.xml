@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="beans.xsd">
+    <bean class="me.cxdev.commerce.forms.data.DynamicFormData">
+        <property name="id" type="java.lang.String"/>
+        <property name="title" type="java.lang.String"/>
+        <property name="type" type="java.lang.String"/>
+        <property name="description" type="java.lang.String"/>
+        <property name="recipients" type="java.util.List&lt;java.lang.String&gt;"/>
+        <property name="dynamicRecipient" type="java.lang.Boolean"/>
+        <property name="formFields" type="java.util.List&lt;me.cxdev.commerce.forms.data.DynamicFormFieldData&gt;"/>
+    </bean>
+
+    <bean class="me.cxdev.commerce.forms.data.DynamicFormFieldData">
+        <property name="id" type="java.lang.String"/>
+        <property name="label" type="java.lang.String"/>
+        <property name="description" type="java.lang.String"/>
+        <property name="required" type="java.lang.Boolean"/>
+        <property name="hidden" type="java.lang.Boolean"/>
+        <property name="fieldType" type="java.lang.String"/>
+        <property name="minValue" type="java.lang.Double"/>
+        <property name="maxValue" type="java.lang.Double"/>
+        <property name="minLength" type="java.lang.Integer"/>
+        <property name="maxLength" type="java.lang.Integer"/>
+        <property name="defaultValue" type="java.lang.String"/>
+        <property name="stepId" type="java.lang.String"/>
+        <property name="stepTitle" type="java.lang.String"/>
+        <property name="placeholder" type="java.lang.String"/>
+        <property name="formFieldValues" type="java.util.List&lt;me.cxdev.commerce.forms.data.DynamicFormFieldValueData&gt;"/>
+        <property name="value" type="java.lang.String"/>
+    </bean>
+
+    <bean class="me.cxdev.commerce.forms.data.DynamicFormFieldValueData">
+        <property name="id" type="java.lang.String"/>
+        <property name="label" type="java.lang.String"/>
+        <property name="childFields" type="java.util.List&lt;me.cxdev.commerce.forms.data.DynamicFormFieldData&gt;"/>
+    </bean>
+
+    <bean class="me.cxdev.commerce.forms.dto.DynamicFormWsDTO">
+		<description>Representations of a dynamic form</description>
+		<hints>
+			<hint name="wsRelated"/>
+            <hint name="alias">DynamicFormWsDTO</hint>
+		</hints>
+		<property name="id" type="java.lang.String"/>
+		<property name="title" type="java.lang.String"/>
+		<property name="type" type="java.lang.String"/>
+		<property name="description" type="java.lang.String"/>
+		<property name="recipients" type="java.util.List&lt;java.lang.String&gt;"/>
+		<property name="dynamicRecipient" type="java.lang.Boolean"/>
+		<property name="formFields" type="java.util.List&lt;me.cxdev.commerce.forms.dto.DynamicFormFieldWsDTO&gt;"/>
+	</bean>
+
+    <bean class="me.cxdev.commerce.forms.dto.DynamicFormFieldWsDTO">
+		<description>Representations of a dynamic form field</description>
+		<hints>
+			<hint name="wsRelated"/>
+            <hint name="alias">DynamicFormFieldWsDTO</hint>
+		</hints>
+		<property name="id" type="java.lang.String"/>
+		<property name="label" type="java.lang.String"/>
+		<property name="description" type="java.lang.String"/>
+		<property name="required" type="java.lang.Boolean"/>
+		<property name="hidden" type="java.lang.Boolean"/>
+		<property name="fieldType" type="java.lang.String"/>
+		<property name="minValue" type="java.lang.Double"/>
+		<property name="maxValue" type="java.lang.Double"/>
+		<property name="minLength" type="java.lang.Integer"/>
+		<property name="maxLength" type="java.lang.Integer"/>
+		<property name="defaultValue" type="java.lang.String"/>
+		<property name="stepId" type="java.lang.String"/>
+        <property name="stepTitle" type="java.lang.String"/>
+        <property name="placeholder" type="java.lang.String"/>
+		<property name="formFieldValues" type="java.util.List&lt;me.cxdev.commerce.forms.dto.DynamicFormFieldValueWsDTO&gt;"/>
+		<property name="value" type="java.lang.String"/>
+	</bean>
+
+    <bean class="me.cxdev.commerce.forms.dto.DynamicFormFieldValueWsDTO">
+		<description>Representations of a dynamic form field value</description>
+		<hints>
+			<hint name="wsRelated"/>
+            <hint name="alias">DynamicFormFieldValueWsDTO</hint>
+		</hints>
+		<property name="id" type="java.lang.String"/>
+		<property name="label" type="java.lang.String"/>
+		<property name="childFields" type="java.util.List&lt;me.cxdev.commerce.forms.dto.DynamicFormFieldWsDTO&gt;"/>
+	</bean>
+</beans>

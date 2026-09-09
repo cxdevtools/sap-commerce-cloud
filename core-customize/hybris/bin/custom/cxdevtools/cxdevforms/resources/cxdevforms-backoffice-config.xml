@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.hybris.com/cockpit/config" xmlns:editorArea="http://www.hybris.com/cockpitng/component/editorArea" xmlns:explorer-tree="http://www.hybris.com/cockpitng/config/explorertree" xmlns:list-view="http://www.hybris.com/cockpitng/component/listView" xmlns:y="http://www.hybris.com/cockpit/config/hybris" xmlns:yc="http://www.hybris.com/cockpitng/config/common" xmlns:advanced-search="http://www.hybris.com/cockpitng/config/advancedsearch" xmlns:simple-search="http://www.hybris.com/cockpitng/config/simplesearch" xmlns:wz="http://www.hybris.com/cockpitng/config/wizard-config">
+    <context component="explorer-tree" merge-by="module">
+        <explorer-tree:explorer-tree>
+            <explorer-tree:navigation-node id="cxdevtools_treenode_main" position="999">
+                <explorer-tree:navigation-node id="cxdevtools_treenode_forms" position="600">
+                    <explorer-tree:navigation-node id="cxdevforms_treenode_definitions">
+                        <explorer-tree:type-node code="DynamicForm" id="cxdevforms_typenode_DynamicForm"/>
+                        <explorer-tree:type-node code="DynamicFormField" id="cxdevforms_typenode_DynamicFormField"/>
+                        <explorer-tree:type-node code="DynamicFormFieldValue" id="cxdevforms_typenode_DynamicFormFieldValue"/>
+                    </explorer-tree:navigation-node>
+                    <explorer-tree:type-node code="DynamicFormSubmission" id="cxdevforms_typenode_DynamicFormSubmission"/>
+                    <explorer-tree:navigation-node id="cxdevforms_treenode_configuration">
+                        <explorer-tree:type-node code="DynamicFormType" id="cxdevforms_typenode_DynamicFormType"/>
+                        <explorer-tree:type-node code="DynamicFormFieldType" id="cxdevforms_typenode_DynamicFormFieldType"/>
+                    </explorer-tree:navigation-node>
+                </explorer-tree:navigation-node>
+            </explorer-tree:navigation-node>
+        </explorer-tree:explorer-tree>
+    </context>
+
+    <context type="DynamicForm" merge-by="type" module="cxdevforms">
+        <context component="base">
+            <y:base>
+                <y:labels>
+                    <y:label>id + (title != null ? ' : '+ title : '')</y:label>
+                </y:labels>
+            </y:base>
+        </context>
+        <context component="simple-search" merge-by="type">
+            <simple-search:simple-search>
+                <simple-search:field name="id"/>
+                <simple-search:field name="title"/>
+                <simple-search:field name="description"/>
+            </simple-search:simple-search>
+        </context>
+        <context component="advanced-search" merge-by="type">
+            <advanced-search:advanced-search>
+                <advanced-search:field-list>
+                    <advanced-search:field name="id" selected="true" operator="contains"/>
+                    <advanced-search:field name="title" selected="true" operator="contains"/>
+                    <advanced-search:field name="type" selected="true" operator="equals"/>
+                    <advanced-search:field name="creationtime" selected="true" operator="equals"/>
+                    <advanced-search:field name="modifiedtime" selected="true" operator="equals"/>
+                    <advanced-search:field name="recipients" operator="contains"/>
+                </advanced-search:field-list>
+            </advanced-search:advanced-search>
+        </context>
+        <context component="listview" merge-by="type">
+            <list-view:list-view>
+                <list-view:column qualifier="id"/>
+                <list-view:column qualifier="title"/>
+                <list-view:column qualifier="type"/>
+                <list-view:column qualifier="creationtime"/>
+                <list-view:column qualifier="modifiedtime"/>
+            </list-view:list-view>
+        </context>
+        <context component="listviewactions" merge-by="type">
+            <y:actions>
+                <y:group qualifier="common" show-group-header="false" position="10">
+                    <y:action action-id="com.hybris.cockpitng.action.create" property="pageable.typeCode">
+                        <y:parameter>
+                            <yc:name>forbidSubtypesCreation</yc:name>
+                            <yc:value>true</yc:value>
+                        </y:parameter>
+                    </y:action>
+                    <y:action action-id="com.hybris.cockpitng.listview.action.export.csv" merge-mode="remove"/>
+                </y:group>
+                <y:extended-group qualifier="export" show-group-header="false" position="30">
+                    <y:action action-id="com.hybris.backoffice.widgets.actions.excel.export" position="10" property="pageable.typeCode"/>
+                    <y:action action-id="com.hybris.cockpitng.listview.action.export.csv" position="20" property="exportColumnsAndData">
+                        <y:parameter>
+                            <yc:name>actionName</yc:name>
+                            <yc:value>label.export.csv</yc:value>
+                        </y:parameter>
+                    </y:action>
+                    <y:extended-action action-id="com.hybris.backoffice.widgets.actions.excel.export" position="40"/>
+                </y:extended-group>
+                <y:group qualifier="import" show-group-header="false" position="40">
+                    <y:action action-id="com.hybris.backoffice.widgets.actions.excel.import" position="10" property="pageable.typeCode"/>
+                </y:group>
+            </y:actions>
+        </context>
+        <context component="editor-area" merge-by="type">
+            <editorArea:editorArea>
+                <editorArea:essentials>
+                    <editorArea:essentialSection name="hmc.essential">
+                        <editorArea:attribute qualifier="id"/>
+                        <editorArea:attribute qualifier="title"/>
+                        <editorArea:attribute qualifier="type"/>
+                    </editorArea:essentialSection>
+                </editorArea:essentials>
+                <editorArea:tab name="cxdevforms.tab.general">
+                    <editorArea:section name="cxdevforms.section.general">
+                        <editorArea:attribute qualifier="description" colspan="2" editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)"/>
+                    </editorArea:section>
+                </editorArea:tab>
+                <editorArea:tab name="cxdevforms.tab.form">
+                    <editorArea:section name="cxdevforms.section.form">
+                        <editorArea:attribute qualifier="formFields"/>
+                    </editorArea:section>
+                </editorArea:tab>
+                <editorArea:tab name="cxdevforms.tab.notification">
+                    <editorArea:section name="cxdevforms.section.notification">
+                        <editorArea:attribute qualifier="recipients"/>
+                        <editorArea:attribute qualifier="dynamicRecipient"/>
+                        <editorArea:attribute qualifier="submissionEmailTemplate" colspan="2" editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)"/>
+                    </editorArea:section>
+                </editorArea:tab>
+                <editorArea:tab name="cxdevforms.tab.submissions">
+                    <editorArea:section name="cxdevforms.section.submissions">
+                        <editorArea:attribute qualifier="submissions" readonly="true"/>
+                    </editorArea:section>
+                </editorArea:tab>
+            </editorArea:editorArea>
+        </context>
+        <context component="create-wizard" merge-by="type">
+            <wz:flow id="DynamicFormWizard" title="create.title(ctx.TYPE_CODE)">
+                <wz:prepare id="itemPrepare">
+                    <wz:initialize property="newObject" type="ctx.TYPE_CODE"/>
+                </wz:prepare>
+                <wz:step id="step1" label="flow.allmanadatory">
+                    <wz:content id="step1.content">
+                        <wz:property-list root="newObject">
+                            <wz:property qualifier="id"/>
+                            <wz:property qualifier="title"/>
+                            <wz:property qualifier="type"/>
+                            <wz:property qualifier="description"/>
+                            <wz:property qualifier="recipients"/>
+                            <wz:property qualifier="dynamicRecipient"/>
+                            <wz:property qualifier="formFields"/>
+                            <wz:property qualifier="creationtime" exclude="true"/>
+                        </wz:property-list>
+                    </wz:content>
+                    <wz:navigation>
+                        <wz:cancel/>
+                        <wz:done visible="newObject.id !=null">
+                            <wz:save property="newObject"/>
+                        </wz:done>
+                    </wz:navigation>
+                </wz:step>
+            </wz:flow>
+        </context>
+    </context>
+
+    <context type="DynamicFormField" merge-by="type" module="cxdevforms">
+        <context component="base">
+            <y:base>
+                <y:labels>
+                    <y:label>id + (label != null ? ' : '+ label : '')</y:label>
+                </y:labels>
+            </y:base>
+        </context>
+        <context component="simple-search" merge-by="type">
+            <simple-search:simple-search>
+                <simple-search:field name="id"/>
+                <simple-search:field name="label"/>
+            </simple-search:simple-search>
+        </context>
+        <context component="advanced-search" merge-by="type">
+            <advanced-search:advanced-search>
+                <advanced-search:field-list>
+                    <advanced-search:field name="id" selected="true" operator="contains"/>
+                    <advanced-search:field name="label" selected="true" operator="contains"/>
+                    <advanced-search:field name="description" selected="true" operator="contains"/>
+                    <advanced-search:field name="form" selected="true" operator="equals"/>
+                    <advanced-search:field name="required"/>
+                    <advanced-search:field name="hidden"/>
+                    <advanced-search:field name="active"/>
+                    <advanced-search:field name="fieldType"/>
+                    <advanced-search:field name="minValue"/>
+                    <advanced-search:field name="maxValue"/>
+                    <advanced-search:field name="minLength"/>
+                    <advanced-search:field name="maxLength"/>
+                    <advanced-search:field name="defaultValue"/>
+                    <advanced-search:field name="placeholder"/>
+                </advanced-search:field-list>
+            </advanced-search:advanced-search>
+        </context>
+        <context component="listview" merge-by="type">
+            <list-view:list-view>
+                <list-view:column qualifier="id"/>
+                <list-view:column qualifier="label"/>
+                <list-view:column qualifier="description"/>
+                <list-view:column qualifier="required"/>
+                <list-view:column qualifier="hidden"/>
+                <list-view:column qualifier="active"/>
+                <list-view:column qualifier="fieldType"/>
+                <list-view:column qualifier="minValue"/>
+                <list-view:column qualifier="maxValue"/>
+                <list-view:column qualifier="minLength"/>
+                <list-view:column qualifier="maxLength"/>
+                <list-view:column qualifier="defaultValue"/>
+                <list-view:column qualifier="placeholder"/>
+            </list-view:list-view>
+        </context>
+        <context component="listviewactions" merge-by="type">
+            <y:actions>
+                <y:group qualifier="common" show-group-header="false" position="10">
+                    <y:action action-id="com.hybris.cockpitng.action.create" property="pageable.typeCode">
+                        <y:parameter>
+                            <yc:name>forbidSubtypesCreation</yc:name>
+                            <yc:value>true</yc:value>
+                        </y:parameter>
+                    </y:action>
+                    <y:action action-id="com.hybris.cockpitng.listview.action.export.csv" merge-mode="remove"/>
+                </y:group>
+                <y:extended-group qualifier="export" show-group-header="false" position="30">
+                    <y:action action-id="com.hybris.backoffice.widgets.actions.excel.export" position="10" property="pageable.typeCode"/>
+                    <y:action action-id="com.hybris.cockpitng.listview.action.export.csv" position="20" property="exportColumnsAndData">
+                        <y:parameter>
+                            <yc:name>actionName</yc:name>
+                            <yc:value>label.export.csv</yc:value>
+                        </y:parameter>
+                    </y:action>
+                    <y:extended-action action-id="com.hybris.backoffice.widgets.actions.excel.export" position="40"/>
+                </y:extended-group>
+                <y:group qualifier="import" show-group-header="false" position="40">
+                    <y:action action-id="com.hybris.backoffice.widgets.actions.excel.import" position="10" property="pageable.typeCode"/>
+                </y:group>
+            </y:actions>
+        </context>
+        <context component="editor-area" merge-by="type">
+            <editorArea:editorArea>
+                <editorArea:essentials>
+                    <editorArea:essentialSection name="hmc.essential">
+                        <editorArea:attribute qualifier="id"/>
+                    </editorArea:essentialSection>
+                </editorArea:essentials>
+                <editorArea:tab name="hmc.tab.common">
+                    <editorArea:section name="hmc.properties">
+                        <editorArea:attribute qualifier="label"/>
+                        <editorArea:attribute qualifier="description"/>
+                        <editorArea:attribute qualifier="required"/>
+                        <editorArea:attribute qualifier="hidden"/>
+                        <editorArea:attribute qualifier="active"/>
+                        <editorArea:attribute qualifier="fieldType"/>
+                        <editorArea:attribute qualifier="minValue"/>
+                        <editorArea:attribute qualifier="maxValue"/>
+                        <editorArea:attribute qualifier="minLength"/>
+                        <editorArea:attribute qualifier="maxLength"/>
+                        <editorArea:attribute qualifier="defaultValue"/>
+                        <editorArea:attribute qualifier="placeholder"/>
+                        <editorArea:attribute qualifier="stepId"/>
+                        <editorArea:attribute qualifier="stepTitle"/>
+                        <editorArea:attribute qualifier="formFieldValues"/>
+                        <editorArea:attribute qualifier="form"/>
+                        <editorArea:attribute qualifier="parentFieldValues"/>
+                    </editorArea:section>
+                </editorArea:tab>
+            </editorArea:editorArea>
+        </context>
+        <context component="create-wizard" merge-by="type">
+            <wz:flow id="DynamicFormFieldWizard" title="create.title(ctx.TYPE_CODE)">
+                <wz:prepare id="itemPrepare">
+                    <wz:initialize property="newObject" type="ctx.TYPE_CODE"/>
+                </wz:prepare>
+                <wz:step id="step1" label="flow.allmanadatory">
+                    <wz:content id="step1.content">
+                        <wz:property-list root="newObject">
+                            <wz:property qualifier="id"/>
+                            <wz:property qualifier="label"/>
+                            <wz:property qualifier="description"/>
+                            <wz:property qualifier="required"/>
+                            <wz:property qualifier="active"/>
+                            <wz:property qualifier="hidden"/>
+                            <wz:property qualifier="fieldType"/>
+                            <wz:property qualifier="minValue"/>
+                            <wz:property qualifier="maxValue"/>
+                            <wz:property qualifier="maxLength"/>
+                            <wz:property qualifier="minLength"/>
+                            <wz:property qualifier="defaultValue"/>
+                            <wz:property qualifier="placeholder"/>
+                            <wz:property qualifier="creationtime" exclude="true"/>
+                        </wz:property-list>
+                    </wz:content>
+                    <wz:navigation>
+                        <wz:cancel/>
+                        <wz:done visible="newObject.id !=null">
+                            <wz:save property="newObject"/>
+                        </wz:done>
+                    </wz:navigation>
+                </wz:step>
+            </wz:flow>
+        </context>
+    </context>
+
+    <context type="DynamicFormFieldValue" merge-by="type" module="cxdevforms">
+        <context component="base">
+            <y:base>
+                <y:labels>
+                    <y:label>id + (label != null ? ' : '+ label : '')</y:label>
+                </y:labels>
+            </y:base>
+        </context>
+        <context component="simple-search" merge-by="type">
+            <simple-search:simple-search>
+                <simple-search:field name="id"/>
+                <simple-search:field name="label"/>
+            </simple-search:simple-search>
+        </context>
+        <context component="advanced-search" merge-by="type">
+            <advanced-search:advanced-search>
+                <advanced-search:field-list>
+                    <advanced-search:field name="id" selected="true" operator="contains"/>
+                    <advanced-search:field name="label" selected="true" operator="contains"/>
+                    <advanced-search:field name="childFields" selected="true" operator="contains"/>
+                </advanced-search:field-list>
+            </advanced-search:advanced-search>
+        </context>
+        <context component="listview" merge-by="type">
+            <list-view:list-view>
+                <list-view:column qualifier="id"/>
+                <list-view:column qualifier="label"/>
+                <list-view:column qualifier="childFields"/>
+            </list-view:list-view>
+        </context>
+        <context component="listviewactions" merge-by="type">
+            <y:actions>
+                <y:group qualifier="common" show-group-header="false" position="10">
+                    <y:action action-id="com.hybris.cockpitng.action.create" property="pageable.typeCode">
+                        <y:parameter>
+                            <yc:name>forbidSubtypesCreation</yc:name>
+                            <yc:value>true</yc:value>
+                        </y:parameter>
+                    </y:action>
+                    <y:action action-id="com.hybris.cockpitng.listview.action.export.csv" merge-mode="remove"/>
+                </y:group>
+                <y:extended-group qualifier="export" show-group-header="false" position="30">
+                    <y:action action-id="com.hybris.backoffice.widgets.actions.excel.export" position="10" property="pageable.typeCode"/>
+                    <y:action action-id="com.hybris.cockpitng.listview.action.export.csv" position="20" property="exportColumnsAndData">
+                        <y:parameter>
+                            <yc:name>actionName</yc:name>
+                            <yc:value>label.export.csv</yc:value>
+                        </y:parameter>
+                    </y:action>
+                    <y:extended-action action-id="com.hybris.backoffice.widgets.actions.excel.export" position="40"/>
+                </y:extended-group>
+                <y:group qualifier="import" show-group-header="false" position="40">
+                    <y:action action-id="com.hybris.backoffice.widgets.actions.excel.import" position="10" property="pageable.typeCode"/>
+                </y:group>
+            </y:actions>
+        </context>
+        <context component="editor-area" merge-by="type">
+            <editorArea:editorArea>
+                <editorArea:essentials>
+                    <editorArea:essentialSection name="hmc.essential">
+                        <editorArea:attribute qualifier="id"/>
+                    </editorArea:essentialSection>
+                </editorArea:essentials>
+                <editorArea:tab name="hmc.tab.common">
+                    <editorArea:section name="hmc.properties">
+                        <editorArea:attribute qualifier="id"/>
+                        <editorArea:attribute qualifier="label"/>
+                        <editorArea:attribute qualifier="childFields"/>
+                    </editorArea:section>
+                </editorArea:tab>
+            </editorArea:editorArea>
+        </context>
+        <context component="create-wizard" merge-by="type">
+            <wz:flow id="DynamicFormFieldValueWizard" title="create.title(ctx.TYPE_CODE)">
+                <wz:prepare id="itemPrepare">
+                    <wz:initialize property="newObject" type="ctx.TYPE_CODE"/>
+                </wz:prepare>
+                <wz:step id="step1" label="flow.allmanadatory">
+                    <wz:content id="step1.content">
+                        <wz:property-list root="newObject">
+                            <wz:property qualifier="id"/>
+                            <wz:property qualifier="label"/>
+                            <wz:property qualifier="creationtime" exclude="true"/>
+                        </wz:property-list>
+                    </wz:content>
+                    <wz:navigation>
+                        <wz:cancel/>
+                        <wz:done visible="newObject.id !=null">
+                            <wz:save property="newObject"/>
+                        </wz:done>
+                    </wz:navigation>
+                </wz:step>
+            </wz:flow>
+        </context>
+    </context>
+
+    <context type="DynamicFormFieldType" merge-by="type" module="cxdevforms">
+        <context component="base">
+            <y:base>
+                <y:labels>
+                    <y:label>code + (name != null ? ' : '+ name : '')</y:label>
+                </y:labels>
+            </y:base>
+        </context>
+        <context component="simple-search" merge-by="type">
+            <simple-search:simple-search>
+                <simple-search:field name="code"/>
+                <simple-search:field name="name"/>
+            </simple-search:simple-search>
+        </context>
+        <context component="advanced-search" merge-by="type">
+            <advanced-search:advanced-search>
+                <advanced-search:field-list>
+                    <advanced-search:field name="code" selected="true" operator="contains"/>
+                    <advanced-search:field name="name" selected="true" operator="contains"/>
+                </advanced-search:field-list>
+            </advanced-search:advanced-search>
+        </context>
+        <context component="listview" merge-by="type">
+            <list-view:list-view>
+                <list-view:column qualifier="code"/>
+                <list-view:column qualifier="name"/>
+            </list-view:list-view>
+        </context>
+        <context component="listviewactions" merge-by="type">
+            <y:actions>
+                <y:group qualifier="common" show-group-header="false" position="10">
+                    <y:action action-id="com.hybris.cockpitng.action.create" property="pageable.typeCode">
+                        <y:parameter>
+                            <yc:name>forbidSubtypesCreation</yc:name>
+                            <yc:value>true</yc:value>
+                        </y:parameter>
+                    </y:action>
+                    <y:action action-id="com.hybris.cockpitng.listview.action.export.csv" merge-mode="remove"/>
+                </y:group>
+                <y:extended-group qualifier="export" show-group-header="false" position="30">
+                    <y:action action-id="com.hybris.backoffice.widgets.actions.excel.export" position="10" property="pageable.typeCode"/>
+                    <y:action action-id="com.hybris.cockpitng.listview.action.export.csv" position="20" property="exportColumnsAndData">
+                        <y:parameter>
+                            <yc:name>actionName</yc:name>
+                            <yc:value>label.export.csv</yc:value>
+                        </y:parameter>
+                    </y:action>
+                    <y:extended-action action-id="com.hybris.backoffice.widgets.actions.excel.export" position="40"/>
+                </y:extended-group>
+                <y:group qualifier="import" show-group-header="false" position="40">
+                    <y:action action-id="com.hybris.backoffice.widgets.actions.excel.import" position="10" property="pageable.typeCode"/>
+                </y:group>
+            </y:actions>
+        </context>
+        <context component="editor-area" merge-by="type">
+            <editorArea:editorArea>
+                <editorArea:essentials>
+                    <editorArea:essentialSection name="hmc.essential">
+                        <editorArea:attribute qualifier="code"/>
+                    </editorArea:essentialSection>
+                </editorArea:essentials>
+                <editorArea:tab name="hmc.tab.common">
+                    <editorArea:section name="hmc.properties">
+                        <editorArea:attribute qualifier="code"/>
+                        <editorArea:attribute qualifier="name"/>
+                    </editorArea:section>
+                </editorArea:tab>
+            </editorArea:editorArea>
+        </context>
+        <context component="create-wizard" merge-by="type">
+            <wz:flow id="DynamicFormFieldTypeWizard" title="create.title(ctx.TYPE_CODE)">
+                <wz:prepare id="itemPrepare">
+                    <wz:initialize property="newObject" type="ctx.TYPE_CODE"/>
+                </wz:prepare>
+                <wz:step id="step1" label="flow.allmanadatory">
+                    <wz:content id="step1.content">
+                        <wz:property-list root="newObject">
+                            <wz:property qualifier="code"/>
+                            <wz:property qualifier="name"/>
+                        </wz:property-list>
+                    </wz:content>
+                    <wz:navigation>
+                        <wz:cancel/>
+                        <wz:done visible="!#empty(newObject.code)">
+                            <wz:save property="newObject"/>
+                        </wz:done>
+                    </wz:navigation>
+                </wz:step>
+            </wz:flow>
+        </context>
+    </context>
+    <context type="DynamicFormSubmission" merge-by="type" module="cxdevforms">
+        <context component="base"><y:base><y:labels><y:label>id</y:label></y:labels></y:base></context>
+        <context component="simple-search"><simple-search:simple-search><simple-search:field name="id"/></simple-search:simple-search></context>
+        <context component="advanced-search">
+            <advanced-search:advanced-search><advanced-search:field-list>
+                <advanced-search:field name="form" selected="true" operator="equals"/>
+                <advanced-search:field name="submittedAt" selected="true"/>
+                <advanced-search:field name="user" selected="true" operator="equals"/>
+                <advanced-search:field name="baseSite" selected="true" operator="equals"/>
+            </advanced-search:field-list></advanced-search:advanced-search>
+        </context>
+        <context component="listview"><list-view:list-view>
+            <list-view:column qualifier="id"/>
+            <list-view:column qualifier="form"/>
+            <list-view:column qualifier="submittedAt"/>
+            <list-view:column qualifier="user"/>
+            <list-view:column qualifier="baseSite"/>
+        </list-view:list-view></context>
+        <context component="editor-area">
+            <editorArea:editorArea>
+                <editorArea:essentials><editorArea:essentialSection name="hmc.essential">
+                    <editorArea:attribute qualifier="id" readonly="true"/>
+                    <editorArea:attribute qualifier="form" readonly="true"/>
+                    <editorArea:attribute qualifier="submittedAt" readonly="true"/>
+                </editorArea:essentialSection></editorArea:essentials>
+                <editorArea:tab name="cxdevforms.submission.answers">
+                    <editorArea:customSection name="cxdevforms.submission.answers" spring-bean="cxDynamicFormSubmissionRenderer"/>
+                </editorArea:tab>
+                <editorArea:tab name="cxdevforms.submission.metadata">
+                    <editorArea:section name="cxdevforms.submission.metadata">
+                        <editorArea:attribute qualifier="user" readonly="true"/>
+                        <editorArea:attribute qualifier="baseSite" readonly="true"/>
+                        <editorArea:attribute qualifier="language" readonly="true"/>
+                        <editorArea:attribute qualifier="userAgent" readonly="true"/>
+                        <editorArea:attribute qualifier="remoteAddress" readonly="true"/>
+                    </editorArea:section>
+                </editorArea:tab>
+                <editorArea:tab name="cxdevforms.submission.raw">
+                    <editorArea:section name="cxdevforms.submission.raw">
+                        <editorArea:attribute qualifier="answersJson" readonly="true"/>
+                        <editorArea:attribute qualifier="definitionSnapshotJson" readonly="true"/>
+                    </editorArea:section>
+                </editorArea:tab>
+            </editorArea:editorArea>
+        </context>
+    </context>
+</config>

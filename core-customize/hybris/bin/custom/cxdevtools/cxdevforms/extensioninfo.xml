@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<extensioninfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="extensioninfo.xsd">
+    <extension abstractclassprefix="Generated" classprefix="CxForms" jaloLogicFree="true" name="cxdevforms" version="5.0.2" usemaven="true">
+        <requires-extension name="cxdevtoolkit"/>
+        <requires-extension name="cxdevbackoffice"/>
+        <requires-extension name="commercewebservices"/>
+
+        <coremodule generated="true" manager="de.hybris.platform.jalo.extension.GenericManager" packageroot="me.cxdev.commerce.forms"/>
+        <meta key="backoffice-module" value="true"/>
+    </extension>
+</extensioninfo>

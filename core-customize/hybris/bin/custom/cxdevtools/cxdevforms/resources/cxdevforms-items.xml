@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<items xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="items.xsd">
+    <collectiontypes>
+        <collectiontype code="DynamicFormFieldValueList" elementtype="DynamicFormFieldValue" type="list"/>
+    </collectiontypes>
+
+    <enumtypes>
+        <enumtype code="DynamicFormType" dynamic="true">
+            <description>Type of Dynamic Form</description>
+        </enumtype>
+        <enumtype code="DynamicFormFieldType">
+            <value code="TEXT"/>
+            <value code="EMAIL"/>
+            <value code="HIDDEN"/>
+            <value code="PASSWORD"/>
+            <value code="COLOR"/>
+            <value code="TEXTAREA"/>
+            <value code="NUMBER"/>
+            <value code="RADIO"/>
+            <value code="CHECKBOX"/>
+            <value code="CHECKBOXES"/>
+            <value code="SELECT"/>
+            <value code="FILE"/>
+            <value code="DATE"/>
+            <value code="WEEK"/>
+        </enumtype>
+    </enumtypes>
+
+    <relations>
+        <relation code="DynamicForm2Submissions" localized="false">
+            <sourceElement type="DynamicForm" qualifier="form" cardinality="one">
+                <modifiers optional="false"/>
+            </sourceElement>
+            <targetElement type="DynamicFormSubmission" qualifier="submissions" cardinality="many" collectiontype="list">
+                <modifiers partof="false"/>
+            </targetElement>
+        </relation>
+        <relation code="DynamicForm2DynamicFormFields" localized="false">
+            <sourceElement type="DynamicForm" qualifier="form" cardinality="one">
+                <modifiers read="true" write="true" search="true"/>
+            </sourceElement>
+            <targetElement type="DynamicFormField" qualifier="formFields" cardinality="many" ordered="true">
+                <modifiers read="true" write="true" search="true"/>
+            </targetElement>
+        </relation>
+        <relation code="DynamicFormFieldValues2DynamicFormFields" localized="false">
+            <deployment table="cxdevformsfield2value" typecode="31178"/>
+            <sourceElement type="DynamicFormField" qualifier="childFields" cardinality="many">
+                <modifiers read="true" write="true" search="true"/>
+            </sourceElement>
+            <targetElement type="DynamicFormFieldValue" qualifier="parentFieldValues" cardinality="many">
+                <modifiers read="true" write="true" search="true"/>
+            </targetElement>
+        </relation>
+    </relations>
+
+    <itemtypes>
+        <typegroup name="DynamicForms">
+            <itemtype code="DynamicForm" extends="GenericItem">
+                <deployment table="cxdevformsform" typecode="31175"/>
+                <attributes>
+                    <attribute qualifier="id" type="java.lang.String">
+                        <description>ID of the dynamic form.</description>
+                        <modifiers optional="false" initial="true" unique="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="title" type="localized:java.lang.String">
+                        <description>Title of the dynamic form.</description>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="type" type="DynamicFormType">
+                        <description>Type of the dynamic form.</description>
+                        <modifiers optional="false" initial="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="description" type="localized:java.lang.String">
+                        <description>Description of the dynamic form.</description>
+                        <persistence type="property">
+                            <columntype>
+                                <value>HYBRIS.LONG_STRING</value>
+                            </columntype>
+                        </persistence>
+                    </attribute>
+                    <attribute qualifier="submissionEmailTemplate" type="localized:java.lang.String">
+                        <description>Trusted administrator-authored Thymeleaf HTML; blank uses the classpath fallback.</description>
+                        <persistence type="property"><columntype><value>HYBRIS.LONG_STRING</value></columntype></persistence>
+                    </attribute>
+                    <attribute qualifier="recipients" type="StringCollection">
+                        <description>String list for email-addresses to send the dynamic form to.</description>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="dynamicRecipient" type="java.lang.Boolean">
+                        <description>If true adds a hidden email field, that can be filled by frontend as an input.</description>
+                        <modifiers optional="false" initial="true"/>
+                        <persistence type="property"/>
+                        <defaultvalue>false</defaultvalue>
+                    </attribute>
+                </attributes>
+                <indexes>
+                    <index name="dynamicFormIndex" unique="true">
+                        <key attribute="id"/>
+                    </index>
+                </indexes>
+            </itemtype>
+            <itemtype code="DynamicFormField" extends="GenericItem">
+                <deployment table="cxdevformsfield" typecode="31176"/>
+                <attributes>
+                    <attribute qualifier="id" type="java.lang.String">
+                        <description>The id of the dynamic form field.</description>
+                        <modifiers optional="false" initial="true" unique="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="label" type="localized:java.lang.String">
+                        <description>Label of the dynamic form field.</description>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="description" type="localized:java.lang.String">
+                        <description>Description of the dynamic form field.</description>
+                        <persistence type="property">
+                            <columntype>
+                                <value>HYBRIS.LONG_STRING</value>
+                            </columntype>
+                        </persistence>
+                    </attribute>
+                    <attribute qualifier="required" type="boolean">
+                        <description>Is the dynamic form field required.</description>
+                        <persistence type="property"/>
+                        <modifiers optional="false"/>
+                        <defaultvalue>false</defaultvalue>
+                    </attribute>
+                    <attribute qualifier="hidden" type="boolean">
+                        <description>Is the dynamic form field should be hidden.</description>
+                        <persistence type="property"/>
+                        <modifiers optional="false"/>
+                        <defaultvalue>false</defaultvalue>
+                    </attribute>
+                    <attribute qualifier="active" type="boolean">
+                        <description>Is the dynamic form field active.</description>
+                        <persistence type="property"/>
+                        <modifiers optional="false"/>
+                        <defaultvalue>true</defaultvalue>
+                    </attribute>
+                    <attribute qualifier="fieldType" type="DynamicFormFieldType">
+                        <description>Type of the dynamic form field.</description>
+                        <modifiers optional="false" initial="true"/>
+                        <defaultvalue>em().getEnumerationValue(&quot;DynamicFormFieldType&quot;,&quot;TEXT&quot;)</defaultvalue>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="minValue" type="java.lang.Double">
+                        <description>Validation constraint for fieldtype number.</description>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="maxValue" type="java.lang.Double">
+                        <description>Validation constraint for fieldtype number.</description>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="maxLength" type="java.lang.Integer">
+                        <description>Validation constraint for fieldtype string.</description>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="minLength" type="java.lang.Integer">
+                        <description>Validation constraint for fieldtype string.</description>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="defaultValue" type="java.lang.String">
+                        <description>Default value of the dynamic form field.</description>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="stepId" type="java.lang.String">
+                        <description>Optional presentation group ID; does not change conditional validation.</description>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="stepTitle" type="localized:java.lang.String">
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="placeholder" type="localized:java.lang.String">
+                        <description>Placeholder of the dynamic form field.</description>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="formFieldValues" type="DynamicFormFieldValueList">
+                        <description>List of values for the dynamic form field.</description>
+                        <persistence type="property"/>
+                    </attribute>
+                </attributes>
+                <indexes>
+                    <index name="cxdevDynamicFormFieldIndex" unique="true">
+                        <key attribute="id"/>
+                    </index>
+                </indexes>
+            </itemtype>
+            <itemtype code="DynamicFormFieldValue" extends="GenericItem">
+                <deployment table="cxdevformsfieldvalue" typecode="31177"/>
+                <attributes>
+                    <attribute qualifier="id" type="java.lang.String">
+                        <description>The id of the value field.</description>
+                        <modifiers optional="false" initial="true" unique="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="label" type="localized:java.lang.String">
+                        <description>Value of the field.</description>
+                        <persistence type="property"/>
+                    </attribute>
+                </attributes>
+                <indexes>
+                    <index name="cxdevDynamicFormFieldValueIndex" unique="true">
+                        <key attribute="id"/>
+                    </index>
+                </indexes>
+            </itemtype>
+            <itemtype code="DynamicFormSubmission" extends="GenericItem">
+                <deployment table="cxdevformsubmission" typecode="31179"/>
+                <attributes>
+                    <attribute qualifier="id" type="java.lang.String">
+                        <modifiers optional="false" unique="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="answersJson" type="java.lang.String">
+                        <modifiers optional="false"/>
+                        <persistence type="property"><columntype><value>HYBRIS.LONG_STRING</value></columntype></persistence>
+                    </attribute>
+                    <attribute qualifier="definitionSnapshotJson" type="java.lang.String">
+                        <modifiers optional="false"/>
+                        <persistence type="property"><columntype><value>HYBRIS.LONG_STRING</value></columntype></persistence>
+                    </attribute>
+                    <attribute qualifier="submittedAt" type="java.util.Date">
+                        <modifiers optional="false"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="user" type="User">
+                        <modifiers optional="false"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="baseSite" type="BaseSite">
+                        <modifiers optional="false"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="language" type="java.lang.String">
+                        <modifiers optional="false"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="userAgent" type="java.lang.String">
+                        <modifiers optional="true"/>
+                        <persistence type="property"><columntype><value>HYBRIS.LONG_STRING</value></columntype></persistence>
+                    </attribute>
+                    <attribute qualifier="remoteAddress" type="java.lang.String">
+                        <modifiers optional="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                </attributes>
+                <indexes>
+                    <index name="cxFormSubmissionId" unique="true"><key attribute="id"/></index>
+                    <index name="cxFormSubmissionByForm"><key attribute="form"/><key attribute="submittedAt"/></index>
+                </indexes>
+            </itemtype>
+        </typegroup>
+    </itemtypes>
+</items>

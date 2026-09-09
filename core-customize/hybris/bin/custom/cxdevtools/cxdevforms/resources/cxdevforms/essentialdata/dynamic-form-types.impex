@@ -1,0 +1,2 @@
+INSERT_UPDATE EnumerationValue; code[unique = true]; enumtype(code)[unique = true]; name[lang = de]; name[lang = en]
+                              ; default             ; DynamicFormType              ; Standard       ; Default

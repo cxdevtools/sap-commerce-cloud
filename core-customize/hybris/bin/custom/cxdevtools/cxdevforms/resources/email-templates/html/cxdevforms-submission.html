@@ -1,0 +1,17 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" th:lang="${#locale.toLanguageTag()}">
+<head><meta charset="UTF-8"/><title th:text="${view.title}">Form submission</title></head>
+<body>
+<h1 th:text="${view.title}">Form submission</h1>
+<p th:text="${submission.id}"></p>
+<section th:each="section : ${view.sections}">
+    <h2 th:text="${section.title}"></h2>
+    <dl th:each="answer : ${section.answers}">
+        <dt><strong th:text="${answer.label}"></strong></dt>
+        <dd style="white-space: pre-wrap; overflow-wrap: anywhere" th:text="${answer.value}"></dd>
+    </dl>
+</section>
+<!-- Custom trusted templates can use answers (typed map) and answersJson (complete JSON).
+     Always use th:text for submitted values; never evaluate them as HTML or templates. -->
+</body>
+</html>
