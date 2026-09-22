@@ -6,6 +6,7 @@
                 <explorer-tree:navigation-node id="cxdevtools_treenode_forms" position="450">
                     <explorer-tree:navigation-node id="cxdevforms_treenode_definitions">
                         <explorer-tree:type-node code="DynamicForm" id="cxdevforms_typenode_DynamicForm"/>
+                        <explorer-tree:type-node code="DynamicFormStep" id="cxdevforms_typenode_DynamicFormStep"/>
                         <explorer-tree:type-node code="DynamicFormField" id="cxdevforms_typenode_DynamicFormField"/>
                         <explorer-tree:type-node code="DynamicFormFieldValue" id="cxdevforms_typenode_DynamicFormFieldValue"/>
                     </explorer-tree:navigation-node>

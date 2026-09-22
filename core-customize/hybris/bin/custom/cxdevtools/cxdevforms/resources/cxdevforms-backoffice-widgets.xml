@@ -23,5 +23,5 @@
     <widget-connection sourceWidgetId="configurableFlow" outputId="wizardResult"
                        targetWidgetId="cxdevformsPreviewRefreshAdapter" inputId="wizardResult"/>
     <widget-connection sourceWidgetId="cxdevformsPreviewRefreshAdapter" outputId="refresh"
-                       targetWidgetId="editorArea" inputId="reset"/>
+                       targetWidgetId="editorArea" inputId="inputObject"/>
 </widgets>
