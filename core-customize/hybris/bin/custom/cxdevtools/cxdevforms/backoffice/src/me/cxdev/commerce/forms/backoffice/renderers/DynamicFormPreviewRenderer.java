@@ -31,6 +31,7 @@ import org.zkoss.zul.Radiogroup;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Vlayout;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -434,19 +435,62 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
 
     private String validationText(final DynamicFormFieldModel field) {
         final DynamicFormFieldType type = field.getFieldType();
+        final List<String> annotations = new ArrayList<>();
         if (type == DynamicFormFieldType.TEXT || type == DynamicFormFieldType.TEXTAREA) {
-            return label("cxdevforms.preview.length", field.getMinLength(), field.getMaxLength());
+            final String length = lengthText(field.getMinLength(), field.getMaxLength());
+            if (length != null) {
+                annotations.add(length);
+            }
         }
         if (type == DynamicFormFieldType.NUMBER) {
-            return label("cxdevforms.preview.number", field.getMinValue(), field.getMaxValue(), field.getDefaultValue());
+            final String range = numberRangeText(field.getMinValue(), field.getMaxValue());
+            if (range != null) {
+                annotations.add(range);
+            }
+            if (!isBlank(field.getDefaultValue())) {
+                annotations.add(label("cxdevforms.preview.defaultValue", field.getDefaultValue()));
+            }
         }
-        if (type == DynamicFormFieldType.FILE) {
+        if (type == DynamicFormFieldType.FILE && field.getMaxLength() != null) {
             return label("cxdevforms.preview.fileSize", field.getMaxLength());
         }
         if (type == DynamicFormFieldType.SELECT || type == DynamicFormFieldType.CHECKBOXES || type == DynamicFormFieldType.RADIO) {
-            return label("cxdevforms.preview.options", optionLabels(field.getFormFieldValues()));
+            final String options = optionLabels(field.getFormFieldValues());
+            if (!options.isBlank()) {
+                annotations.add(label("cxdevforms.preview.validValues", options));
+            }
+        }
+        return annotations.isEmpty() ? null : String.join(" · ", annotations);
+    }
+
+    private String lengthText(final Integer minimum, final Integer maximum) {
+        if (minimum != null && maximum != null) {
+            return label("cxdevforms.preview.length.range", minimum, maximum);
+        }
+        if (minimum != null) {
+            return label("cxdevforms.preview.length.minimum", minimum);
+        }
+        if (maximum != null) {
+            return label("cxdevforms.preview.length.maximum", maximum);
         }
         return null;
+    }
+
+    private String numberRangeText(final Double minimum, final Double maximum) {
+        if (minimum != null && maximum != null) {
+            return label("cxdevforms.preview.number.range", formatNumber(minimum), formatNumber(maximum));
+        }
+        if (minimum != null) {
+            return label("cxdevforms.preview.number.minimum", formatNumber(minimum));
+        }
+        if (maximum != null) {
+            return label("cxdevforms.preview.number.maximum", formatNumber(maximum));
+        }
+        return null;
+    }
+
+    private String formatNumber(final Double value) {
+        return BigDecimal.valueOf(value).stripTrailingZeros().toPlainString();
     }
 
     private boolean isInactive(final DynamicFormFieldModel field) {
@@ -468,7 +512,7 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
 
     private void appendRule(final Component parent, final String rule) {
         if (rule != null) {
-            final Label validation = new Label(label("cxdevforms.preview.validation", rule));
+            final Label validation = new Label(rule);
             validation.setStyle("display: block; color: #5b5b5b; white-space: pre-wrap;");
             parent.appendChild(validation);
         }
@@ -479,7 +523,7 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
     }
 
     private String optionLabels(final Collection<DynamicFormFieldValueModel> values) {
-        return values.stream().map(this::displayName).collect(joining(", "));
+        return values == null ? "" : values.stream().map(this::displayName).collect(joining(", "));
     }
 
     private String displayName(final DynamicFormFieldModel field) {
@@ -492,5 +536,9 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
 
     private String label(final String key, final Object... arguments) {
         return Labels.getLabel(key, arguments);
+    }
+
+    private boolean isBlank(final String value) {
+        return value == null || value.isBlank();
     }
 }
