@@ -3,7 +3,7 @@
     <context component="explorer-tree" merge-by="module">
         <explorer-tree:explorer-tree>
             <explorer-tree:navigation-node id="cxdevtools_treenode_main" position="999">
-                <explorer-tree:navigation-node id="cxdevtools_treenode_forms" position="600">
+                <explorer-tree:navigation-node id="cxdevtools_treenode_forms" position="450">
                     <explorer-tree:navigation-node id="cxdevforms_treenode_definitions">
                         <explorer-tree:type-node code="DynamicForm" id="cxdevforms_typenode_DynamicForm"/>
                         <explorer-tree:type-node code="DynamicFormField" id="cxdevforms_typenode_DynamicFormField"/>
@@ -174,7 +174,7 @@
         <context component="base">
             <y:base>
                 <y:labels>
-                    <y:label>id + (label != null ? ' : '+ label : '')</y:label>
+                    <y:label>(form.title != null &amp;&amp; !form.title.isEmpty() ? form.title : form.id) + ' - ' + (label != null &amp;&amp; !label.isEmpty() ? label : id)</y:label>
                 </y:labels>
             </y:base>
         </context>
@@ -206,19 +206,14 @@
         </context>
         <context component="listview" merge-by="type">
             <list-view:list-view>
-                <list-view:column qualifier="id"/>
+                <list-view:column qualifier="formTitle" label="cxdevforms.list.formTitle" spring-bean="cxDynamicFormReferenceListCellRenderer" sortable="false"/>
                 <list-view:column qualifier="label"/>
                 <list-view:column qualifier="description"/>
-                <list-view:column qualifier="required"/>
-                <list-view:column qualifier="hidden"/>
-                <list-view:column qualifier="active"/>
                 <list-view:column qualifier="fieldType"/>
-                <list-view:column qualifier="minValue"/>
-                <list-view:column qualifier="maxValue"/>
-                <list-view:column qualifier="minLength"/>
-                <list-view:column qualifier="maxLength"/>
-                <list-view:column qualifier="defaultValue"/>
-                <list-view:column qualifier="placeholder"/>
+                <list-view:column qualifier="required"/>
+                <list-view:column qualifier="id"/>
+                <list-view:column qualifier="creationtime"/>
+                <list-view:column qualifier="modifiedtime"/>
             </list-view:list-view>
         </context>
         <context component="listviewactions" merge-by="type">
@@ -250,29 +245,39 @@
         <context component="editor-area" merge-by="type">
             <editorArea:editorArea>
                 <editorArea:essentials>
-                    <editorArea:essentialSection name="hmc.essential">
+                    <editorArea:essentialSection name="hmc.essential" columns="4">
+                        <editorArea:attribute qualifier="form"/>
                         <editorArea:attribute qualifier="id" readonly="true"/>
+                        <editorArea:attribute qualifier="stepId"/>
+                        <editorArea:attribute qualifier="stepTitle"/>
                     </editorArea:essentialSection>
                 </editorArea:essentials>
-                <editorArea:tab name="hmc.tab.common">
-                    <editorArea:section name="hmc.properties">
+                <editorArea:tab name="cxdevforms.tab.general">
+                    <editorArea:section name="cxdevforms.section.general" columns="2">
+                        <editorArea:attribute qualifier="fieldType"/>
+                        <editorArea:attribute qualifier="required"/>
+                        <editorArea:attribute qualifier="active"/>
+                        <editorArea:attribute qualifier="hidden"/>
                         <editorArea:attribute qualifier="label"/>
                         <editorArea:attribute qualifier="description"/>
-                        <editorArea:attribute qualifier="required"/>
-                        <editorArea:attribute qualifier="hidden"/>
-                        <editorArea:attribute qualifier="active"/>
-                        <editorArea:attribute qualifier="fieldType"/>
+                        <editorArea:attribute qualifier="placeholder"/>
+                        <editorArea:attribute qualifier="defaultValue"/>
+                        <editorArea:attribute qualifier="formFieldValues" colspan="2"/>
+                    </editorArea:section>
+                </editorArea:tab>
+                <editorArea:tab name="cxdevforms.tab.step">
+                    <editorArea:section name="cxdevforms.section.step" columns="2">
+                        <editorArea:attribute qualifier="stepId"/>
+                        <editorArea:attribute qualifier="stepTitle"/>
+                        <editorArea:attribute qualifier="parentFieldValue" colspan="2"/>
+                    </editorArea:section>
+                </editorArea:tab>
+                <editorArea:tab name="cxdevforms.tab.validation">
+                    <editorArea:section name="cxdevforms.section.validation" columns="2">
                         <editorArea:attribute qualifier="minValue"/>
                         <editorArea:attribute qualifier="maxValue"/>
                         <editorArea:attribute qualifier="minLength"/>
                         <editorArea:attribute qualifier="maxLength"/>
-                        <editorArea:attribute qualifier="defaultValue"/>
-                        <editorArea:attribute qualifier="placeholder"/>
-                        <editorArea:attribute qualifier="stepId"/>
-                        <editorArea:attribute qualifier="stepTitle"/>
-                        <editorArea:attribute qualifier="formFieldValues"/>
-                        <editorArea:attribute qualifier="form"/>
-                        <editorArea:attribute qualifier="parentFieldValue" readonly="true"/>
                     </editorArea:section>
                 </editorArea:tab>
             </editorArea:editorArea>
@@ -331,7 +336,7 @@
         <context component="base">
             <y:base>
                 <y:labels>
-                    <y:label>id + (label != null ? ' : '+ label : '')</y:label>
+                    <y:label>(field.form.title != null &amp;&amp; !field.form.title.isEmpty() ? field.form.title : field.form.id) + ' - ' + (field.label != null &amp;&amp; !field.label.isEmpty() ? field.label : field.id) + ' - ' + (label != null &amp;&amp; !label.isEmpty() ? label : id)</y:label>
                 </y:labels>
             </y:base>
         </context>
@@ -352,9 +357,12 @@
         </context>
         <context component="listview" merge-by="type">
             <list-view:list-view>
-                <list-view:column qualifier="id"/>
+                <list-view:column qualifier="fieldFormTitle" label="cxdevforms.list.fieldFormTitle" spring-bean="cxDynamicFormReferenceListCellRenderer" sortable="false"/>
+                <list-view:column qualifier="fieldLabel" label="cxdevforms.list.fieldLabel" spring-bean="cxDynamicFormReferenceListCellRenderer" sortable="false"/>
                 <list-view:column qualifier="label"/>
-                <list-view:column qualifier="childFields"/>
+                <list-view:column qualifier="id"/>
+                <list-view:column qualifier="creationtime"/>
+                <list-view:column qualifier="modifiedtime"/>
             </list-view:list-view>
         </context>
         <context component="listviewactions" merge-by="type">
@@ -386,15 +394,18 @@
         <context component="editor-area" merge-by="type">
             <editorArea:editorArea>
                 <editorArea:essentials>
-                    <editorArea:essentialSection name="hmc.essential">
+                    <editorArea:essentialSection name="hmc.essential" columns="2">
                         <editorArea:attribute qualifier="field" readonly="true"/>
                         <editorArea:attribute qualifier="id" readonly="true"/>
                     </editorArea:essentialSection>
                 </editorArea:essentials>
-                <editorArea:tab name="hmc.tab.common">
-                    <editorArea:section name="hmc.properties">
-                        <editorArea:attribute qualifier="id" readonly="true"/>
+                <editorArea:tab name="cxdevforms.tab.general">
+                    <editorArea:section name="cxdevforms.section.general">
                         <editorArea:attribute qualifier="label"/>
+                    </editorArea:section>
+                </editorArea:tab>
+                <editorArea:tab name="cxdevforms.tab.step">
+                    <editorArea:section name="cxdevforms.section.step">
                         <editorArea:attribute qualifier="childFields"/>
                     </editorArea:section>
                 </editorArea:tab>

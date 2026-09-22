@@ -13,4 +13,5 @@
         <constructor-arg ref="modelService"/>
         <constructor-arg ref="permissionFacade"/>
     </bean>
+    <bean id="cxDynamicFormReferenceListCellRenderer" class="me.cxdev.commerce.forms.backoffice.renderers.DynamicFormReferenceListCellRenderer"/>
 </beans>
