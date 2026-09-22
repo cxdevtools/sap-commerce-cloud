@@ -7,6 +7,10 @@ import de.hybris.platform.servicelayer.model.ModelService;
 import com.hybris.cockpitng.core.config.impl.jaxb.editorarea.AbstractSection;
 import com.hybris.cockpitng.components.Action;
 import com.hybris.cockpitng.actions.ActionContext;
+import com.hybris.cockpitng.actions.ActionDefinition;
+import com.hybris.cockpitng.actions.ActionListener;
+import com.hybris.cockpitng.actions.CockpitAction;
+import com.hybris.cockpitng.actions.impl.DefaultActionRenderer;
 import com.hybris.cockpitng.data.TypeAwareSelectionContext;
 import com.hybris.cockpitng.dataaccess.facades.type.DataType;
 import com.hybris.cockpitng.dataaccess.facades.permissions.PermissionFacade;
@@ -15,6 +19,7 @@ import com.hybris.cockpitng.widgets.common.WidgetComponentRenderer;
 
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.HtmlBasedComponent;
 import org.zkoss.zk.ui.HtmlNativeComponent;
 import org.zkoss.zk.ui.event.DropEvent;
 import org.zkoss.zk.ui.event.Events;
@@ -279,22 +284,19 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
             return;
         }
 
-        // Action uses a table-based Backoffice renderer. The fixed wrapper constrains this internal
-        // structure to the same 28 px action slot as the regular ZK buttons.
-        final Div deleteSlot = new Div();
-        deleteSlot.setStyle(ACTION_SLOT_STYLE + " overflow: hidden;");
-        final Action delete = new PreviewDeleteAction();
+        // Keep the stock delete action and its stock confirmation renderer, but render its trigger
+        // as the same plain ZK icon button used by the other preview actions.
+        final Action delete = new PreviewDeleteAction(label("cxdevforms.preview.delete"));
         delete.setActionId("com.hybris.cockpitng.action.delete");
         delete.setWidgetInstanceManager(widgetInstanceManager);
         delete.setInputValue(List.of(field));
         delete.setViewMode(ActionContext.VIEWMODE_ICONONLY);
-        delete.setTooltiptext(label("cxdevforms.preview.delete"));
+        delete.setStyle("display: inline-flex; flex: 0 0 28px; width: 28px; min-width: 28px; max-width: 28px;");
         delete.addEventListener(Action.ON_ACTION_PERFORMED, event -> {
             modelService.refresh(form);
             renderPreview(previewParent, form, widgetInstanceManager);
         });
-        deleteSlot.appendChild(delete);
-        actionsCell.appendChild(deleteSlot);
+        actionsCell.appendChild(delete);
         deleteActions.add(delete);
     }
 
@@ -308,10 +310,49 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
      * socket from navigating away from the currently edited DynamicForm.
      */
     private static final class PreviewDeleteAction extends Action {
+        private static final PreviewActionRenderer ACTION_RENDERER = new PreviewActionRenderer();
+        private final String tooltip;
+
+        private PreviewDeleteAction(final String tooltip) {
+            this.tooltip = tooltip;
+        }
+
+        @Override
+        @SuppressWarnings({"rawtypes", "unchecked"})
+        protected void renderAction(final HtmlBasedComponent component, final ActionDefinition definition,
+                final CockpitAction action, final boolean initialize) {
+            final ActionContext context = createActionContext(definition);
+            initializeActionContext(context, component, definition, action, initialize);
+
+            final Button button = new Button();
+            button.setStyle(ACTION_SLOT_STYLE);
+            button.setClass("cng-action-icon cng-font-icon font-icon--delete z-button");
+            button.setTooltiptext(tooltip);
+            button.setAttribute("aria-label", tooltip);
+            final boolean enabled = action.canPerform(context);
+            button.setDisabled(!enabled);
+            if (enabled) {
+                final ActionListener listener = result -> Events.postEvent(Action.ON_ACTION_PERFORMED, this, result);
+                button.addEventListener(Events.ON_CLICK,
+                        event -> ACTION_RENDERER.performWithConfirmation(action, context, listener));
+            }
+            component.appendChild(button);
+        }
+
         @Override
         protected void sendOutput(final String outputId, final Object output) {
             // The preview itself refreshes after a successful delete; the editor must stay open.
         }
+    }
+
+    /** Exposes the platform's confirmation-aware action execution without its table-based visual renderer. */
+    private static final class PreviewActionRenderer extends DefaultActionRenderer {
+        @SuppressWarnings({"rawtypes", "unchecked"})
+        private void performWithConfirmation(final CockpitAction action, final ActionContext context,
+                final ActionListener listener) {
+            performWithConfirmationCheck(action, context, listener);
+        }
+
     }
 
     /** Opens the same editor dialog as a DynamicFormField reference editor. */
