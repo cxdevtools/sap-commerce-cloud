@@ -82,33 +82,33 @@
             </y:actions>
         </context>
         <context component="editor-area" merge-by="type">
-            <editorArea:editorArea>
+            <editorArea:editorArea viewMode="static">
                 <editorArea:essentials>
-                    <editorArea:essentialSection name="hmc.essential">
+                    <editorArea:essentialSection name="hmc.essential" columns="4">
                         <editorArea:attribute qualifier="id"/>
                         <editorArea:attribute qualifier="title"/>
                         <editorArea:attribute qualifier="type"/>
                     </editorArea:essentialSection>
                 </editorArea:essentials>
                 <editorArea:tab name="cxdevforms.tab.general">
-                    <editorArea:section name="cxdevforms.section.general">
+                    <editorArea:section name="cxdevforms.section.general" columns="1">
                         <editorArea:attribute qualifier="description" colspan="2" editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)"/>
                     </editorArea:section>
                 </editorArea:tab>
                 <editorArea:tab name="cxdevforms.tab.form">
-                    <editorArea:section name="cxdevforms.section.form">
-                        <editorArea:attribute qualifier="formFields"/>
-                    </editorArea:section>
+                    <editorArea:customSection name="cxdevforms.section.form" spring-bean="cxDynamicFormPreviewRenderer"/>
                 </editorArea:tab>
                 <editorArea:tab name="cxdevforms.tab.notification">
-                    <editorArea:section name="cxdevforms.section.notification">
+                    <editorArea:section name="cxdevforms.section.notification" columns="2">
                         <editorArea:attribute qualifier="recipients"/>
                         <editorArea:attribute qualifier="dynamicRecipient"/>
-                        <editorArea:attribute qualifier="submissionEmailTemplate" colspan="2" editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)"/>
+                        <editorArea:panel name="cxdevforms.section.notification" colspan="2">
+                            <editorArea:attribute qualifier="submissionEmailTemplate" editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)"/>
+                        </editorArea:panel>
                     </editorArea:section>
                 </editorArea:tab>
                 <editorArea:tab name="cxdevforms.tab.submissions">
-                    <editorArea:section name="cxdevforms.section.submissions">
+                    <editorArea:section name="cxdevforms.section.submissions" columns="1">
                         <editorArea:attribute qualifier="submissions" readonly="true"/>
                     </editorArea:section>
                 </editorArea:tab>
@@ -119,22 +119,49 @@
                 <wz:prepare id="itemPrepare">
                     <wz:initialize property="newObject" type="ctx.TYPE_CODE"/>
                 </wz:prepare>
-                <wz:step id="step1" label="flow.allmanadatory">
+                <wz:step id="step1" label="cxdevforms.section.general">
                     <wz:content id="step1.content">
                         <wz:property-list root="newObject">
                             <wz:property qualifier="id"/>
                             <wz:property qualifier="title"/>
                             <wz:property qualifier="type"/>
                             <wz:property qualifier="description"/>
-                            <wz:property qualifier="recipients"/>
-                            <wz:property qualifier="dynamicRecipient"/>
-                            <wz:property qualifier="formFields"/>
                             <wz:property qualifier="creationtime" exclude="true"/>
                         </wz:property-list>
                     </wz:content>
                     <wz:navigation>
                         <wz:cancel/>
-                        <wz:done visible="newObject.id !=null">
+                        <wz:next/>
+                        <wz:done visible="newObject.id != null">
+                            <wz:save property="newObject"/>
+                        </wz:done>
+                    </wz:navigation>
+                </wz:step>
+                <wz:step id="step2" label="cxdevforms.section.form">
+                    <wz:content>
+                        <wz:property-list root="newObject">
+                            <wz:property qualifier="formFields"/>
+                        </wz:property-list>
+                    </wz:content>
+                    <wz:navigation>
+                        <wz:back/>
+                        <wz:next/>
+                        <wz:done visible="newObject.id != null">
+                            <wz:save property="newObject"/>
+                        </wz:done>
+                    </wz:navigation>
+                </wz:step>
+                <wz:step id="step3" label="cxdevforms.section.notification">
+                    <wz:content>
+                        <wz:property-list root="newObject">
+                            <wz:property qualifier="recipients"/>
+                            <wz:property qualifier="dynamicRecipient"/>
+                            <wz:property qualifier="submissionEmailTemplate"/>
+                        </wz:property-list>
+                    </wz:content>
+                    <wz:navigation>
+                        <wz:back/>
+                        <wz:done visible="newObject.id != null">
                             <wz:save property="newObject"/>
                         </wz:done>
                     </wz:navigation>
@@ -224,7 +251,7 @@
             <editorArea:editorArea>
                 <editorArea:essentials>
                     <editorArea:essentialSection name="hmc.essential">
-                        <editorArea:attribute qualifier="id"/>
+                        <editorArea:attribute qualifier="id" readonly="true"/>
                     </editorArea:essentialSection>
                 </editorArea:essentials>
                 <editorArea:tab name="hmc.tab.common">
@@ -245,7 +272,7 @@
                         <editorArea:attribute qualifier="stepTitle"/>
                         <editorArea:attribute qualifier="formFieldValues"/>
                         <editorArea:attribute qualifier="form"/>
-                        <editorArea:attribute qualifier="parentFieldValues"/>
+                        <editorArea:attribute qualifier="parentFieldValue" readonly="true"/>
                     </editorArea:section>
                 </editorArea:tab>
             </editorArea:editorArea>
@@ -254,29 +281,44 @@
             <wz:flow id="DynamicFormFieldWizard" title="create.title(ctx.TYPE_CODE)">
                 <wz:prepare id="itemPrepare">
                     <wz:initialize property="newObject" type="ctx.TYPE_CODE"/>
+                    <wz:assign property="newObject.form" value="ctx.parentObject"/>
+                    <wz:assign property="newObject.id" value="T(java.util.UUID).randomUUID().toString()"/>
                 </wz:prepare>
-                <wz:step id="step1" label="flow.allmanadatory">
+                <wz:step id="step1" label="cxdevforms.wizard.general">
                     <wz:content id="step1.content">
                         <wz:property-list root="newObject">
-                            <wz:property qualifier="id"/>
+                            <wz:property qualifier="form"/>
+                            <wz:property qualifier="fieldType"/>
                             <wz:property qualifier="label"/>
                             <wz:property qualifier="description"/>
-                            <wz:property qualifier="required"/>
-                            <wz:property qualifier="active"/>
-                            <wz:property qualifier="hidden"/>
-                            <wz:property qualifier="fieldType"/>
-                            <wz:property qualifier="minValue"/>
-                            <wz:property qualifier="maxValue"/>
-                            <wz:property qualifier="maxLength"/>
-                            <wz:property qualifier="minLength"/>
-                            <wz:property qualifier="defaultValue"/>
                             <wz:property qualifier="placeholder"/>
+                            <wz:property qualifier="active" exclude="true"/>
+                            <wz:property qualifier="hidden" exclude="true"/>
                             <wz:property qualifier="creationtime" exclude="true"/>
                         </wz:property-list>
                     </wz:content>
                     <wz:navigation>
                         <wz:cancel/>
-                        <wz:done visible="newObject.id !=null">
+                        <wz:next/>
+                        <wz:done visible="newObject.form != null">
+                            <wz:save property="newObject"/>
+                        </wz:done>
+                    </wz:navigation>
+                </wz:step>
+                <wz:step id="step2" label="cxdevforms.wizard.validation">
+                    <wz:content id="step2.content">
+                        <wz:property-list root="newObject">
+                            <wz:property qualifier="required"/>
+                            <wz:property qualifier="defaultValue"/>
+                            <wz:property qualifier="minValue"/>
+                            <wz:property qualifier="maxValue"/>
+                            <wz:property qualifier="maxLength"/>
+                            <wz:property qualifier="minLength"/>
+                        </wz:property-list>
+                    </wz:content>
+                    <wz:navigation>
+                        <wz:back/>
+                        <wz:done visible="newObject.form != null">
                             <wz:save property="newObject"/>
                         </wz:done>
                     </wz:navigation>
@@ -345,12 +387,13 @@
             <editorArea:editorArea>
                 <editorArea:essentials>
                     <editorArea:essentialSection name="hmc.essential">
-                        <editorArea:attribute qualifier="id"/>
+                        <editorArea:attribute qualifier="field" readonly="true"/>
+                        <editorArea:attribute qualifier="id" readonly="true"/>
                     </editorArea:essentialSection>
                 </editorArea:essentials>
                 <editorArea:tab name="hmc.tab.common">
                     <editorArea:section name="hmc.properties">
-                        <editorArea:attribute qualifier="id"/>
+                        <editorArea:attribute qualifier="id" readonly="true"/>
                         <editorArea:attribute qualifier="label"/>
                         <editorArea:attribute qualifier="childFields"/>
                     </editorArea:section>
@@ -361,18 +404,20 @@
             <wz:flow id="DynamicFormFieldValueWizard" title="create.title(ctx.TYPE_CODE)">
                 <wz:prepare id="itemPrepare">
                     <wz:initialize property="newObject" type="ctx.TYPE_CODE"/>
+                    <wz:assign property="newObject.field"  value="ctx.item"/>
+                    <wz:assign property="newObject.id" value="T(java.util.UUID).randomUUID().toString()"/>
                 </wz:prepare>
                 <wz:step id="step1" label="flow.allmanadatory">
                     <wz:content id="step1.content">
                         <wz:property-list root="newObject">
-                            <wz:property qualifier="id"/>
+                            <wz:property qualifier="field"/>
                             <wz:property qualifier="label"/>
                             <wz:property qualifier="creationtime" exclude="true"/>
                         </wz:property-list>
                     </wz:content>
                     <wz:navigation>
                         <wz:cancel/>
-                        <wz:done visible="newObject.id !=null">
+                        <wz:done visible="newObject.field !=null">
                             <wz:save property="newObject"/>
                         </wz:done>
                     </wz:navigation>

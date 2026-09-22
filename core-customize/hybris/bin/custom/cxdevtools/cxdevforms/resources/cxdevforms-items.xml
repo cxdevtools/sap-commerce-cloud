@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <items xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="items.xsd">
-    <collectiontypes>
-        <collectiontype code="DynamicFormFieldValueList" elementtype="DynamicFormFieldValue" type="list"/>
-    </collectiontypes>
-
     <enumtypes>
         <enumtype code="DynamicFormType" dynamic="true">
             <description>Type of Dynamic Form</description>
+            <value code="CONTACT"/>
         </enumtype>
         <enumtype code="DynamicFormFieldType">
             <value code="TEXT"/>
@@ -37,18 +34,25 @@
         </relation>
         <relation code="DynamicForm2DynamicFormFields" localized="false">
             <sourceElement type="DynamicForm" qualifier="form" cardinality="one">
-                <modifiers read="true" write="true" search="true"/>
+                <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
             </sourceElement>
             <targetElement type="DynamicFormField" qualifier="formFields" cardinality="many" ordered="true">
                 <modifiers read="true" write="true" search="true"/>
             </targetElement>
         </relation>
-        <relation code="DynamicFormFieldValues2DynamicFormFields" localized="false">
-            <deployment table="cxdevformsfield2value" typecode="31178"/>
-            <sourceElement type="DynamicFormField" qualifier="childFields" cardinality="many">
-                <modifiers read="true" write="true" search="true"/>
+        <relation code="DynamicFormField2DynamicFormFieldValues" localized="false">
+            <sourceElement type="DynamicFormField" qualifier="field" cardinality="one">
+                <modifiers optional="false" initial="true"/>
             </sourceElement>
-            <targetElement type="DynamicFormFieldValue" qualifier="parentFieldValues" cardinality="many">
+            <targetElement type="DynamicFormFieldValue" qualifier="formFieldValues" cardinality="many" ordered="true">
+                <modifiers partof="true"/>
+            </targetElement>
+        </relation>
+        <relation code="DynamicFormFieldValues2DynamicFormFields" localized="false">
+            <sourceElement type="DynamicFormFieldValue" qualifier="parentFieldValue" cardinality="one">
+                <modifiers read="true" write="true" search="true" optional="true"/>
+            </sourceElement>
+            <targetElement type="DynamicFormField" qualifier="childFields" cardinality="many" ordered="true">
                 <modifiers read="true" write="true" search="true"/>
             </targetElement>
         </relation>
@@ -175,10 +179,6 @@
                     </attribute>
                     <attribute qualifier="placeholder" type="localized:java.lang.String">
                         <description>Placeholder of the dynamic form field.</description>
-                        <persistence type="property"/>
-                    </attribute>
-                    <attribute qualifier="formFieldValues" type="DynamicFormFieldValueList">
-                        <description>List of values for the dynamic form field.</description>
                         <persistence type="property"/>
                     </attribute>
                 </attributes>

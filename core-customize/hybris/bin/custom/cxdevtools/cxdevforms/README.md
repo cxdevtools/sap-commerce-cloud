@@ -44,16 +44,17 @@ standard `classpath*:/occ/v2/*occ/web/spring/*-web-spring.xml` resource pattern.
 
 ## Data model
 
-The `DynamicForms` type group contains four item types, supported by two enums,
-three relations and the `DynamicFormFieldValueList` collection type.
+The `DynamicForms` type group contains four item types, supported by two enums
+and three relations.
 
 | Type | Configuration |
 | --- | --- |
 | `DynamicForm` | Unique ID, localized title and description, form type, recipients, dynamic-recipient flag and ordered fields |
 | `DynamicFormField` | Unique ID, localized label, description and placeholder, input type, active/hidden/required flags, constraints, default value and selectable values |
-| `DynamicFormFieldValue` | Unique ID, localized label and conditional child fields |
+| `DynamicFormFieldValue` | Field-owned, prefixed ID, localized label and conditional child fields |
 
-IDs are globally unique within each item type. Definitions are independent of
+IDs are globally unique within each item type. A field value ID is automatically
+prefixed with its owning field ID. Definitions are independent of
 catalog versions. `DynamicFormType` is a dynamic enum for business categories
 such as `CONTACT`; additional categories can be configured in Backoffice.
 `DynamicFormFieldType` defines the supported input types.
@@ -96,9 +97,13 @@ listener uses only configured recipients; client-supplied email routing is not s
 `DynamicForm2DynamicFormFields` associates a form with its ordered `formFields`.
 A field can belong to one form through its `form` reference.
 
-`DynamicFormFieldValues2DynamicFormFields` connects selectable values to their
-`childFields`. The reverse reference on a field is `parentFieldValues`. This is
-a many-to-many relationship without a defined child-field order.
+`DynamicFormField2DynamicFormFieldValues` makes every selectable value an
+ordered, part-of value of exactly one field (`field` / `formFieldValues`).
+Deleting the field therefore also deletes its values.
+
+`DynamicFormFieldValues2DynamicFormFields` connects a selectable value to its
+ordered `childFields`. A child has at most one optional `parentFieldValue`, so it
+is either a root field or belongs to precisely one selected value.
 
 A frontend uses the selected option's ID to determine which child fields to
 activate. Child fields can themselves contain options and further child fields,

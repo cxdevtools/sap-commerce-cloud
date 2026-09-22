@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widgets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/widgets.xsd">
+    <widget-extension widgetId="editorArea">
+        <virtual-sockets>
+            <output id="cxdevformsEditField" type="com.hybris.cockpitng.data.TypeAwareSelectionContext"/>
+            <output id="cxdevformsCreateField" type="java.lang.Object"/>
+        </virtual-sockets>
+    </widget-extension>
+
+    <widget-extension widgetId="backofficePerspectiveChooser">
+        <widget id="cxdevformsPreviewRefreshAdapter"
+                widgetDefinitionId="me.cxdev.commerce.forms.backoffice.previewrefresh"
+                slotId="cockpitWidgetChildrenInvisible" template="false">
+            <virtual-sockets/>
+        </widget>
+    </widget-extension>
+
+    <widget-connection sourceWidgetId="editorArea" outputId="cxdevformsEditField"
+                       targetWidgetId="collectionEditorAreaGroup" inputId="inputDataInput"/>
+    <widget-connection sourceWidgetId="editorArea" outputId="cxdevformsCreateField"
+                       targetWidgetId="configurableFlow" inputId="context"/>
+    <widget-connection sourceWidgetId="configurableFlow" outputId="wizardResult"
+                       targetWidgetId="cxdevformsPreviewRefreshAdapter" inputId="wizardResult"/>
+    <widget-connection sourceWidgetId="cxdevformsPreviewRefreshAdapter" outputId="refresh"
+                       targetWidgetId="editorArea" inputId="reset"/>
+</widgets>

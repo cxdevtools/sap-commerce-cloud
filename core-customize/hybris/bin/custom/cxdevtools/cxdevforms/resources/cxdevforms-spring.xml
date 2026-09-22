@@ -4,4 +4,19 @@
     <import resource="cxdevforms/cxdevforms-services-spring.xml"/>
     <import resource="cxdevforms/cxdevforms-facades-spring.xml"/>
     <import resource="cxdevforms/cxdevforms-submissions-spring.xml"/>
+
+    <bean id="cxDynamicFormFieldValuePrepareInterceptor"
+          class="me.cxdev.commerce.forms.interceptors.DynamicFormFieldValuePrepareInterceptor"/>
+    <bean id="cxDynamicFormFieldUuidPrepareInterceptor"
+          class="me.cxdev.commerce.forms.interceptors.DynamicFormFieldUuidPrepareInterceptor"/>
+    <bean id="cxDynamicFormFieldUuidPrepareInterceptorMapping"
+          class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+        <property name="interceptor" ref="cxDynamicFormFieldUuidPrepareInterceptor"/>
+        <property name="typeCode" value="DynamicFormField"/>
+    </bean>
+    <bean id="cxDynamicFormFieldValuePrepareInterceptorMapping"
+          class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+        <property name="interceptor" ref="cxDynamicFormFieldValuePrepareInterceptor"/>
+        <property name="typeCode" value="DynamicFormFieldValue"/>
+    </bean>
 </beans>

@@ -9,4 +9,8 @@
     <bean id="cxDynamicFormSubmissionRenderer" class="me.cxdev.commerce.forms.backoffice.renderers.DynamicFormSubmissionRenderer">
         <constructor-arg ref="cxDynamicFormSubmissionPresentationService"/>
     </bean>
+    <bean id="cxDynamicFormPreviewRenderer" class="me.cxdev.commerce.forms.backoffice.renderers.DynamicFormPreviewRenderer">
+        <constructor-arg ref="modelService"/>
+        <constructor-arg ref="permissionFacade"/>
+    </bean>
 </beans>
