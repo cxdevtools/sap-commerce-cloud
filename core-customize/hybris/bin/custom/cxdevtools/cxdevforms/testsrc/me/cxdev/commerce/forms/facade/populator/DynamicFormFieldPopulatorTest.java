@@ -21,6 +21,7 @@ import de.hybris.platform.servicelayer.dto.converter.Converter;
 import me.cxdev.commerce.forms.enums.DynamicFormFieldType;
 import me.cxdev.commerce.forms.model.DynamicFormFieldModel;
 import me.cxdev.commerce.forms.model.DynamicFormFieldValueModel;
+import me.cxdev.commerce.forms.model.DynamicFormStepModel;
 import me.cxdev.commerce.forms.data.DynamicFormFieldData;
 import me.cxdev.commerce.forms.data.DynamicFormFieldValueData;
 
@@ -37,6 +38,8 @@ class DynamicFormFieldPopulatorTest {
 	private DynamicFormFieldValueModel valueModel;
 	@Mock
 	private DynamicFormFieldType fieldType;
+	@Mock
+	private DynamicFormStepModel step;
 
 	private DynamicFormFieldPopulator systemUnderTest;
 
@@ -59,6 +62,9 @@ class DynamicFormFieldPopulatorTest {
 		when(fieldType.getCode()).thenReturn("TEXT");
 		when(source.getDefaultValue()).thenReturn("default");
 		when(source.getPlaceholder()).thenReturn("placeholder");
+		when(source.getStep()).thenReturn(step);
+		when(step.getId()).thenReturn("step-uuid");
+		when(step.getLabel()).thenReturn("Contact details");
 		when(source.getMinValue()).thenReturn(1.0);
 		when(source.getMaxValue()).thenReturn(10.0);
 		when(source.getMinLength()).thenReturn(2);
@@ -72,6 +78,8 @@ class DynamicFormFieldPopulatorTest {
 		assertEquals("machine", target.getId());
 		assertEquals("TEXT", target.getFieldType());
 		assertEquals(Boolean.TRUE, target.getRequired());
+		assertEquals("step-uuid", target.getStepId());
+		assertEquals("Contact details", target.getStepTitle());
 		assertEquals(1, target.getFormFieldValues().size());
 		assertSame(convertedValue, target.getFormFieldValues().get(0));
 	}

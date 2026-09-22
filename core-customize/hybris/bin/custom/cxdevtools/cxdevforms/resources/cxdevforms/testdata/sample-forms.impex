@@ -7,6 +7,15 @@
 $showcaseForm=sample-contact-field-types
 $conditionalForm=sample-contact-conditional
 
+$showcaseStepContact=41111111-1111-4111-8111-000000000001
+$showcaseStepAppointment=41111111-1111-4111-8111-000000000002
+$showcaseStepPreferences=41111111-1111-4111-8111-000000000003
+$conditionalStepStart=42222222-2222-4222-8222-000000000001
+$conditionalStepAdvice=42222222-2222-4222-8222-000000000002
+$conditionalStepSupport=42222222-2222-4222-8222-000000000003
+$conditionalStepEvent=42222222-2222-4222-8222-000000000004
+$conditionalStepDetails=42222222-2222-4222-8222-000000000005
+
 $showcaseText=11111111-1111-4111-8111-000000000001
 $showcaseEmail=11111111-1111-4111-8111-000000000002
 $showcaseTextArea=11111111-1111-4111-8111-000000000003
@@ -53,22 +62,32 @@ INSERT_UPDATE DynamicForm; id[unique = true]; type(code); title[lang = en]; titl
                              ; $showcaseForm   ; CONTACT   ; Contact form – field type showcase; Kontaktformular – Feldtypen-Showcase; Demonstrates every available DynamicFormFieldType.; Demonstriert alle verfügbaren DynamicFormFieldType.
                              ; $conditionalForm; CONTACT   ; Contact form – conditional scenarios; Kontaktformular – abhängige Szenarien; Demonstrates conditional fields over three levels.; Demonstriert abhängige Felder über drei Ebenen.
 
+INSERT_UPDATE DynamicFormStep; id[unique = true]; form(id); label[lang = en]; label[lang = de]
+                             ; $showcaseStepContact    ; $showcaseForm; Contact details; Kontaktdaten
+                             ; $showcaseStepAppointment; $showcaseForm; Appointment preferences; Terminwünsche
+                             ; $showcaseStepPreferences; $showcaseForm; Preferences and attachments; Präferenzen und Anhänge
+                             ; $conditionalStepStart   ; $conditionalForm; Your request; Ihr Anliegen
+                             ; $conditionalStepAdvice  ; $conditionalForm; Advice; Beratung
+                             ; $conditionalStepSupport ; $conditionalForm; Technical support; Technischer Support
+                             ; $conditionalStepEvent   ; $conditionalForm; Event planning; Veranstaltungsplanung
+                             ; $conditionalStepDetails ; $conditionalForm; Request details; Details zum Anliegen
+
 # 1. Contact form with every DynamicFormFieldType
-INSERT_UPDATE DynamicFormField; id[unique = true]; form(id); fieldType(code); label[lang = en]; label[lang = de]; description[lang = en]; description[lang = de]; placeholder[lang = en]; placeholder[lang = de]; defaultValue; active; hidden; required
-                              ; $showcaseText      ; $showcaseForm; TEXT      ; Your name; Ihr Name; TEXT: Enter the name we should use when contacting you.; TEXT: Geben Sie den Namen ein, mit dem wir Sie ansprechen dürfen.; Jane Doe; Erika Mustermann; ; true; false; false
-                              ; $showcaseEmail     ; $showcaseForm; EMAIL     ; Email address; E-Mail-Adresse; EMAIL: Tell us where we can send our reply.; EMAIL: Geben Sie an, wohin wir unsere Antwort senden dürfen.; jane@example.com; erika@example.de; ; true; false; false
-                              ; $showcaseTextArea  ; $showcaseForm; TEXTAREA  ; Your message; Ihre Nachricht; TEXTAREA: Describe your request in your own words.; TEXTAREA: Beschreiben Sie Ihr Anliegen mit eigenen Worten.; How can we help?; Wie können wir helfen?; ; true; false; false
-                              ; $showcaseNumber    ; $showcaseForm; NUMBER    ; Number of participants; Anzahl der Teilnehmenden; NUMBER: Estimate how many people are involved in your request.; NUMBER: Schätzen Sie, wie viele Personen von Ihrem Anliegen betroffen sind.; 1; 1; 1; true; false; false
-                              ; $showcaseDate      ; $showcaseForm; DATE      ; Preferred appointment; Wunschtermin; DATE: Choose a suitable date for a call.; DATE: Wählen Sie ein passendes Datum für einen Rückruf.; ; ; ; true; false; false
-                              ; $showcaseWeek      ; $showcaseForm; WEEK      ; Preferred calendar week; Bevorzugte Kalenderwoche; WEEK: Select the week in which we should contact you.; WEEK: Wählen Sie die Kalenderwoche für unsere Kontaktaufnahme.; ; ; ; true; false; false
-                              ; $showcasePassword  ; $showcaseForm; PASSWORD  ; Callback code; Rückruf-Code; PASSWORD: A confidential code for identifying your request.; PASSWORD: Ein vertraulicher Code zur Zuordnung Ihres Anliegens.; ; ; ; true; false; false
-                              ; $showcaseHidden    ; $showcaseForm; HIDDEN    ; Internal reference; Interne Referenz; HIDDEN: A technical value supplied by the frontend.; HIDDEN: Ein technischer Wert, der vom Frontend gesetzt wird.; contact-demo; kontakt-demo; contact-demo; true; false; false
-                              ; $showcaseColor     ; $showcaseForm; COLOR     ; Preferred colour; Wunschfarbe; COLOR: Pick a colour for the requested material.; COLOR: Wählen Sie eine Farbe für die gewünschten Unterlagen.; ; ; #4b8eff; true; false; false
-                              ; $showcaseSelect    ; $showcaseForm; SELECT    ; Preferred contact channel; Bevorzugter Kontaktweg; SELECT: Choose how you would like to hear from us.; SELECT: Wählen Sie, wie wir Sie kontaktieren dürfen.; ; ; $selectEmail; true; false; false
-                              ; $showcaseRadio     ; $showcaseForm; RADIO     ; Reply detail; Antwortumfang; RADIO: Decide how detailed our reply should be.; RADIO: Entscheiden Sie, wie ausführlich unsere Antwort sein soll.; ; ; $radioQuick; true; false; false
-                              ; $showcaseCheckbox  ; $showcaseForm; CHECKBOX  ; Callback consent; Rückruf erlaubt; CHECKBOX: Confirm whether we may call you back.; CHECKBOX: Bestätigen Sie, ob wir Sie zurückrufen dürfen.; ; ; false; true; false; false
-                              ; $showcaseCheckboxes; $showcaseForm; CHECKBOXES; Areas of interest; Interessensgebiete; CHECKBOXES: Select all topics that are relevant to you.; CHECKBOXES: Wählen Sie alle Themen, die für Sie relevant sind.; ; ; $interestProduct,$interestSupport; true; false; false
-                              ; $showcaseFile      ; $showcaseForm; FILE      ; Attachment; Anhang; FILE: Upload a screenshot or a document if it helps explain your request.; FILE: Laden Sie bei Bedarf einen Screenshot oder ein Dokument hoch.; ; ; ; true; false; false
+INSERT_UPDATE DynamicFormField; id[unique = true]; form(id); step(id); fieldType(code); label[lang = en]; label[lang = de]; description[lang = en]; description[lang = de]; placeholder[lang = en]; placeholder[lang = de]; defaultValue; active; hidden; required
+                              ; $showcaseText      ; $showcaseForm; $showcaseStepContact; TEXT      ; Your name; Ihr Name; TEXT: Enter the name we should use when contacting you.; TEXT: Geben Sie den Namen ein, mit dem wir Sie ansprechen dürfen.; Jane Doe; Erika Mustermann; ; true; false; false
+                              ; $showcaseEmail     ; $showcaseForm; $showcaseStepContact; EMAIL     ; Email address; E-Mail-Adresse; EMAIL: Tell us where we can send our reply.; EMAIL: Geben Sie an, wohin wir unsere Antwort senden dürfen.; jane@example.com; erika@example.de; ; true; false; false
+                              ; $showcaseTextArea  ; $showcaseForm; $showcaseStepContact; TEXTAREA  ; Your message; Ihre Nachricht; TEXTAREA: Describe your request in your own words.; TEXTAREA: Beschreiben Sie Ihr Anliegen mit eigenen Worten.; How can we help?; Wie können wir helfen?; ; true; false; false
+                              ; $showcaseNumber    ; $showcaseForm; $showcaseStepContact; NUMBER    ; Number of participants; Anzahl der Teilnehmenden; NUMBER: Estimate how many people are involved in your request.; NUMBER: Schätzen Sie, wie viele Personen von Ihrem Anliegen betroffen sind.; 1; 1; 1; true; false; false
+                              ; $showcaseDate      ; $showcaseForm; $showcaseStepAppointment; DATE      ; Preferred appointment; Wunschtermin; DATE: Choose a suitable date for a call.; DATE: Wählen Sie ein passendes Datum für einen Rückruf.; ; ; ; true; false; false
+                              ; $showcaseWeek      ; $showcaseForm; $showcaseStepAppointment; WEEK      ; Preferred calendar week; Bevorzugte Kalenderwoche; WEEK: Select the week in which we should contact you.; WEEK: Wählen Sie die Kalenderwoche für unsere Kontaktaufnahme.; ; ; ; true; false; false
+                              ; $showcasePassword  ; $showcaseForm; $showcaseStepAppointment; PASSWORD  ; Callback code; Rückruf-Code; PASSWORD: A confidential code for identifying your request.; PASSWORD: Ein vertraulicher Code zur Zuordnung Ihres Anliegens.; ; ; ; true; false; false
+                              ; $showcaseHidden    ; $showcaseForm; $showcaseStepPreferences; HIDDEN    ; Internal reference; Interne Referenz; HIDDEN: A technical value supplied by the frontend.; HIDDEN: Ein technischer Wert, der vom Frontend gesetzt wird.; contact-demo; kontakt-demo; contact-demo; true; false; false
+                              ; $showcaseColor     ; $showcaseForm; $showcaseStepPreferences; COLOR     ; Preferred colour; Wunschfarbe; COLOR: Pick a colour for the requested material.; COLOR: Wählen Sie eine Farbe für die gewünschten Unterlagen.; ; ; #4b8eff; true; false; false
+                              ; $showcaseSelect    ; $showcaseForm; $showcaseStepPreferences; SELECT    ; Preferred contact channel; Bevorzugter Kontaktweg; SELECT: Choose how you would like to hear from us.; SELECT: Wählen Sie, wie wir Sie kontaktieren dürfen.; ; ; $selectEmail; true; false; false
+                              ; $showcaseRadio     ; $showcaseForm; $showcaseStepPreferences; RADIO     ; Reply detail; Antwortumfang; RADIO: Decide how detailed our reply should be.; RADIO: Entscheiden Sie, wie ausführlich unsere Antwort sein soll.; ; ; $radioQuick; true; false; false
+                              ; $showcaseCheckbox  ; $showcaseForm; $showcaseStepPreferences; CHECKBOX  ; Callback consent; Rückruf erlaubt; CHECKBOX: Confirm whether we may call you back.; CHECKBOX: Bestätigen Sie, ob wir Sie zurückrufen dürfen.; ; ; false; true; false; false
+                              ; $showcaseCheckboxes; $showcaseForm; $showcaseStepPreferences; CHECKBOXES; Areas of interest; Interessensgebiete; CHECKBOXES: Select all topics that are relevant to you.; CHECKBOXES: Wählen Sie alle Themen, die für Sie relevant sind.; ; ; $interestProduct,$interestSupport; true; false; false
+                              ; $showcaseFile      ; $showcaseForm; $showcaseStepPreferences; FILE      ; Attachment; Anhang; FILE: Upload a screenshot or a document if it helps explain your request.; FILE: Laden Sie bei Bedarf einen Screenshot oder ein Dokument hoch.; ; ; ; true; false; false
 
 INSERT_UPDATE DynamicFormFieldValue; id[unique = true]; field(id); label[lang = en]; label[lang = de]
                                    ; $selectEmail        ; $showcaseSelect    ; Email; E-Mail
@@ -83,18 +102,18 @@ INSERT_UPDATE DynamicFormFieldValue; id[unique = true]; field(id); label[lang = 
 # 2. Contact form with conditional fields: scenario -> topic -> detail
 # The import is intentionally layered so each parent value exists before a
 # dependent child field references it.
-INSERT_UPDATE DynamicFormField; id[unique = true]; form(id); fieldType(code); parentFieldValue(id); label[lang = en]; label[lang = de]; description[lang = en]; description[lang = de]; placeholder[lang = en]; placeholder[lang = de]; defaultValue; active; hidden; required
-                              ; $conditionalScenario; $conditionalForm; SELECT    ;                     ; What is your request about?; Worum geht es in Ihrem Anliegen?; SELECT: Choose a scenario to reveal the appropriate follow-up questions.; SELECT: Wählen Sie ein Szenario, um passende Folgefragen anzuzeigen.; ; ; $scenarioAdvice; true; false; false
+INSERT_UPDATE DynamicFormField; id[unique = true]; form(id); step(id); fieldType(code); parentFieldValue(id); label[lang = en]; label[lang = de]; description[lang = en]; description[lang = de]; placeholder[lang = en]; placeholder[lang = de]; defaultValue; active; hidden; required
+                              ; $conditionalScenario; $conditionalForm; $conditionalStepStart; SELECT    ;                     ; What is your request about?; Worum geht es in Ihrem Anliegen?; SELECT: Choose a scenario to reveal the appropriate follow-up questions.; SELECT: Wählen Sie ein Szenario, um passende Folgefragen anzuzeigen.; ; ; $scenarioAdvice; true; false; false
 
 INSERT_UPDATE DynamicFormFieldValue; id[unique = true]; field(id); label[lang = en]; label[lang = de]
                                    ; $scenarioAdvice      ; $conditionalScenario; Product or service advice; Produkt- oder Serviceberatung
                                    ; $scenarioSupport     ; $conditionalScenario; Technical support; Technischer Support
                                    ; $scenarioEvent       ; $conditionalScenario; Event request; Veranstaltungsanfrage
 
-INSERT_UPDATE DynamicFormField; id[unique = true]; form(id); fieldType(code); parentFieldValue(id); label[lang = en]; label[lang = de]; description[lang = en]; description[lang = de]; placeholder[lang = en]; placeholder[lang = de]; defaultValue; active; hidden; required
-                              ; $adviceType         ; $conditionalForm; SELECT    ; $scenarioAdvice     ; What kind of advice do you need?; Welche Beratung benötigen Sie?; SELECT: Select the advice format that fits your situation.; SELECT: Wählen Sie das Beratungsformat, das zu Ihrer Situation passt.; ; ; $adviceIndividual; true; false; false
-                              ; $supportTopic       ; $conditionalForm; RADIO     ; $scenarioSupport    ; Support topic; Support-Thema; RADIO: Choose the part of the service you need help with.; RADIO: Wählen Sie den Bereich, bei dem Sie Unterstützung benötigen.; ; ; $supportLogin; true; false; false
-                              ; $eventFormat        ; $conditionalForm; CHECKBOXES; $scenarioEvent      ; Event format; Veranstaltungsformat; CHECKBOXES: Select one or more formats you are considering.; CHECKBOXES: Wählen Sie ein oder mehrere Formate, die Sie in Betracht ziehen.; ; ; ; true; false; false
+INSERT_UPDATE DynamicFormField; id[unique = true]; form(id); step(id); fieldType(code); parentFieldValue(id); label[lang = en]; label[lang = de]; description[lang = en]; description[lang = de]; placeholder[lang = en]; placeholder[lang = de]; defaultValue; active; hidden; required
+                              ; $adviceType         ; $conditionalForm; $conditionalStepAdvice; SELECT    ; $scenarioAdvice     ; What kind of advice do you need?; Welche Beratung benötigen Sie?; SELECT: Select the advice format that fits your situation.; SELECT: Wählen Sie das Beratungsformat, das zu Ihrer Situation passt.; ; ; $adviceIndividual; true; false; false
+                              ; $supportTopic       ; $conditionalForm; $conditionalStepSupport; RADIO     ; $scenarioSupport    ; Support topic; Support-Thema; RADIO: Choose the part of the service you need help with.; RADIO: Wählen Sie den Bereich, bei dem Sie Unterstützung benötigen.; ; ; $supportLogin; true; false; false
+                              ; $eventFormat        ; $conditionalForm; $conditionalStepEvent; CHECKBOXES; $scenarioEvent      ; Event format; Veranstaltungsformat; CHECKBOXES: Select one or more formats you are considering.; CHECKBOXES: Wählen Sie ein oder mehrere Formate, die Sie in Betracht ziehen.; ; ; ; true; false; false
 
 INSERT_UPDATE DynamicFormFieldValue; id[unique = true]; field(id); label[lang = en]; label[lang = de]
                                    ; $adviceIndividual    ; $adviceType         ; Individual consultation; Individuelle Beratung
@@ -104,15 +123,15 @@ INSERT_UPDATE DynamicFormFieldValue; id[unique = true]; field(id); label[lang = 
                                    ; $eventOnsite         ; $eventFormat        ; On-site event; Veranstaltung vor Ort
                                    ; $eventOnline         ; $eventFormat        ; Online event; Online-Veranstaltung
 
-INSERT_UPDATE DynamicFormField; id[unique = true]; form(id); fieldType(code); parentFieldValue(id); label[lang = en]; label[lang = de]; description[lang = en]; description[lang = de]; placeholder[lang = en]; placeholder[lang = de]; defaultValue; active; hidden; required
-                              ; $adviceDetails      ; $conditionalForm; TEXTAREA  ; $adviceIndividual   ; Your requirements; Ihre Anforderungen; TEXTAREA: Describe the goals for your individual consultation.; TEXTAREA: Beschreiben Sie die Ziele für Ihre individuelle Beratung.; What should the consultation cover?; Was soll die Beratung abdecken?; ; true; false; false
-                              ; $supportLog         ; $conditionalForm; FILE      ; $supportIntegration ; Log file; Log-Datei; FILE: Upload the relevant log file for integration support.; FILE: Laden Sie die passende Log-Datei für den Integrationssupport hoch.; ; ; ; true; false; false
-                              ; $eventDate          ; $conditionalForm; DATE      ; $eventOnsite        ; Desired event date; Gewünschtes Veranstaltungsdatum; DATE: Pick a date for an on-site event.; DATE: Wählen Sie ein Datum für eine Veranstaltung vor Ort.; ; ; ; true; false; false
+INSERT_UPDATE DynamicFormField; id[unique = true]; form(id); step(id); fieldType(code); parentFieldValue(id); label[lang = en]; label[lang = de]; description[lang = en]; description[lang = de]; placeholder[lang = en]; placeholder[lang = de]; defaultValue; active; hidden; required
+                              ; $adviceDetails      ; $conditionalForm; $conditionalStepDetails; TEXTAREA  ; $adviceIndividual   ; Your requirements; Ihre Anforderungen; TEXTAREA: Describe the goals for your individual consultation.; TEXTAREA: Beschreiben Sie die Ziele für Ihre individuelle Beratung.; What should the consultation cover?; Was soll die Beratung abdecken?; ; true; false; false
+                              ; $supportLog         ; $conditionalForm; $conditionalStepDetails; FILE      ; $supportIntegration ; Log file; Log-Datei; FILE: Upload the relevant log file for integration support.; FILE: Laden Sie die passende Log-Datei für den Integrationssupport hoch.; ; ; ; true; false; false
+                              ; $eventDate          ; $conditionalForm; $conditionalStepDetails; DATE      ; $eventOnsite        ; Desired event date; Gewünschtes Veranstaltungsdatum; DATE: Pick a date for an on-site event.; DATE: Wählen Sie ein Datum für eine Veranstaltung vor Ort.; ; ; ; true; false; false
 
 # Keep the visual order deterministic for both forms and all option lists.
-UPDATE DynamicForm; id[unique = true]; formFields(id)[mode = replace]
-                  ; $showcaseForm   ; $showcaseText,$showcaseEmail,$showcaseTextArea,$showcaseNumber,$showcaseDate,$showcaseWeek,$showcasePassword,$showcaseHidden,$showcaseColor,$showcaseSelect,$showcaseRadio,$showcaseCheckbox,$showcaseCheckboxes,$showcaseFile
-                  ; $conditionalForm; $conditionalScenario,$adviceType,$adviceDetails,$supportTopic,$supportLog,$eventFormat,$eventDate
+UPDATE DynamicForm; id[unique = true]; formFields(id)[mode = replace]; steps(id)[mode = replace]
+                  ; $showcaseForm   ; $showcaseText,$showcaseEmail,$showcaseTextArea,$showcaseNumber,$showcaseDate,$showcaseWeek,$showcasePassword,$showcaseHidden,$showcaseColor,$showcaseSelect,$showcaseRadio,$showcaseCheckbox,$showcaseCheckboxes,$showcaseFile; $showcaseStepContact,$showcaseStepAppointment,$showcaseStepPreferences
+                  ; $conditionalForm; $conditionalScenario,$adviceType,$adviceDetails,$supportTopic,$supportLog,$eventFormat,$eventDate; $conditionalStepStart,$conditionalStepAdvice,$conditionalStepSupport,$conditionalStepEvent,$conditionalStepDetails
 
 UPDATE DynamicFormField; id[unique = true]; formFieldValues(id)[mode = replace]
                        ; $showcaseSelect    ; $selectEmail,$selectPhone,$selectVideo

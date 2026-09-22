@@ -275,10 +275,11 @@ Navigate to **CX DEV Tools → Forms → Submissions** (German: **Anfragen**), o
 `submissions` on a form. Filter by form, time, user or site. The initial Answers tab
 renders snapshot labels and translated option values as plain text. Metadata and
 raw JSON have separate tabs. The editor is read-only; authorization still requires
-platform type permissions. Optional `DynamicFormField.stepId` and localized
-`stepTitle` group answers into sections in first-occurrence order. These are
-presentation groups, not a new navigation/conditional-step engine. The definition
-API exposes both properties. Ungrouped fields appear in a general answer section.
+platform type permissions. `DynamicFormStep` is an ordered, localized, part-of
+child of a form; fields reference one of their own form's steps. Answer snapshots
+use the step UUID and title to preserve sections across later definition edits.
+Ungrouped fields appear in a general answer section. The definition API exposes
+the existing `stepId` and `stepTitle` representation for compatibility.
 Localization falls back from requested locale to language, submitted language,
 English, then technical ID. Snapshots preserve translations across definition edits.
 

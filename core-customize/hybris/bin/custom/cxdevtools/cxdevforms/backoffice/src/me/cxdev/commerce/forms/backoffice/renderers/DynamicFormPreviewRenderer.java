@@ -45,6 +45,7 @@ import me.cxdev.commerce.forms.enums.DynamicFormFieldType;
 import me.cxdev.commerce.forms.model.DynamicFormFieldModel;
 import me.cxdev.commerce.forms.model.DynamicFormFieldValueModel;
 import me.cxdev.commerce.forms.model.DynamicFormModel;
+import me.cxdev.commerce.forms.model.DynamicFormStepModel;
 
 /**
  * Interactive, non-submittable preview of a form definition in Backoffice.
@@ -93,13 +94,33 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
         preview.setSpacing("0");
         preview.setWidth("100%");
         preview.setStyle("width: 100%; background: #ffffff; border: 1px solid #d9d9d9; box-sizing: border-box;");
-        final Set<DynamicFormFieldModel> rendered = new HashSet<>();
+        final Set<DynamicFormFieldModel> visibleFields = collectVisibleFields(rootFields);
         final List<Action> deleteActions = new ArrayList<>();
-        for (int index = 0; index < rootFields.size(); index++) {
-            final DynamicFormFieldModel field = rootFields.get(index);
-            if (rendered.add(field)) {
-                preview.appendChild(renderField(form, rootFields, field, index, 0, new HashSet<>(), rendered,
-                        deleteActions, widgetInstanceManager, parent));
+        final List<DynamicFormFieldModel> orderedFields = new ArrayList<>(form.getFormFields());
+        final Set<DynamicFormFieldModel> rendered = new HashSet<>();
+        for (final DynamicFormFieldModel field : orderedFields) {
+            if (field.getStep() == null && visibleFields.contains(field) && rendered.add(field)) {
+                preview.appendChild(renderField(form, rootFields, field, rootFields.indexOf(field), deleteActions,
+                        widgetInstanceManager, parent));
+            }
+        }
+        for (final DynamicFormStepModel step : form.getSteps()) {
+            final List<DynamicFormFieldModel> fieldsForStep = orderedFields.stream()
+                    .filter(field -> Objects.equals(field.getStep(), step) && visibleFields.contains(field))
+                    .filter(rendered::add).toList();
+            if (!fieldsForStep.isEmpty()) {
+                preview.appendChild(renderStepHeading(step));
+                for (final DynamicFormFieldModel field : fieldsForStep) {
+                    preview.appendChild(renderField(form, rootFields, field, rootFields.indexOf(field), deleteActions,
+                            widgetInstanceManager, parent));
+                }
+            }
+        }
+        // Old or corrupt definitions can reference a removed step. Show them rather than hiding data.
+        for (final DynamicFormFieldModel field : orderedFields) {
+            if (visibleFields.contains(field) && rendered.add(field)) {
+                preview.appendChild(renderField(form, rootFields, field, rootFields.indexOf(field), deleteActions,
+                        widgetInstanceManager, parent));
             }
         }
         parent.appendChild(preview);
@@ -123,8 +144,7 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
     }
 
     private Component renderField(final DynamicFormModel form, final List<DynamicFormFieldModel> rootFields,
-            final DynamicFormFieldModel field, final int position, final int level, final Set<DynamicFormFieldModel> path,
-            final Set<DynamicFormFieldModel> rendered, final List<Action> deleteActions,
+            final DynamicFormFieldModel field, final int position, final List<Action> deleteActions,
             final WidgetInstanceManager widgetInstanceManager,
             final Component previewParent) {
         final Vlayout fieldGroup = new Vlayout();
@@ -137,7 +157,7 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
                 + " gap: 0; align-items: start; padding: 12px; width: 100%; min-width: 0; box-sizing: border-box; border-bottom: 1px solid #e5e5e5;"
                 + (Boolean.TRUE.equals(field.isHidden()) ? " opacity: 0.58;" : ""));
         final boolean canMoveFields = canChangeFormFields(form);
-        if (level == 0 && canMoveFields) {
+        if (field.getParentFieldValue() == null && canMoveFields) {
             row.setDraggable("true");
             row.setDroppable("true");
             row.addEventListener(Events.ON_DROP, event -> moveDroppedField(form, rootFields, field, (DropEvent) event,
@@ -146,8 +166,7 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
 
         final Div labelCell = new Div();
         labelCell.setWidth("300px");
-        labelCell.setStyle("width: 300px; padding-left: " + (level * 24)
-                + "px; min-width: 0; overflow-wrap: anywhere; box-sizing: border-box;");
+        labelCell.setStyle("width: 300px; min-width: 0; overflow-wrap: anywhere; box-sizing: border-box;");
         final Hlayout heading = new Hlayout();
         heading.setSpacing("6px");
         final Label title = new Label(displayName(field));
@@ -174,6 +193,7 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
         inputCell.setStyle("min-width: 0; width: 500px; box-sizing: border-box;");
         inputCell.appendChild(renderInput(field));
         appendRule(inputCell, validationText(field));
+        appendRule(inputCell, visibilityText(field));
         final Div actionsCell = new Div();
         actionsCell.setWidth("175px");
         actionsCell.setStyle("display: flex; align-items: center; justify-content: center; gap: 8px; flex: 0 0 auto;"
@@ -192,32 +212,47 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
         actionsCell.appendChild(edit);
         appendDeleteControl(actionsCell, field, form, deleteActions, widgetInstanceManager, previewParent);
         actionsCell.appendChild(moveButton(label("cxdevforms.preview.moveUp"), true,
-                canMoveFields && level == 0 && position > 0,
+                canMoveFields && field.getParentFieldValue() == null && position > 0,
                 () -> moveField(form, rootFields, field, position - 1, widgetInstanceManager, previewParent)));
         actionsCell.appendChild(moveButton(label("cxdevforms.preview.moveDown"), false,
-                canMoveFields && level == 0 && position < rootFields.size() - 1,
+                canMoveFields && field.getParentFieldValue() == null && position < rootFields.size() - 1,
                 () -> moveField(form, rootFields, field, position + 1, widgetInstanceManager, previewParent)));
         row.appendChild(actionsCell);
         row.appendChild(labelCell);
         row.appendChild(inputCell);
         fieldGroup.appendChild(row);
 
-        final Set<DynamicFormFieldModel> nextPath = new HashSet<>(path);
-        if (!nextPath.add(field)) {
-            return fieldGroup;
+        return fieldGroup;
+    }
+
+    private Component renderStepHeading(final DynamicFormStepModel step) {
+        final Div heading = new Div();
+        heading.setStyle("width: 975px; box-sizing: border-box; padding: 12px 12px 8px;"
+                + " background: #f4f7fa; border-bottom: 1px solid #d9e1e8; color: #34495e; font-weight: 600;");
+        heading.appendChild(new Label(displayName(step)));
+        return heading;
+    }
+
+    private Set<DynamicFormFieldModel> collectVisibleFields(final List<DynamicFormFieldModel> rootFields) {
+        final Set<DynamicFormFieldModel> visible = new HashSet<>();
+        for (final DynamicFormFieldModel rootField : rootFields) {
+            collectVisibleFields(rootField, visible, new HashSet<>());
+        }
+        return visible;
+    }
+
+    private void collectVisibleFields(final DynamicFormFieldModel field, final Set<DynamicFormFieldModel> visible,
+            final Set<DynamicFormFieldModel> path) {
+        if (!visible.add(field) || !path.add(field)) {
+            return;
         }
         for (final DynamicFormFieldValueModel value : field.getFormFieldValues()) {
-            if (!isSelected(field, value)) {
-                continue;
-            }
-            for (final DynamicFormFieldModel child : sorted(value.getChildFields())) {
-                if (!nextPath.contains(child) && rendered.add(child)) {
-                    fieldGroup.appendChild(renderField(form, rootFields, child, -1, level + 1, nextPath, rendered,
-                            deleteActions, widgetInstanceManager, previewParent));
+            if (isSelected(field, value)) {
+                for (final DynamicFormFieldModel child : sorted(value.getChildFields())) {
+                    collectVisibleFields(child, visible, new HashSet<>(path));
                 }
             }
         }
-        return fieldGroup;
     }
 
     private Button moveButton(final String tooltip, final boolean up, final boolean enabled, final Runnable action) {
@@ -518,6 +553,15 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
         }
     }
 
+    private String visibilityText(final DynamicFormFieldModel field) {
+        final DynamicFormFieldValueModel parentValue = field.getParentFieldValue();
+        if (parentValue == null) {
+            return null;
+        }
+        final DynamicFormFieldModel parentField = parentValue.getField();
+        return label("cxdevforms.preview.visibleIf", displayName(parentField), displayName(parentValue));
+    }
+
     private List<DynamicFormFieldModel> sorted(final Collection<DynamicFormFieldModel> fields) {
         return fields.stream().sorted(Comparator.comparing(DynamicFormFieldModel::getId, Comparator.nullsLast(String::compareTo))).toList();
     }
@@ -532,6 +576,10 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
 
     private String displayName(final DynamicFormFieldValueModel value) {
         return value.getLabel() == null || value.getLabel().isBlank() ? value.getId() : value.getLabel();
+    }
+
+    private String displayName(final DynamicFormStepModel step) {
+        return step.getLabel() == null || step.getLabel().isBlank() ? step.getId() : step.getLabel();
     }
 
     private String label(final String key, final Object... arguments) {

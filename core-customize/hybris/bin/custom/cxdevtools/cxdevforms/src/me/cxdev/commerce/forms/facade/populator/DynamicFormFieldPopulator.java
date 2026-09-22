@@ -12,6 +12,7 @@ import me.cxdev.commerce.forms.data.DynamicFormFieldData;
 import me.cxdev.commerce.forms.data.DynamicFormFieldValueData;
 import me.cxdev.commerce.forms.model.DynamicFormFieldModel;
 import me.cxdev.commerce.forms.model.DynamicFormFieldValueModel;
+import me.cxdev.commerce.forms.model.DynamicFormStepModel;
 
 /**
  * Populates {@link DynamicFormFieldData} from {@link DynamicFormFieldModel}.
@@ -44,8 +45,9 @@ public class DynamicFormFieldPopulator implements Populator<DynamicFormFieldMode
 		}
 		target.setDefaultValue(source.getDefaultValue());
 		target.setPlaceholder(source.getPlaceholder());
-		target.setStepId(source.getStepId());
-		target.setStepTitle(source.getStepTitle());
+		final DynamicFormStepModel step = source.getStep();
+		target.setStepId(step == null ? null : step.getId());
+		target.setStepTitle(step == null ? null : step.getLabel());
 		target.setMinValue(source.getMinValue());
 		target.setMaxValue(source.getMaxValue());
 		target.setMinLength(source.getMinLength());

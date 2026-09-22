@@ -95,7 +95,12 @@
                         <editorArea:attribute qualifier="description" colspan="2" editor="com.hybris.cockpitng.editor.localized(com.hybris.cockpitng.editor.wysiwyg)"/>
                     </editorArea:section>
                 </editorArea:tab>
-                <editorArea:tab name="cxdevforms.tab.form">
+                <editorArea:tab name="cxdevforms.tab.steps">
+                    <editorArea:section name="cxdevforms.section.steps" columns="1">
+                        <editorArea:attribute qualifier="steps"/>
+                    </editorArea:section>
+                </editorArea:tab>
+                <editorArea:tab name="cxdevforms.tab.fields">
                     <editorArea:customSection name="cxdevforms.section.form" spring-bean="cxDynamicFormPreviewRenderer"/>
                 </editorArea:tab>
                 <editorArea:tab name="cxdevforms.tab.notification">
@@ -137,7 +142,21 @@
                         </wz:done>
                     </wz:navigation>
                 </wz:step>
-                <wz:step id="step2" label="cxdevforms.section.form">
+                <wz:step id="step2" label="cxdevforms.section.steps">
+                    <wz:content>
+                        <wz:property-list root="newObject">
+                            <wz:property qualifier="steps"/>
+                        </wz:property-list>
+                    </wz:content>
+                    <wz:navigation>
+                        <wz:back/>
+                        <wz:next/>
+                        <wz:done visible="newObject.id != null">
+                            <wz:save property="newObject"/>
+                        </wz:done>
+                    </wz:navigation>
+                </wz:step>
+                <wz:step id="step3" label="cxdevforms.section.form">
                     <wz:content>
                         <wz:property-list root="newObject">
                             <wz:property qualifier="formFields"/>
@@ -151,7 +170,7 @@
                         </wz:done>
                     </wz:navigation>
                 </wz:step>
-                <wz:step id="step3" label="cxdevforms.section.notification">
+                <wz:step id="step4" label="cxdevforms.section.notification">
                     <wz:content>
                         <wz:property-list root="newObject">
                             <wz:property qualifier="recipients"/>
@@ -248,8 +267,6 @@
                     <editorArea:essentialSection name="hmc.essential" columns="4">
                         <editorArea:attribute qualifier="form"/>
                         <editorArea:attribute qualifier="id" readonly="true"/>
-                        <editorArea:attribute qualifier="stepId"/>
-                        <editorArea:attribute qualifier="stepTitle"/>
                     </editorArea:essentialSection>
                 </editorArea:essentials>
                 <editorArea:tab name="cxdevforms.tab.general">
@@ -267,8 +284,7 @@
                 </editorArea:tab>
                 <editorArea:tab name="cxdevforms.tab.step">
                     <editorArea:section name="cxdevforms.section.step" columns="2">
-                        <editorArea:attribute qualifier="stepId"/>
-                        <editorArea:attribute qualifier="stepTitle"/>
+                        <editorArea:attribute qualifier="step"/>
                         <editorArea:attribute qualifier="parentFieldValue" colspan="2"/>
                     </editorArea:section>
                 </editorArea:tab>
@@ -293,6 +309,7 @@
                     <wz:content id="step1.content">
                         <wz:property-list root="newObject">
                             <wz:property qualifier="form"/>
+                            <wz:property qualifier="step"/>
                             <wz:property qualifier="fieldType"/>
                             <wz:property qualifier="label"/>
                             <wz:property qualifier="description"/>
@@ -323,6 +340,54 @@
                     </wz:content>
                     <wz:navigation>
                         <wz:back/>
+                        <wz:done visible="newObject.form != null">
+                            <wz:save property="newObject"/>
+                        </wz:done>
+                    </wz:navigation>
+                </wz:step>
+            </wz:flow>
+        </context>
+    </context>
+
+    <context type="DynamicFormStep" merge-by="type" module="cxdevforms">
+        <context component="base">
+            <y:base>
+                <y:labels>
+                    <y:label>(form.title != null &amp;&amp; !form.title.isEmpty() ? form.title : form.id) + ' - ' + (label != null &amp;&amp; !label.isEmpty() ? label : id)</y:label>
+                </y:labels>
+            </y:base>
+        </context>
+        <context component="editor-area" merge-by="type">
+            <editorArea:editorArea>
+                <editorArea:essentials>
+                    <editorArea:essentialSection name="hmc.essential" columns="2">
+                        <editorArea:attribute qualifier="form" readonly="true"/>
+                        <editorArea:attribute qualifier="id" readonly="true"/>
+                    </editorArea:essentialSection>
+                </editorArea:essentials>
+                <editorArea:tab name="cxdevforms.tab.general">
+                    <editorArea:section name="cxdevforms.section.general">
+                        <editorArea:attribute qualifier="label"/>
+                    </editorArea:section>
+                </editorArea:tab>
+            </editorArea:editorArea>
+        </context>
+        <context component="create-wizard" merge-by="type">
+            <wz:flow id="DynamicFormStepWizard" title="create.title(ctx.TYPE_CODE)">
+                <wz:prepare id="itemPrepare">
+                    <wz:initialize property="newObject" type="ctx.TYPE_CODE"/>
+                    <wz:assign property="newObject.form" value="ctx.parentObject"/>
+                    <wz:assign property="newObject.id" value="T(java.util.UUID).randomUUID().toString()"/>
+                </wz:prepare>
+                <wz:step id="step1" label="flow.allmanadatory">
+                    <wz:content id="step1.content">
+                        <wz:property-list root="newObject">
+                            <wz:property qualifier="form"/>
+                            <wz:property qualifier="label"/>
+                        </wz:property-list>
+                    </wz:content>
+                    <wz:navigation>
+                        <wz:cancel/>
                         <wz:done visible="newObject.form != null">
                             <wz:save property="newObject"/>
                         </wz:done>

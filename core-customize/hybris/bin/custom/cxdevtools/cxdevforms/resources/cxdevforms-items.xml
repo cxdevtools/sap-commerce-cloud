@@ -37,6 +37,22 @@
                 <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
             </sourceElement>
             <targetElement type="DynamicFormField" qualifier="formFields" cardinality="many" ordered="true">
+                <modifiers read="true" write="true" search="true" partof="true"/>
+            </targetElement>
+        </relation>
+        <relation code="DynamicForm2DynamicFormSteps" localized="false">
+            <sourceElement type="DynamicForm" qualifier="form" cardinality="one">
+                <modifiers read="true" write="true" search="true" optional="false" initial="true"/>
+            </sourceElement>
+            <targetElement type="DynamicFormStep" qualifier="steps" cardinality="many" ordered="true">
+                <modifiers read="true" write="true" search="true" partof="true"/>
+            </targetElement>
+        </relation>
+        <relation code="DynamicFormStep2DynamicFormFields" localized="false">
+            <sourceElement type="DynamicFormStep" qualifier="step" cardinality="one">
+                <modifiers read="true" write="true" search="true" optional="true"/>
+            </sourceElement>
+            <targetElement type="DynamicFormField" qualifier="fields" cardinality="many">
                 <modifiers read="true" write="true" search="true"/>
             </targetElement>
         </relation>
@@ -171,10 +187,13 @@
                         <persistence type="property"/>
                     </attribute>
                     <attribute qualifier="stepId" type="java.lang.String">
-                        <description>Optional presentation group ID; does not change conditional validation.</description>
+                        <description>Deprecated legacy step ID. Kept only to migrate existing forms.</description>
+                        <modifiers read="false" write="false" search="false"/>
                         <persistence type="property"/>
                     </attribute>
                     <attribute qualifier="stepTitle" type="localized:java.lang.String">
+                        <description>Deprecated legacy step title. Kept only to migrate existing forms.</description>
+                        <modifiers read="false" write="false" search="false"/>
                         <persistence type="property"/>
                     </attribute>
                     <attribute qualifier="placeholder" type="localized:java.lang.String">
@@ -184,6 +203,25 @@
                 </attributes>
                 <indexes>
                     <index name="cxdevDynamicFormFieldIndex" unique="true">
+                        <key attribute="id"/>
+                    </index>
+                </indexes>
+            </itemtype>
+            <itemtype code="DynamicFormStep" extends="GenericItem">
+                <deployment table="cxdevformsstep" typecode="31180"/>
+                <attributes>
+                    <attribute qualifier="id" type="java.lang.String">
+                        <description>Immutable technical identifier of the form step.</description>
+                        <modifiers optional="false" initial="true" unique="true"/>
+                        <persistence type="property"/>
+                    </attribute>
+                    <attribute qualifier="label" type="localized:java.lang.String">
+                        <description>Visible heading for this step.</description>
+                        <persistence type="property"/>
+                    </attribute>
+                </attributes>
+                <indexes>
+                    <index name="cxdevDynamicFormStepIndex" unique="true">
                         <key attribute="id"/>
                     </index>
                 </indexes>

@@ -39,7 +39,7 @@ mit Template-Fallback gehören ebenfalls zum Lieferumfang.
 | --- | --- | --- |
 | Formular-ID | Global eindeutige DynamicForm.id | Stabil pro Mandant und Site; Version separat |
 | Formulare | Typ, Titel, Beschreibung, Empfänger | Zusätzlich Status, Revisionen, UI-Konfiguration |
-| Schritte | Optionale Feldgruppierung über stepId/stepTitle; kein eigener Schritttyp | Geordnete, lokalisierte Schritte mit Bedingungen |
+| Schritte | Geordnete, lokalisierte `DynamicFormStep`-Items je Formular | Geordnete, lokalisierte Schritte mit Bedingungen |
 | Felder | Geordnete Wurzelfelder, rekursive Unterfelder | Geordnete Platzierungen und zentrale Regeln |
 | Auswahlwerte | ID, Label, Liste am Feld, n:m-Unterfelder | Lokale Options-IDs, Reihenfolge, geprüfte Referenzen |
 | Aktiv | Nur Wurzelfelder werden beim Lesen gefiltert | Gilt für alle Felder, Optionen und Schritte |

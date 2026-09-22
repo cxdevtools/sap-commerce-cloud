@@ -9,6 +9,10 @@
           class="me.cxdev.commerce.forms.interceptors.DynamicFormFieldValuePrepareInterceptor"/>
     <bean id="cxDynamicFormFieldUuidPrepareInterceptor"
           class="me.cxdev.commerce.forms.interceptors.DynamicFormFieldUuidPrepareInterceptor"/>
+    <bean id="cxDynamicFormStepUuidPrepareInterceptor"
+          class="me.cxdev.commerce.forms.interceptors.DynamicFormStepUuidPrepareInterceptor"/>
+    <bean id="cxDynamicFormFieldStepValidateInterceptor"
+          class="me.cxdev.commerce.forms.interceptors.DynamicFormFieldStepValidateInterceptor"/>
     <bean id="cxDynamicFormFieldUuidPrepareInterceptorMapping"
           class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
         <property name="interceptor" ref="cxDynamicFormFieldUuidPrepareInterceptor"/>
@@ -18,5 +22,15 @@
           class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
         <property name="interceptor" ref="cxDynamicFormFieldValuePrepareInterceptor"/>
         <property name="typeCode" value="DynamicFormFieldValue"/>
+    </bean>
+    <bean id="cxDynamicFormStepUuidPrepareInterceptorMapping"
+          class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+        <property name="interceptor" ref="cxDynamicFormStepUuidPrepareInterceptor"/>
+        <property name="typeCode" value="DynamicFormStep"/>
+    </bean>
+    <bean id="cxDynamicFormFieldStepValidateInterceptorMapping"
+          class="de.hybris.platform.servicelayer.interceptor.impl.InterceptorMapping">
+        <property name="interceptor" ref="cxDynamicFormFieldStepValidateInterceptor"/>
+        <property name="typeCode" value="DynamicFormField"/>
     </bean>
 </beans>

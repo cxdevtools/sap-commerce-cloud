@@ -15,6 +15,7 @@ import de.hybris.platform.servicelayer.i18n.CommonI18NService;
 import me.cxdev.commerce.forms.model.DynamicFormFieldModel;
 import me.cxdev.commerce.forms.model.DynamicFormFieldValueModel;
 import me.cxdev.commerce.forms.model.DynamicFormModel;
+import me.cxdev.commerce.forms.model.DynamicFormStepModel;
 
 /** Serializes answer values separately from immutable presentation metadata. @since 5.0.2 */
 public class SubmissionSnapshotService {
@@ -34,8 +35,10 @@ public class SubmissionSnapshotService {
 					options.put(option.getId(), translations(option::getLabel));
 				}
 			}
-			snapshot.add(new SubmissionSnapshot.Field(field.getId(), field.getFieldType().getCode(), field.getStepId(),
-					translations(field::getStepTitle), translations(field::getLabel), options));
+			final DynamicFormStepModel step = field.getStep();
+			snapshot.add(new SubmissionSnapshot.Field(field.getId(), field.getFieldType().getCode(),
+					step == null ? null : step.getId(), step == null ? Map.of() : translations(step::getLabel),
+					translations(field::getLabel), options));
 		}
 		return toJson(new SubmissionSnapshot(form.getId(), translations(form::getTitle), snapshot));
 	}
