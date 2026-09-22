@@ -227,7 +227,7 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
 
     private Component renderStepHeading(final DynamicFormStepModel step) {
         final Div heading = new Div();
-        heading.setStyle("width: 975px; box-sizing: border-box; padding: 12px 12px 8px;"
+        heading.setStyle("width: 100%; box-sizing: border-box; padding: 12px 12px 8px;"
                 + " background: #f4f7fa; border-bottom: 1px solid #d9e1e8; color: #34495e; font-weight: 600;");
         heading.appendChild(new Label(displayName(step)));
         return heading;
