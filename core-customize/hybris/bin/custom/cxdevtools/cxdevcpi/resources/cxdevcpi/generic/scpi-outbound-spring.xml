@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--
+        Configure the SAP outbound RestTemplate creators to map JSON payloads to DTOs.
+        Some CPI interfaces deliver JSON with Content-Type application/octet-stream.
+        The SAP request factory, interceptors and cache are retained.
+    -->
+    <alias name="cxAbstractRestTemplateCreator" alias="abstractRestTemplateCreator"/>
+    <bean id="cxAbstractRestTemplateCreator" abstract="true"
+          class="de.hybris.platform.outboundservices.client.impl.AbstractRestTemplateCreator">
+        <property name="clientHttpRequestFactory" ref="outboundClientHttpRequestFactory"/>
+        <property name="messageConverters">
+            <list>
+                <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                    <property name="supportedMediaTypes">
+                        <list>
+                            <value>application/json</value>
+                            <value>application/octet-stream</value>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+        <property name="requestInterceptors" ref="restTemplateHeaderInterceptors"/>
+        <property name="cache" ref="outboundRestTemplateCache"/>
+    </bean>
+
+    <alias name="cxScpiRemoteClientFactory" alias="scpiRemoteClientFactory"/>
+    <bean id="cxScpiRemoteClientFactory" class="me.cxdev.cpi.generic.remoteclient.ScpiRemoteClientFactory">
+        <constructor-arg name="flexibleSearchService" ref="flexibleSearchService"/>
+        <constructor-arg name="restTemplateFactory" ref="integrationRestTemplateFactory"/>
+    </bean>
+
+    <alias name="cxAbstractScpiOutboundStrategy" alias="abstractScpiOutboundStrategy"/>
+    <bean id="cxAbstractScpiOutboundStrategy" class="me.cxdev.cpi.generic.outbound.AbstractScpiOutboundStrategy" abstract="true">
+        <property name="remoteClientFactory" ref="scpiRemoteClientFactory"/>
+    </bean>
+</beans>

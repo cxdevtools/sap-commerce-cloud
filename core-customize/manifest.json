@@ -1,6 +1,11 @@
 {
-    "commerceSuiteVersion": "2211-jdk21.7",
-    "extensionPacks": [],
+    "commerceSuiteVersion": "2211-jdk21.17",
+    "extensionPacks": [
+        {
+            "name": "hybris-commerce-integrations",
+            "version": "2211-jdk21.13"
+        }
+    ],
     "solr": {
         "location": "solr",
         "solrVersion": "9.10"

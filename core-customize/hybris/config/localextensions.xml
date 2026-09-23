@@ -9,6 +9,7 @@
     <extension name="cxdevproxy"/>
     <extension name="cxdevreporting"/>
     <extension name="cxdevtoolkit"/>
+    <extension name="cxdevcpi"/>
 
     <!-- Required for local search server -->
     <extension name="solrserver"/>

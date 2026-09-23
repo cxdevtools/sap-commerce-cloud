@@ -7,15 +7,15 @@
 	<packaging>jar</packaging>
 
 	<properties>
-		<smallrye.common.version>2.16.0</smallrye.common.version>
-		<graalvm.sdk.version>25.0.3-snapshot</graalvm.sdk.version>
+		<smallrye.common.version>2.20.0</smallrye.common.version>
+		<graalvm.sdk.version>25.3.4.1</graalvm.sdk.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>io.undertow</groupId>
 			<artifactId>undertow-core</artifactId>
-			<version>2.3.23.Final</version>
+			<version>2.4.3.Final</version>
 		</dependency>
 
 		<dependency>
