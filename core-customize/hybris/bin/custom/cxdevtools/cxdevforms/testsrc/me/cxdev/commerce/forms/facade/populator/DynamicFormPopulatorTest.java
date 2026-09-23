@@ -7,21 +7,20 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import me.cxdev.commerce.forms.facade.populator.DynamicFormPopulator;
+import de.hybris.bootstrap.annotations.UnitTest;
+import de.hybris.platform.servicelayer.dto.converter.Converter;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import de.hybris.bootstrap.annotations.UnitTest;
-import de.hybris.platform.servicelayer.dto.converter.Converter;
-
+import me.cxdev.commerce.forms.data.DynamicFormData;
+import me.cxdev.commerce.forms.data.DynamicFormFieldData;
 import me.cxdev.commerce.forms.enums.DynamicFormType;
 import me.cxdev.commerce.forms.model.DynamicFormFieldModel;
 import me.cxdev.commerce.forms.model.DynamicFormModel;
-import me.cxdev.commerce.forms.data.DynamicFormData;
-import me.cxdev.commerce.forms.data.DynamicFormFieldData;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

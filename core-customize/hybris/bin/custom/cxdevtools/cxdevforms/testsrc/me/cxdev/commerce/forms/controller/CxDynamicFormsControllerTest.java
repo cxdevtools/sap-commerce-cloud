@@ -9,6 +9,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 
+import de.hybris.bootstrap.annotations.UnitTest;
+import de.hybris.platform.webservicescommons.mapping.DataMapper;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,12 +21,9 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import de.hybris.bootstrap.annotations.UnitTest;
-import de.hybris.platform.webservicescommons.mapping.DataMapper;
-
 import me.cxdev.commerce.forms.data.DynamicFormData;
-import me.cxdev.commerce.forms.facade.DynamicFormFacade;
 import me.cxdev.commerce.forms.dto.DynamicFormWsDTO;
+import me.cxdev.commerce.forms.facade.DynamicFormFacade;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

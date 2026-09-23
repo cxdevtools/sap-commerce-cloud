@@ -7,7 +7,9 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import me.cxdev.commerce.forms.facade.populator.DynamicFormFieldPopulator;
+import de.hybris.bootstrap.annotations.UnitTest;
+import de.hybris.platform.servicelayer.dto.converter.Converter;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,15 +17,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.ObjectFactory;
 
-import de.hybris.bootstrap.annotations.UnitTest;
-import de.hybris.platform.servicelayer.dto.converter.Converter;
-
+import me.cxdev.commerce.forms.data.DynamicFormFieldData;
+import me.cxdev.commerce.forms.data.DynamicFormFieldValueData;
 import me.cxdev.commerce.forms.enums.DynamicFormFieldType;
 import me.cxdev.commerce.forms.model.DynamicFormFieldModel;
 import me.cxdev.commerce.forms.model.DynamicFormFieldValueModel;
 import me.cxdev.commerce.forms.model.DynamicFormStepModel;
-import me.cxdev.commerce.forms.data.DynamicFormFieldData;
-import me.cxdev.commerce.forms.data.DynamicFormFieldValueData;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)

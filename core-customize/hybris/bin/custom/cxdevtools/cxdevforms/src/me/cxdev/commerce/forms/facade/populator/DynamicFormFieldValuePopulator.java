@@ -1,16 +1,16 @@
 package me.cxdev.commerce.forms.facade.populator;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.ObjectFactory;
-
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.servicelayer.dto.converter.ConversionException;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 
-import me.cxdev.commerce.forms.model.DynamicFormFieldModel;
-import me.cxdev.commerce.forms.model.DynamicFormFieldValueModel;
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.ObjectFactory;
+
 import me.cxdev.commerce.forms.data.DynamicFormFieldData;
 import me.cxdev.commerce.forms.data.DynamicFormFieldValueData;
+import me.cxdev.commerce.forms.model.DynamicFormFieldModel;
+import me.cxdev.commerce.forms.model.DynamicFormFieldValueModel;
 
 /**
  * Populates {@link DynamicFormFieldValueData} from {@link DynamicFormFieldValueModel}.

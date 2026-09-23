@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.BooleanUtils;
-
 import de.hybris.platform.converters.Populator;
 import de.hybris.platform.servicelayer.dto.converter.Converter;
 
-import me.cxdev.commerce.forms.model.DynamicFormFieldModel;
-import me.cxdev.commerce.forms.model.DynamicFormModel;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
+
 import me.cxdev.commerce.forms.data.DynamicFormData;
 import me.cxdev.commerce.forms.data.DynamicFormFieldData;
+import me.cxdev.commerce.forms.model.DynamicFormFieldModel;
+import me.cxdev.commerce.forms.model.DynamicFormModel;
 
 /**
  * Populates {@link DynamicFormData} from {@link DynamicFormModel}.

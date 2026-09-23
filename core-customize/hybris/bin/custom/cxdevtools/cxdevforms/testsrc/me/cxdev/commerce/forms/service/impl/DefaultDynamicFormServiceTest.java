@@ -12,17 +12,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import de.hybris.bootstrap.annotations.UnitTest;
+import de.hybris.platform.servicelayer.internal.dao.GenericDao;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import de.hybris.bootstrap.annotations.UnitTest;
-import de.hybris.platform.servicelayer.internal.dao.GenericDao;
-
-import me.cxdev.commerce.toolkit.testing.itemmodel.InMemoryModelFactory;
 import me.cxdev.commerce.forms.model.DynamicFormModel;
+import me.cxdev.commerce.toolkit.testing.itemmodel.InMemoryModelFactory;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)
