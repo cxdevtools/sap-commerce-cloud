@@ -56,8 +56,9 @@ import me.cxdev.commerce.forms.model.DynamicFormStepModel;
 /**
  * Interactive, non-submittable preview of a form definition in Backoffice.
  * Fields, including those only visible for a given field value, can be reordered with
- * drag-and-drop or the accessible move buttons. Moving a field next to a field of another
- * step reassigns it to that step.
+ * drag-and-drop or the accessible move buttons. Every configured step is always shown, with a
+ * placeholder row when it has no fields; moving or dropping a field onto another step's area
+ * reassigns it to that step.
  */
 public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Component, AbstractSection, Object> {
 
@@ -90,7 +91,7 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
         final List<DynamicFormFieldModel> rootFields = form.getFormFields().stream()
                 .filter(field -> field.getParentFieldValue() == null)
                 .toList();
-        if (rootFields.isEmpty()) {
+        if (rootFields.isEmpty() && form.getSteps().isEmpty()) {
             final Vlayout emptyState = new Vlayout();
             emptyState.setSpacing("8px");
             emptyState.appendChild(new Label(label("cxdevforms.preview.empty")));
@@ -105,28 +106,33 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
         final Set<DynamicFormFieldModel> visibleFields = collectVisibleFields(rootFields);
         final List<Action> deleteActions = new ArrayList<>();
         final List<DynamicFormFieldModel> orderedFields = new ArrayList<>(form.getFormFields());
-        // The render order (not just the root fields) is what "move up/down" and drag-and-drop
-        // operate on, so that conditional fields can be reordered like any other field.
-        final List<DynamicFormFieldModel> renderOrder = computeRenderOrder(form, orderedFields, visibleFields);
+        // The slot order (not just the root fields) is what "move up/down" and drag-and-drop
+        // operate on, so that conditional fields can be reordered like any other field and an
+        // empty step's placeholder can be a valid neighbor/drop target.
+        final List<Object> slots = computeSlotOrder(form, orderedFields, visibleFields);
         final Map<DynamicFormFieldModel, Integer> positions = new HashMap<>();
-        for (int i = 0; i < renderOrder.size(); i++) {
-            positions.put(renderOrder.get(i), i);
+        for (int i = 0; i < slots.size(); i++) {
+            if (slots.get(i) instanceof DynamicFormFieldModel field) {
+                positions.put(field, i);
+            }
         }
         final Set<DynamicFormFieldModel> rendered = new HashSet<>();
         for (final DynamicFormFieldModel field : orderedFields) {
             if (field.getStep() == null && visibleFields.contains(field) && rendered.add(field)) {
-                preview.appendChild(renderField(form, renderOrder, field, positions.get(field), deleteActions,
+                preview.appendChild(renderField(form, slots, field, positions.get(field), deleteActions,
                         widgetInstanceManager, parent));
             }
         }
         for (final DynamicFormStepModel step : form.getSteps()) {
+            preview.appendChild(renderStepHeading(step));
             final List<DynamicFormFieldModel> fieldsForStep = orderedFields.stream()
                     .filter(field -> Objects.equals(field.getStep(), step) && visibleFields.contains(field))
                     .filter(rendered::add).toList();
-            if (!fieldsForStep.isEmpty()) {
-                preview.appendChild(renderStepHeading(step));
+            if (fieldsForStep.isEmpty()) {
+                preview.appendChild(renderEmptyStepRow(form, slots, step, widgetInstanceManager, parent));
+            } else {
                 for (final DynamicFormFieldModel field : fieldsForStep) {
-                    preview.appendChild(renderField(form, renderOrder, field, positions.get(field), deleteActions,
+                    preview.appendChild(renderField(form, slots, field, positions.get(field), deleteActions,
                             widgetInstanceManager, parent));
                 }
             }
@@ -134,7 +140,7 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
         // Old or corrupt definitions can reference a removed step. Show them rather than hiding data.
         for (final DynamicFormFieldModel field : orderedFields) {
             if (visibleFields.contains(field) && rendered.add(field)) {
-                preview.appendChild(renderField(form, renderOrder, field, positions.get(field), deleteActions,
+                preview.appendChild(renderField(form, slots, field, positions.get(field), deleteActions,
                         widgetInstanceManager, parent));
             }
         }
@@ -145,29 +151,37 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
         appendAddFieldButton(parent, form, widgetInstanceManager);
     }
 
-    /** Mirrors the field grouping/ordering rendered above, as a flat list usable for move positions. */
-    private List<DynamicFormFieldModel> computeRenderOrder(final DynamicFormModel form,
-            final List<DynamicFormFieldModel> orderedFields, final Set<DynamicFormFieldModel> visibleFields) {
-        final List<DynamicFormFieldModel> renderOrder = new ArrayList<>();
+    /**
+     * Mirrors the field grouping/ordering rendered above, as a flat list usable for move
+     * positions. Each element is either a visible {@link DynamicFormFieldModel}, or - for a
+     * configured step with no visible fields - the {@link DynamicFormStepModel} itself, standing
+     * in for that step's empty placeholder row as a move/drop target.
+     */
+    private List<Object> computeSlotOrder(final DynamicFormModel form, final List<DynamicFormFieldModel> orderedFields,
+            final Set<DynamicFormFieldModel> visibleFields) {
+        final List<Object> slots = new ArrayList<>();
         final Set<DynamicFormFieldModel> seen = new HashSet<>();
         for (final DynamicFormFieldModel field : orderedFields) {
             if (field.getStep() == null && visibleFields.contains(field) && seen.add(field)) {
-                renderOrder.add(field);
+                slots.add(field);
             }
         }
         for (final DynamicFormStepModel step : form.getSteps()) {
-            for (final DynamicFormFieldModel field : orderedFields) {
-                if (Objects.equals(field.getStep(), step) && visibleFields.contains(field) && seen.add(field)) {
-                    renderOrder.add(field);
-                }
+            final List<DynamicFormFieldModel> fieldsForStep = orderedFields.stream()
+                    .filter(field -> Objects.equals(field.getStep(), step) && visibleFields.contains(field))
+                    .filter(seen::add).toList();
+            if (fieldsForStep.isEmpty()) {
+                slots.add(step);
+            } else {
+                slots.addAll(fieldsForStep);
             }
         }
         for (final DynamicFormFieldModel field : orderedFields) {
             if (visibleFields.contains(field) && seen.add(field)) {
-                renderOrder.add(field);
+                slots.add(field);
             }
         }
-        return renderOrder;
+        return slots;
     }
 
     private void appendAddFieldButton(final Component parent, final DynamicFormModel form,
@@ -183,7 +197,7 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
         parent.appendChild(addField);
     }
 
-    private Component renderField(final DynamicFormModel form, final List<DynamicFormFieldModel> renderOrder,
+    private Component renderField(final DynamicFormModel form, final List<Object> slots,
             final DynamicFormFieldModel field, final int position, final List<Action> deleteActions,
             final WidgetInstanceManager widgetInstanceManager,
             final Component previewParent) {
@@ -200,7 +214,7 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
         if (canMoveFields) {
             row.setDraggable("true");
             row.setDroppable("true");
-            row.addEventListener(Events.ON_DROP, event -> moveDroppedField(form, renderOrder, field, (DropEvent) event,
+            row.addEventListener(Events.ON_DROP, event -> moveDroppedField(form, slots, field, (DropEvent) event,
                     widgetInstanceManager, previewParent));
         }
 
@@ -253,10 +267,10 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
         appendDeleteControl(actionsCell, field, form, deleteActions, widgetInstanceManager, previewParent);
         actionsCell.appendChild(moveButton(label("cxdevforms.preview.moveUp"), true,
                 canMoveFields && position > 0,
-                () -> moveField(form, renderOrder, field, position - 1, widgetInstanceManager, previewParent)));
+                () -> moveFieldAdjacent(form, slots, field, position - 1, widgetInstanceManager, previewParent)));
         actionsCell.appendChild(moveButton(label("cxdevforms.preview.moveDown"), false,
-                canMoveFields && position < renderOrder.size() - 1,
-                () -> moveField(form, renderOrder, field, position + 1, widgetInstanceManager, previewParent)));
+                canMoveFields && position < slots.size() - 1,
+                () -> moveFieldAdjacent(form, slots, field, position + 1, widgetInstanceManager, previewParent)));
         row.appendChild(actionsCell);
         row.appendChild(labelCell);
         row.appendChild(inputCell);
@@ -271,6 +285,22 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
                 + " background: #f4f7fa; border-bottom: 1px solid #d9e1e8; color: #34495e; font-weight: 600;");
         heading.appendChild(new Label(displayName(step)));
         return heading;
+    }
+
+    /** Placeholder shown for a configured step that currently has no (visible) fields; also a drop target. */
+    private Component renderEmptyStepRow(final DynamicFormModel form, final List<Object> slots, final DynamicFormStepModel step,
+            final WidgetInstanceManager widgetInstanceManager, final Component previewParent) {
+        final Div row = new Div();
+        row.setWidth("100%");
+        row.setStyle("width: 100%; box-sizing: border-box; padding: 12px; border-bottom: 1px solid #e5e5e5;"
+                + " color: #5b5b5b; font-style: italic;");
+        row.appendChild(new Label(label("cxdevforms.preview.empty")));
+        if (canChangeFormFields(form)) {
+            row.setDroppable("true");
+            row.addEventListener(Events.ON_DROP, event -> moveDroppedField(form, slots, step, (DropEvent) event,
+                    widgetInstanceManager, previewParent));
+        }
+        return row;
     }
 
     private Set<DynamicFormFieldModel> collectVisibleFields(final List<DynamicFormFieldModel> rootFields) {
@@ -406,25 +436,36 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
                 DynamicFormModel._TYPECODE, form));
     }
 
-    private void moveDroppedField(final DynamicFormModel form, final List<DynamicFormFieldModel> renderOrder,
-            final DynamicFormFieldModel target, final DropEvent event, final WidgetInstanceManager widgetInstanceManager,
+    private void moveDroppedField(final DynamicFormModel form, final List<Object> slots,
+            final Object target, final DropEvent event, final WidgetInstanceManager widgetInstanceManager,
             final Component section) {
         final Object source = event.getDragged().getAttribute(FIELD_ATTRIBUTE);
-        if (source instanceof DynamicFormFieldModel field && renderOrder.contains(field) && !Objects.equals(field, target)) {
-            moveField(form, renderOrder, field, renderOrder.indexOf(target), widgetInstanceManager, section);
+        if (source instanceof DynamicFormFieldModel field && slots.contains(field) && !Objects.equals(field, target)) {
+            moveField(form, slots, field, slots.indexOf(target), widgetInstanceManager, section);
         }
     }
 
     /**
-     * Moves a field next to the field currently at {@code targetIndex} in the render order.
-     * Since that render order groups fields by step, the moved field also adopts the target's
-     * step - dragging a field across a step boundary moves it into that step.
+     * Moves a field next to the slot currently at {@code targetIndex} - either another field or,
+     * for a step with no fields, the step itself standing in for its empty placeholder row. Since
+     * the slot order groups fields by step, the moved field also adopts the target's step -
+     * dragging a field across a step boundary (or onto an empty step's row) moves it into that step.
      */
-    private void moveField(final DynamicFormModel form, final List<DynamicFormFieldModel> renderOrder, final DynamicFormFieldModel field,
+    private void moveField(final DynamicFormModel form, final List<Object> slots, final DynamicFormFieldModel field,
             final int targetIndex, final WidgetInstanceManager widgetInstanceManager, final Component section) {
+        final Object targetSlot = slots.get(targetIndex);
+        if (targetSlot instanceof DynamicFormStepModel targetStep) {
+            if (!Objects.equals(field.getStep(), targetStep)) {
+                field.setStep(targetStep);
+                modelService.save(field);
+            }
+            modelService.save(form);
+            renderPreview(section, form, widgetInstanceManager);
+            return;
+        }
+        final DynamicFormFieldModel target = (DynamicFormFieldModel) targetSlot;
         final List<DynamicFormFieldModel> reordered = new ArrayList<>(form.getFormFields());
-        final int sourceIndex = renderOrder.indexOf(field);
-        final DynamicFormFieldModel target = renderOrder.get(targetIndex);
+        final int sourceIndex = slots.indexOf(field);
         reordered.remove(field);
         int insertionIndex = reordered.indexOf(target);
         if (targetIndex > sourceIndex) {
@@ -436,6 +477,27 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
             field.setStep(target.getStep());
             modelService.save(field);
         }
+        modelService.save(form);
+        renderPreview(section, form, widgetInstanceManager);
+    }
+
+    /**
+     * Used by the Move Up/Down buttons. Crossing into a neighboring step (including an empty
+     * step's placeholder slot) first only reassigns the field to that step, keeping its relative
+     * order; a further click, now landing on an actual field of that step, reorders it there via
+     * {@link #moveField}.
+     */
+    private void moveFieldAdjacent(final DynamicFormModel form, final List<Object> slots, final DynamicFormFieldModel field,
+            final int targetIndex, final WidgetInstanceManager widgetInstanceManager, final Component section) {
+        final Object targetSlot = slots.get(targetIndex);
+        final DynamicFormStepModel targetStep = targetSlot instanceof DynamicFormFieldModel targetField
+                ? targetField.getStep() : (DynamicFormStepModel) targetSlot;
+        if (Objects.equals(field.getStep(), targetStep)) {
+            moveField(form, slots, field, targetIndex, widgetInstanceManager, section);
+            return;
+        }
+        field.setStep(targetStep);
+        modelService.save(field);
         modelService.save(form);
         renderPreview(section, form, widgetInstanceManager);
     }
