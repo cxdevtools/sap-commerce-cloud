@@ -1,8 +1,9 @@
 @import "cockpitng-globals.scss";
 @import "./support/cxdevbackoffice-variables.scss";
 
-/*Icons for explorer tree */
-div.yw-explorerTree .y-tree-icon-cxdevtools_treenode_main.y-tree-icon:before {
+/* Icon for the explorer tree node, shown both expanded (main tree) and collapsed (side navigation rail) */
+div.yw-explorerTree .y-tree-icon-cxdevtools_treenode_main.y-tree-icon:before,
+.yw-treeCellInner .y-tree-icon-cxdevtools_treenode_main.y-tree-icon:before {
   font-family: var(--bo-content-icon-font-family);
   content: "\e10c";
   color: var(--bo-content-icon-color);

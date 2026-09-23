@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean parent="fieldSetLevelMapping" id="cxdevformsDynamicFormMapping">
+        <property name="dtoClass" value="me.cxdev.commerce.forms.dto.DynamicFormWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="id,type,title,description"/>
+                <entry key="DEFAULT" value="BASIC,recipients,dynamicRecipient,formFields(DEFAULT)"/>
+                <entry key="FULL" value="DEFAULT,formFields(FULL)"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean parent="fieldSetLevelMapping" id="cxdevformsDynamicFormFieldMapping">
+        <property name="dtoClass" value="me.cxdev.commerce.forms.dto.DynamicFormFieldWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="id,label,description,required,hidden,fieldType,minValue,minLength,maxValue,maxLength,defaultValue,stepId,stepTitle,placeholder,formFieldValues(BASIC),value"/>
+                <entry key="DEFAULT" value="BASIC,formFieldValues(DEFAULT)"/>
+                <entry key="FULL" value="DEFAULT,formFieldValues(FULL)"/>
+            </map>
+        </property>
+    </bean>
+
+    <bean parent="fieldSetLevelMapping" id="cxdevformsDynamicFormFieldValueMapping">
+        <property name="dtoClass" value="me.cxdev.commerce.forms.dto.DynamicFormFieldValueWsDTO"/>
+        <property name="levelMapping">
+            <map>
+                <entry key="BASIC" value="id,label,childFields(BASIC)"/>
+                <entry key="DEFAULT" value="BASIC,childFields(DEFAULT)"/>
+                <entry key="FULL" value="DEFAULT,childFields(FULL)"/>
+            </map>
+        </property>
+    </bean>
+</beans>

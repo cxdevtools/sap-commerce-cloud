@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <import resource="config/cxdevforms-dto-mappings-spring.xml"/>
+    <import resource="config/cxdevforms-dto-level-mappings-spring.xml"/>
+
+    <!-- Dynamic Forms controller -->
+    <bean class="me.cxdev.commerce.forms.controller.CxDynamicFormsController"/>
+    <bean class="me.cxdev.commerce.forms.controller.CxDynamicFormsSubmissionsController"/>
+</beans>

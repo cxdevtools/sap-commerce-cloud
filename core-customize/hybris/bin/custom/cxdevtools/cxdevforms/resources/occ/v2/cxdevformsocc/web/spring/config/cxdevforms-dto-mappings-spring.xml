@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="cxdevformsDynamicFormFieldMapper" parent="fieldMapper">
+        <property name="sourceClass" value="me.cxdev.commerce.forms.data.DynamicFormData"/>
+        <property name="destClass" value="me.cxdev.commerce.forms.dto.DynamicFormWsDTO"/>
+    </bean>
+    <bean id="cxdevformsDynamicFormFieldFieldMapper" parent="fieldMapper">
+        <property name="sourceClass" value="me.cxdev.commerce.forms.data.DynamicFormFieldData"/>
+        <property name="destClass" value="me.cxdev.commerce.forms.dto.DynamicFormFieldWsDTO"/>
+    </bean>
+    <bean id="cxdevformsDynamicFormFieldValueFieldMapper" parent="fieldMapper">
+        <property name="sourceClass" value="me.cxdev.commerce.forms.data.DynamicFormFieldValueData"/>
+        <property name="destClass" value="me.cxdev.commerce.forms.dto.DynamicFormFieldValueWsDTO"/>
+    </bean>
+</beans>

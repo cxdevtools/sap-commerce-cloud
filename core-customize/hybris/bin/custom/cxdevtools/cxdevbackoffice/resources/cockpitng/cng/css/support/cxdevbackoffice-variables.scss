@@ -1,8 +1,10 @@
 :root {
-  --bo-tree-color-level1: #FFFFFF;
-  --bo-tree-color-level2: #F3F9FF;
-  --bo-tree-color-level3: #EDF6FF;
-  --bo-tree-color-level4: #E8F3FF;
-  --bo-tree-color-level5: #E2F0FF;
-  --bo-tree-color-level6: #DCEDFF;
+  /* Derived from the active theme (base + a growing share of the highlight accent per level)
+     instead of fixed hex values, so the explorer tree shading also works in non-default themes. */
+  --bo-tree-color-level1: var(--bo-container-background);
+  --bo-tree-color-level2: color-mix(in srgb, var(--bo-container-background) 97%, var(--bo-highlight-color) 3%);
+  --bo-tree-color-level3: color-mix(in srgb, var(--bo-container-background) 94%, var(--bo-highlight-color) 6%);
+  --bo-tree-color-level4: color-mix(in srgb, var(--bo-container-background) 91%, var(--bo-highlight-color) 9%);
+  --bo-tree-color-level5: color-mix(in srgb, var(--bo-container-background) 88%, var(--bo-highlight-color) 12%);
+  --bo-tree-color-level6: color-mix(in srgb, var(--bo-container-background) 85%, var(--bo-highlight-color) 15%);
 }

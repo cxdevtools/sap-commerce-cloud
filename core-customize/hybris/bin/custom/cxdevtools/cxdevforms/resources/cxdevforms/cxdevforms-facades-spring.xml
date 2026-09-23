@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <alias name="cxDynamicFormFacade" alias="dynamicFormFacade"/>
+    <bean id="cxDynamicFormFacade" class="me.cxdev.commerce.forms.facade.impl.DefaultDynamicFormFacade">
+        <constructor-arg name="dynamicFormService" ref="dynamicFormService"/>
+        <constructor-arg name="dynamicFormDataConverter" ref="cxDynamicFormDataConverter"/>
+    </bean>
+
+    <bean id="cxDynamicFormDataConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="me.cxdev.commerce.forms.data.DynamicFormData"/>
+        <property name="populators">
+            <list>
+                <bean class="me.cxdev.commerce.forms.facade.populator.DynamicFormPopulator">
+                    <constructor-arg name="dynamicFormFieldConverter" ref="cxDynamicFormFieldConverter"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="cxDynamicFormFieldConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="me.cxdev.commerce.forms.data.DynamicFormFieldData"/>
+        <property name="populators">
+            <list>
+                <bean class="me.cxdev.commerce.forms.facade.populator.DynamicFormFieldPopulator">
+                    <constructor-arg name="dynamicFormFieldValueConverterFactory" ref="cxDynamicFormFieldValueConverterObjectFactory"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="cxDynamicFormFieldValueConverterObjectFactory" class="org.springframework.beans.factory.config.ObjectFactoryCreatingFactoryBean">
+        <property name="targetBeanName" value="cxDynamicFormFieldValueConverter"/>
+    </bean>
+
+    <bean id="cxDynamicFormFieldValueConverter" parent="abstractPopulatingConverter">
+        <property name="targetClass" value="me.cxdev.commerce.forms.data.DynamicFormFieldValueData"/>
+        <property name="populators">
+            <list>
+                <bean class="me.cxdev.commerce.forms.facade.populator.DynamicFormFieldValuePopulator">
+                    <constructor-arg name="dynamicFormFieldConverterFactory" ref="cxDynamicFormFieldConverterObjectFactory"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="cxDynamicFormFieldConverterObjectFactory" class="org.springframework.beans.factory.config.ObjectFactoryCreatingFactoryBean">
+        <property name="targetBeanName" value="cxDynamicFormFieldConverter"/>
+    </bean>
+</beans>

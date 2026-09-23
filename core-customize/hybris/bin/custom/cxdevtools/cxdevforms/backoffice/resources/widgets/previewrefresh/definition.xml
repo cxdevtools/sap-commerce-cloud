@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<widget-definition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:noNamespaceSchemaLocation="http://www.hybris.com/schema/cockpitng/widget-definition.xsd"
+                   id="me.cxdev.commerce.forms.backoffice.previewrefresh">
+    <name>Dynamic form preview refresh adapter</name>
+    <description>Refreshes the current DynamicForm editor after a field was created or saved.</description>
+    <author>CX DEV Tools</author>
+    <version>1.0</version>
+    <sockets>
+        <input id="wizardResult" type="java.util.Map"/>
+        <output id="refresh" type="java.lang.Object"/>
+    </sockets>
+    <controller class="me.cxdev.commerce.forms.backoffice.widgets.DynamicFormPreviewRefreshController"/>
+    <keywords>
+        <keyword>_hidden</keyword>
+    </keywords>
+</widget-definition>
