@@ -143,35 +143,7 @@
                         </wz:done>
                     </wz:navigation>
                 </wz:step>
-                <wz:step id="step2" label="cxdevforms.section.steps">
-                    <wz:content>
-                        <wz:property-list root="newObject">
-                            <wz:property qualifier="steps"/>
-                        </wz:property-list>
-                    </wz:content>
-                    <wz:navigation>
-                        <wz:back/>
-                        <wz:next/>
-                        <wz:done visible="newObject.id != null">
-                            <wz:save property="newObject"/>
-                        </wz:done>
-                    </wz:navigation>
-                </wz:step>
-                <wz:step id="step3" label="cxdevforms.section.form">
-                    <wz:content>
-                        <wz:property-list root="newObject">
-                            <wz:property qualifier="formFields"/>
-                        </wz:property-list>
-                    </wz:content>
-                    <wz:navigation>
-                        <wz:back/>
-                        <wz:next/>
-                        <wz:done visible="newObject.id != null">
-                            <wz:save property="newObject"/>
-                        </wz:done>
-                    </wz:navigation>
-                </wz:step>
-                <wz:step id="step4" label="cxdevforms.section.notification">
+                <wz:step id="step2" label="cxdevforms.section.notification">
                     <wz:content>
                         <wz:property-list root="newObject">
                             <wz:property qualifier="recipients"/>
@@ -266,16 +238,14 @@
             <editorArea:editorArea>
                 <editorArea:essentials>
                     <editorArea:essentialSection name="hmc.essential" columns="4">
-                        <editorArea:attribute qualifier="form"/>
                         <editorArea:attribute qualifier="id" readonly="true"/>
+                        <editorArea:attribute qualifier="form"/>
+                        <editorArea:attribute qualifier="fieldType"/>
+                        <editorArea:attribute qualifier="active"/>
                     </editorArea:essentialSection>
                 </editorArea:essentials>
                 <editorArea:tab name="cxdevforms.tab.general">
                     <editorArea:section name="cxdevforms.section.general" columns="2">
-                        <editorArea:attribute qualifier="fieldType"/>
-                        <editorArea:attribute qualifier="required"/>
-                        <editorArea:attribute qualifier="active"/>
-                        <editorArea:attribute qualifier="hidden"/>
                         <editorArea:attribute qualifier="label"/>
                         <editorArea:attribute qualifier="description"/>
                         <editorArea:attribute qualifier="placeholder"/>
@@ -285,12 +255,24 @@
                 </editorArea:tab>
                 <editorArea:tab name="cxdevforms.tab.step">
                     <editorArea:section name="cxdevforms.section.step" columns="2">
-                        <editorArea:attribute qualifier="step"/>
-                        <editorArea:attribute qualifier="parentFieldValue" colspan="2"/>
+                        <editorArea:attribute qualifier="step">
+                            <editorArea:editor-parameter>
+                                <editorArea:name>referenceSearchCondition_form</editorArea:name>
+                                <editorArea:value>{parentObject.form}</editorArea:value>
+                            </editorArea:editor-parameter>
+                        </editorArea:attribute>
+                    </editorArea:section>
+                </editorArea:tab>
+                <editorArea:tab name="cxdevforms.tab.visibility">
+                    <editorArea:section name="cxdevforms.section.visibility" columns="2">
+                        <editorArea:attribute qualifier="hidden"/>
+                        <editorArea:attribute qualifier="parentFieldValue" colspan="2"
+                                description="cxdevforms.field.parentFieldValue.description"/>
                     </editorArea:section>
                 </editorArea:tab>
                 <editorArea:tab name="cxdevforms.tab.validation">
                     <editorArea:section name="cxdevforms.section.validation" columns="2">
+                        <editorArea:attribute qualifier="required"/>
                         <editorArea:attribute qualifier="minValue"/>
                         <editorArea:attribute qualifier="maxValue"/>
                         <editorArea:attribute qualifier="minLength"/>
@@ -310,13 +292,19 @@
                     <wz:content id="step1.content">
                         <wz:property-list root="newObject">
                             <wz:property qualifier="form"/>
-                            <wz:property qualifier="step"/>
+                            <wz:property qualifier="step">
+                                <wz:editor-parameter>
+                                    <wz:name>referenceSearchCondition_form</wz:name>
+                                    <wz:value>{parentObject.form}</wz:value>
+                                </wz:editor-parameter>
+                            </wz:property>
                             <wz:property qualifier="fieldType"/>
                             <wz:property qualifier="label"/>
                             <wz:property qualifier="description"/>
                             <wz:property qualifier="placeholder"/>
                             <wz:property qualifier="active" exclude="true"/>
                             <wz:property qualifier="hidden" exclude="true"/>
+                            <wz:property qualifier="id" exclude="true"/>
                             <wz:property qualifier="creationtime" exclude="true"/>
                         </wz:property-list>
                     </wz:content>
@@ -358,6 +346,15 @@
                 </y:labels>
             </y:base>
         </context>
+        <context component="listview" merge-by="type">
+            <list-view:list-view>
+                <list-view:column qualifier="form"/>
+                <list-view:column qualifier="label"/>
+                <list-view:column qualifier="id"/>
+                <list-view:column qualifier="creationtime"/>
+                <list-view:column qualifier="modifiedtime"/>
+            </list-view:list-view>
+        </context>
         <context component="editor-area" merge-by="type">
             <editorArea:editorArea>
                 <editorArea:essentials>
@@ -385,6 +382,8 @@
                         <wz:property-list root="newObject">
                             <wz:property qualifier="form"/>
                             <wz:property qualifier="label"/>
+                            <wz:property qualifier="id" exclude="true"/>
+                            <wz:property qualifier="creationtime" exclude="true"/>
                         </wz:property-list>
                     </wz:content>
                     <wz:navigation>
@@ -489,6 +488,7 @@
                         <wz:property-list root="newObject">
                             <wz:property qualifier="field"/>
                             <wz:property qualifier="label"/>
+                            <wz:property qualifier="id" exclude="true"/>
                             <wz:property qualifier="creationtime" exclude="true"/>
                         </wz:property-list>
                     </wz:content>
@@ -582,6 +582,7 @@
                         <wz:property-list root="newObject">
                             <wz:property qualifier="code"/>
                             <wz:property qualifier="name"/>
+                            <wz:property qualifier="icon"/>
                         </wz:property-list>
                     </wz:content>
                     <wz:navigation>
@@ -594,6 +595,32 @@
             </wz:flow>
         </context>
     </context>
+
+    <context type="DynamicFormType" merge-by="type" module="cxdevforms">
+        <context component="create-wizard" merge-by="type">
+            <wz:flow id="DynamicFormTypeWizard" title="create.title(ctx.TYPE_CODE)">
+                <wz:prepare id="itemPrepare">
+                    <wz:initialize property="newObject" type="ctx.TYPE_CODE"/>
+                </wz:prepare>
+                <wz:step id="step1" label="flow.allmanadatory">
+                    <wz:content id="step1.content">
+                        <wz:property-list root="newObject">
+                            <wz:property qualifier="code"/>
+                            <wz:property qualifier="name"/>
+                            <wz:property qualifier="icon"/>
+                        </wz:property-list>
+                    </wz:content>
+                    <wz:navigation>
+                        <wz:cancel/>
+                        <wz:done visible="!#empty(newObject.code)">
+                            <wz:save property="newObject"/>
+                        </wz:done>
+                    </wz:navigation>
+                </wz:step>
+            </wz:flow>
+        </context>
+    </context>
+
     <context type="DynamicFormSubmission" merge-by="type" module="cxdevforms">
         <context component="base"><y:base><y:labels><y:label>id</y:label></y:labels></y:base></context>
         <context component="simple-search"><simple-search:simple-search><simple-search:field name="id"/></simple-search:simple-search></context>
