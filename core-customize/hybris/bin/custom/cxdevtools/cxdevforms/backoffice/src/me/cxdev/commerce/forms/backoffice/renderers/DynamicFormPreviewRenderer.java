@@ -102,7 +102,7 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
         final Vlayout preview = new Vlayout();
         preview.setSpacing("0");
         preview.setWidth("100%");
-        preview.setStyle("width: 100%; background: #ffffff; border: 1px solid #d9d9d9; box-sizing: border-box;");
+        preview.setStyle("width: 100%; background: var(--bo-container-background); border: 1px solid var(--bo-container-border-color); box-sizing: border-box;");
         final Set<DynamicFormFieldModel> visibleFields = collectVisibleFields(rootFields);
         final List<Action> deleteActions = new ArrayList<>();
         final List<DynamicFormFieldModel> orderedFields = new ArrayList<>(form.getFormFields());
@@ -208,7 +208,7 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
         row.setAttribute(FIELD_ATTRIBUTE, field);
         row.setWidth("100%");
         row.setStyle("display: grid; grid-template-columns: 175px 300px 500px; justify-content: start;"
-                + " gap: 0; align-items: start; padding: 12px; width: 100%; min-width: 0; box-sizing: border-box; border-bottom: 1px solid #e5e5e5;"
+                + " gap: 0; align-items: start; padding: 12px; width: 100%; min-width: 0; box-sizing: border-box; border-bottom: 1px solid var(--bo-list-border-color);"
                 + (Boolean.TRUE.equals(field.isHidden()) ? " opacity: 0.58;" : ""));
         final boolean canMoveFields = canChangeFormFields(form);
         if (canMoveFields) {
@@ -228,7 +228,7 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
         heading.appendChild(title);
         if (Boolean.TRUE.equals(field.isRequired())) {
             final Label required = new Label("*");
-            required.setStyle("color: #bb0000; font-weight: bold;");
+            required.setStyle("color: var(--bo-input-required-color); font-weight: bold;");
             required.setTooltiptext(label("cxdevforms.preview.required"));
             heading.appendChild(required);
         }
@@ -238,7 +238,7 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
         labelCell.appendChild(heading);
         if (field.getDescription() != null && !field.getDescription().isBlank()) {
             final Label description = new Label(field.getDescription());
-            description.setStyle("display: block; margin-top: 4px; color: #5b5b5b; white-space: pre-wrap;");
+            description.setStyle("display: block; margin-top: 4px; color: var(--bo-content-label-color); white-space: pre-wrap;");
             labelCell.appendChild(description);
         }
 
@@ -282,7 +282,8 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
     private Component renderStepHeading(final DynamicFormStepModel step) {
         final Div heading = new Div();
         heading.setStyle("width: 100%; box-sizing: border-box; padding: 12px 12px 8px;"
-                + " background: #f4f7fa; border-bottom: 1px solid #d9e1e8; color: #34495e; font-weight: 600;");
+                + " background: var(--sapList_TableGroupHeaderBackground); border-bottom: 1px solid var(--sapList_TableGroupHeaderBorderColor);"
+                + " color: var(--sapList_TableGroupHeaderTextColor); font-weight: 600;");
         heading.appendChild(new Label(displayName(step)));
         return heading;
     }
@@ -292,8 +293,8 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
             final WidgetInstanceManager widgetInstanceManager, final Component previewParent) {
         final Div row = new Div();
         row.setWidth("100%");
-        row.setStyle("width: 100%; box-sizing: border-box; padding: 12px; border-bottom: 1px solid #e5e5e5;"
-                + " color: #5b5b5b; font-style: italic;");
+        row.setStyle("width: 100%; box-sizing: border-box; padding: 12px; border-bottom: 1px solid var(--bo-list-border-color);"
+                + " color: var(--bo-content-label-color); font-style: italic;");
         row.appendChild(new Label(label("cxdevforms.preview.empty")));
         if (canChangeFormFields(form)) {
             row.setDroppable("true");
@@ -695,7 +696,7 @@ public class DynamicFormPreviewRenderer implements WidgetComponentRenderer<Compo
     private void appendRule(final Component parent, final String rule) {
         if (rule != null) {
             final Label validation = new Label(rule);
-            validation.setStyle("display: block; font-style: italic; color: #5b5b5b; white-space: pre-wrap; margin: 10px 0px 0px 0px;");
+            validation.setStyle("display: block; font-style: italic; color: var(--bo-content-label-color); white-space: pre-wrap; margin: 10px 0px 0px 0px;");
             parent.appendChild(validation);
         }
     }
